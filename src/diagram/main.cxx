@@ -1,11 +1,15 @@
+#include <gtkmm/main.h>
+
+#include <logging/logging.hxx>
+
 #include "Display.hxx"
 #include "Diagram.hxx"
 
 
-#include <gtkmm/main.h>
-
 int main(int argc, char** argv)
 {
+    DLOG_SET_LEVEL(DEBUG);
+    
     Gtk::Main kit(argc, argv);
 
     DBricks::Diagram diagram;

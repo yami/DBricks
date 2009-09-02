@@ -4,11 +4,13 @@
 #include <string>
 
 #include <geom/Point.hxx>
+
 #include "Shape.hxx"
 
 namespace DBricks {
 
 class CustomShape : public Shape {
+public:
     CustomShape(const std::string& name);
     
     ~CustomShape()

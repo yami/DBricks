@@ -44,6 +44,8 @@ const char* loglevel_name(LogLevel level);
 
 const char* loggroup_name(LogGroup group);
 
+void set_default_level(LogLevel level);
+
 
 struct LogMessageInfo {
     LogMessageInfo()
@@ -115,6 +117,9 @@ public:
 
     LogLevel group_level(LogGroup group) const;
     void     group_level(LogGroup group, LogLevel level);
+
+    void default_level(LogLevel level);
+    
     
     DispatchersType& dispatchers();
 
@@ -128,7 +133,7 @@ private:
 
 void sendLogMessage(const LogMessageInfo& info, ...);
 
-}
+} // namespace logging
 
 #define DLOG(GROUP, LEVEL, FMT, ARGS...)                                \
     do {                                                                \
@@ -137,5 +142,7 @@ void sendLogMessage(const LogMessageInfo& info, ...);
             logging::LOGGROUP_##GROUP, logging::LOGLEVEL_##LEVEL, FMT); \
         logging::sendLogMessage(_logmsg_info, ##ARGS);                  \
     } while (0)
+
+#define DLOG_SET_LEVEL(LEVEL) logging::set_default_level(logging::LOGLEVEL_##LEVEL)
 
 #endif //LOGGING_HXX

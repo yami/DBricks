@@ -1,10 +1,13 @@
 #include "ModifyContext.hxx"
+
+#include <logging/logging.hxx>
+#include <util/assert.hxx>
+
+#include "defines.hxx"
 #include "Shape.hxx"
 #include "Handle.hxx"
 #include "Diagram.hxx"
 
-#include <util/assert.hxx>
-#include "defines.hxx"
 
 namespace DBricks {
 
@@ -14,17 +17,21 @@ ModifyContext::on_button_press_event(GdkEventButton* e)
     bool pass_down = false;
 
     if (e->button == Left_Button) {
+        DLOG(DIAGRAM, DEBUG, "ModifyContext left button pressed \n");
         Point point(e->x, e->y);
 
-        if (m_state = None) {
+        if (m_state == None) {
             m_shape  = m_diagram->find_closest_shape(point);
             m_handle = m_diagram->find_closest_handle(m_shape, point);
 
+            DLOG(DIAGRAM, DEBUG, "closest shape=%p, handle=%p\n", m_shape, m_handle);
+            
             if (m_handle)
                 m_state = Handle_Moving;
             else if (m_shape)
                 m_state = Shape_Moving;
         } else {
+            DLOG(DIAGRAM, DEBUG, "ModifyContext state is %d\n", (int)m_state);
             m_state     = None;
             m_shape     = 0;
             m_handle    = 0;

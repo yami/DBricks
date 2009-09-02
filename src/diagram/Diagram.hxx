@@ -15,9 +15,11 @@ class Diagram
 public:
     typedef std::list<Shape*> ShapesType;
     typedef std::list<DiagramObserver*> ObserversType;
+
+    void add_shape(Shape* shape);
     
     Shape* find_closest_shape(const Point& point) const;
-
+    
     Handle* find_closest_handle(Shape* shape, const Point& point) const;    
     
     const ShapesType& shapes() const;

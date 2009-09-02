@@ -4,6 +4,7 @@ dbricks_SOURCES = main.cxx \
 	Diagram.cxx \
 	CustomShape.cxx \
 	ModifyContext.cxx \
+	CreateContext.cxx \
 	DispatchContext.cxx \
 	Display.cxx
 

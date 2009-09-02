@@ -8,6 +8,12 @@
 
 namespace DBricks {
 
+void
+Diagram::add_shape(Shape* shape)
+{
+    m_shapes.push_back(shape);
+}
+
 Shape*
 Diagram::find_closest_shape(const Point& point) const
 {

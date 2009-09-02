@@ -1,4 +1,7 @@
 #include "logging.hxx"
+
+#include <algorithm>
+
 #include <util/stl.hxx>
 #include <util/assert.hxx>
 
@@ -50,7 +53,13 @@ loglevel_name(LogLevel level)
             ASSERT_NOT_REACHED();
     }
 }
-    
+
+void
+set_default_level(LogLevel level)
+{
+    gLogConfig.default_level(level);
+}
+
 void
 sendLogMessage(const LogMessageInfo& info, ...)
 {
@@ -94,6 +103,12 @@ void
 LogConfig::group_level(LogGroup group, LogLevel level)
 {
     m_group_levels[group] = level;
+}
+
+void
+LogConfig::default_level(LogLevel level)
+{
+    std::fill(m_group_levels.begin(), m_group_levels.end(), level);
 }
 
 LogConfig::DispatchersType&

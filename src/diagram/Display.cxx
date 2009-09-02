@@ -5,15 +5,26 @@
 
 #include <cairomm/context.h>
 
-#include "ModifyContext.hxx"
-#include "Diagram.hxx"
+#include <util/stl.hxx>
+#include <logging/logging.hxx>
+
+#include "defines.hxx"
+
 #include "Shape.hxx"
+#include "Diagram.hxx"
+
+#include "ModifyContext.hxx"
+#include "CreateContext.hxx"
+
 
 namespace DBricks {
 
 Display::Display(Diagram* diagram)
-    :DiagramObserver(diagram), m_context(new ModifyContext(diagram))
+    :DiagramObserver(diagram), m_current_context(0)
 {
+    m_contexts.push_back(new ModifyContext(diagram));
+    m_contexts.push_back(new CreateContext(diagram));
+    
     add_events(Gdk::EXPOSURE_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
     add_events(Gdk::POINTER_MOTION_HINT_MASK);
@@ -28,15 +39,28 @@ Display::Display(Diagram* diagram)
 
 Display::~Display()
 {
-    delete m_context;
+    util::delete_entries(m_contexts.begin(), m_contexts.end());
 }
 
 bool
 Display::on_event(GdkEvent* event)
 {
-    m_context->on_event(event);
+    if (event->type == GDK_BUTTON_PRESS) {
+        GdkEventButton *e = (GdkEventButton*)event;
+
+        if (e->button == Right_Button) {
+            m_current_context = (m_current_context + 1) % m_contexts.size();
+
+            DLOG(DIAGRAM, INFO, "context changed!\n");
+            return true;
+        }
+    }
+
+    m_contexts[m_current_context]->on_event(event);
+    update();
     return true;
 }
+
 
 void
 Display::update()

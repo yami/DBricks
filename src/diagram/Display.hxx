@@ -1,6 +1,8 @@
 #ifndef DISPLAY_HXX
 #define DISPLAY_HXX
 
+#include <vector>
+
 #include <gtkmm/window.h>
 
 #include "DiagramObserver.hxx"
@@ -11,18 +13,18 @@ namespace DBricks {
 class Diagram;
 class EventContext;
 
-class Display : public DiagramObserver, public Gtk::Window {
+class Display : public Gtk::Window, public DiagramObserver {
 public:
     Display(Diagram* diagram);
     ~Display();
 
     virtual void update();
     virtual bool on_event(GdkEvent* event);
-    
 private:
     void draw(GdkEventExpose* event=NULL);
     
-    EventContext* m_context;
+    std::vector<EventContext*> m_contexts;
+    size_t                     m_current_context;
 };
 
 } // namespace DBricks
