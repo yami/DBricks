@@ -2,9 +2,7 @@
 
 #include <logging/logging.hxx>
 
-#include "Display.hxx"
-#include "Diagram.hxx"
-
+#include "Desktop.hxx"
 
 int main(int argc, char** argv)
 {
@@ -12,12 +10,8 @@ int main(int argc, char** argv)
     
     Gtk::Main kit(argc, argv);
 
-    DBricks::Diagram diagram;
-    DBricks::Display display(&diagram);
+    DBricks::Desktop desktop;
+    desktop.show_all();
 
-    diagram.attach_observer(&display);
-    
-    display.show_all();
-
-    Gtk::Main::run(display);
+    Gtk::Main::run(desktop);
 }

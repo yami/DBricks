@@ -75,6 +75,10 @@ struct LogEventInfo {
 
 class Dispatcher {
 public:
+    virtual ~Dispatcher()
+    {
+    }
+    
     virtual bool filter(const LogMessageInfo& info) const = 0;
     virtual int vprintf(const LogMessageInfo& info, va_list va) = 0;
 };

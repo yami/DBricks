@@ -3,22 +3,31 @@
 
 #include <vector>
 
-#include <gtkmm/window.h>
+#include <gtkmm/drawingarea.h>
 
 #include "DiagramObserver.hxx"
 
+// Perhaps I should change Display to Canvas or some other name?
+// Its role is:
+//   1. main drawing area
+//   2. to receive events from user
+//   3. to pass events to items in drawing area
+//   4. to pass events to its parent
 
 namespace DBricks {
 
 class Diagram;
 class EventContext;
 
-class Display : public Gtk::Window, public DiagramObserver {
+class Display : public Gtk::DrawingArea, public DiagramObserver {
 public:
     Display(Diagram* diagram);
     ~Display();
 
+    // DBricks::DiagramObserver interfaces
     virtual void update();
+
+    // Gtk::Window interfaces
     virtual bool on_event(GdkEvent* event);
 private:
     void draw(GdkEventExpose* event=NULL);

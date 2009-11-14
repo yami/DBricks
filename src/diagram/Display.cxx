@@ -22,9 +22,6 @@ namespace DBricks {
 Display::Display(Diagram* diagram)
     :DiagramObserver(diagram), m_current_context(0)
 {
-    m_contexts.push_back(new ModifyContext(diagram));
-    m_contexts.push_back(new CreateContext(diagram));
-    
     add_events(Gdk::EXPOSURE_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
     add_events(Gdk::POINTER_MOTION_HINT_MASK);
@@ -34,6 +31,9 @@ Display::Display(Diagram* diagram)
     add_events(Gdk::ENTER_NOTIFY_MASK);
     add_events(Gdk::KEY_PRESS_MASK);
     add_events(Gdk::KEY_RELEASE_MASK);
+
+    m_contexts.push_back(new ModifyContext(diagram));
+    m_contexts.push_back(new CreateContext(diagram));    
 }
 
 
@@ -58,7 +58,7 @@ Display::on_event(GdkEvent* event)
 
     m_contexts[m_current_context]->on_event(event);
     update();
-    return true;
+    return false;
 }
 
 
