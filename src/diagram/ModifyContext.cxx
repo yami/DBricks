@@ -7,7 +7,7 @@
 #include "Shape.hxx"
 #include "Handle.hxx"
 #include "Diagram.hxx"
-
+#include "Display.hxx"
 
 namespace DBricks {
 
@@ -18,11 +18,10 @@ ModifyContext::on_button_press_event(GdkEventButton* e)
 
     if (e->button == Left_Button) {
         DLOG(DIAGRAM, DEBUG, "ModifyContext left button pressed \n");
-        Point point(e->x, e->y);
 
         if (m_state == None) {
-            m_shape  = m_diagram->find_closest_shape(point);
-            m_handle = m_diagram->find_closest_handle(m_shape, point);
+            m_shape  = m_display->event_shape();
+            m_handle = m_display->event_handle();
 
             DLOG(DIAGRAM, DEBUG, "closest shape=%p, handle=%p\n", m_shape, m_handle);
             

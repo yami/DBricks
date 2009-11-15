@@ -11,8 +11,8 @@ class Handle;
 
 class ModifyContext : public DispatchContext {
 public:
-    ModifyContext(Diagram* diagram)
-        :DispatchContext(diagram)
+    ModifyContext(Diagram* diagram, Display* display)
+        :DispatchContext(diagram, display)
     {
     }
 private:

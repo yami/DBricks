@@ -7,8 +7,8 @@ namespace DBricks {
 
 class DispatchContext : public EventContext {
 public:
-    DispatchContext(Diagram* diagram)
-        :EventContext(diagram)
+    DispatchContext(Diagram* diagram, Display* display)
+        :EventContext(diagram, display)
     {
     }
     

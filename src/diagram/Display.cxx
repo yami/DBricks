@@ -9,6 +9,7 @@
 #include <logging/logging.hxx>
 
 #include "defines.hxx"
+#include "gtkutil.hxx"
 
 #include "Shape.hxx"
 #include "Diagram.hxx"
@@ -20,7 +21,8 @@
 namespace DBricks {
 
 Display::Display(Diagram* diagram)
-    :DiagramObserver(diagram), m_current_context(0)
+    :DiagramObserver(diagram), m_current_context(0),
+     m_event_shape(0), m_event_handle(0)
 {
     add_events(Gdk::EXPOSURE_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
@@ -32,8 +34,8 @@ Display::Display(Diagram* diagram)
     add_events(Gdk::KEY_PRESS_MASK);
     add_events(Gdk::KEY_RELEASE_MASK);
 
-    m_contexts.push_back(new ModifyContext(diagram));
-    m_contexts.push_back(new CreateContext(diagram));    
+    m_contexts.push_back(new ModifyContext(diagram, this));
+    m_contexts.push_back(new CreateContext(diagram, this));
 }
 
 
@@ -56,6 +58,13 @@ Display::on_event(GdkEvent* event)
         }
     }
 
+    Point point;
+
+    if (point_of_event(event, &point)) {
+        m_event_shape  = m_diagram->find_closest_shape(point);
+        m_event_handle = m_diagram->find_closest_handle(m_event_shape, point);
+    }
+    
     m_contexts[m_current_context]->on_event(event);
     update();
     return false;

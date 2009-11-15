@@ -7,7 +7,8 @@ dbricks_SOURCES = main.cxx \
 	CreateContext.cxx \
 	DispatchContext.cxx \
 	Display.cxx \
-	Desktop.cxx
+	Desktop.cxx \
+	gtkutil.cxx
 
 dbricks_CPPFLAGS = \
 	$(GTKMM_CFLAGS) \

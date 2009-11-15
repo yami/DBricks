@@ -17,6 +17,8 @@
 namespace DBricks {
 
 class Diagram;
+class Shape;
+class Handle;
 class EventContext;
 
 class Display : public Gtk::DrawingArea, public DiagramObserver {
@@ -29,11 +31,25 @@ public:
 
     // Gtk::Window interfaces
     virtual bool on_event(GdkEvent* event);
+
+    // own interfaces
+    Shape* event_shape() const
+    {
+        return m_event_shape;
+    }
+
+    Handle* event_handle() const
+    {
+        return m_event_handle;
+    }
 private:
     void draw(GdkEventExpose* event=NULL);
     
     std::vector<EventContext*> m_contexts;
     size_t                     m_current_context;
+
+    Shape*  m_event_shape;
+    Handle* m_event_handle;
 };
 
 } // namespace DBricks

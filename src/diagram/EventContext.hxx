@@ -6,11 +6,12 @@
 namespace DBricks {
 
 class Diagram;
+class Display;
 
 class EventContext {
 public:
-    EventContext (Diagram* diagram)
-        :m_diagram(diagram)
+    EventContext (Diagram* diagram, Display* display)
+        :m_diagram(diagram), m_display(display)
     {
     }
     
@@ -31,6 +32,7 @@ public:
     }
 protected:
     Diagram* m_diagram;
+    Display* m_display;
 };
 
 
