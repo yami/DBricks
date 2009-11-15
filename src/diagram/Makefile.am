@@ -8,7 +8,10 @@ dbricks_SOURCES = main.cxx \
 	DispatchContext.cxx \
 	Display.cxx \
 	Desktop.cxx \
-	gtkutil.cxx
+	gtkutil.cxx \
+	RectShape.cxx \
+	EllipseShape.cxx \
+	BoxShape.cxx
 
 dbricks_CPPFLAGS = \
 	$(GTKMM_CFLAGS) \

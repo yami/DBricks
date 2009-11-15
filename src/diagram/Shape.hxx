@@ -2,6 +2,7 @@
 #define SHAPE_HXX
 
 #include <vector>
+#include <cmath>
 #include <geom/Point.hxx>
 #include <cairomm/context.h>
 
@@ -18,6 +19,11 @@ public:
     {
     }
 
+    Shape(double x, double y)
+        :m_corner(x, y)
+    {
+    }
+    
     ~Shape()
     {
     }
@@ -25,7 +31,11 @@ public:
     virtual void draw (Cairo::RefPtr<Cairo::Context> ctx) const = 0;
     virtual void move_handle(Handle* handle, const Point& delta) = 0;
     virtual void move(const Point& delta) = 0;
-    virtual double distance(const Point& point) const = 0;
+
+    virtual double distance(const Point& point)
+    {
+        return fabs(m_corner.x - point.x) + fabs(m_corner.y - point.y);
+    }
 
     HandlesType& handles()
     {

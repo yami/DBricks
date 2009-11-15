@@ -20,7 +20,6 @@ public:
     virtual void draw (Cairo::RefPtr<Cairo::Context> ctx) const;
     virtual void move_handle(Handle* handle, const Point& delta);
     virtual void move(const Point& delta);
-    virtual double distance(const Point& point) const;
     
 private:
     void update_handle(const std::string& name, const Point& point);

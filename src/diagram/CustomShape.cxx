@@ -71,12 +71,6 @@ CustomShape::move(const Point& delta)
     update_corner(delta);
 }
 
-double
-CustomShape::distance(const Point& point) const
-{
-    return fabs(m_corner.x - point.x) + fabs(m_corner.y - point.y);
-}
-
 void
 CustomShape::update_handle(const std::string& name, const Point& point)
 {
