@@ -37,6 +37,8 @@ public:
         return fabs(m_corner.x - point.x) + fabs(m_corner.y - point.y);
     }
 
+    virtual bool cover(const Point& point) = 0;
+
     HandlesType& handles()
     {
         return m_handles;

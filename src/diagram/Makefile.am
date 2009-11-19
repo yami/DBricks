@@ -11,7 +11,8 @@ dbricks_SOURCES = main.cxx \
 	gtkutil.cxx \
 	RectShape.cxx \
 	EllipseShape.cxx \
-	BoxShape.cxx
+	BoxShape.cxx \
+	Handle.cxx
 
 dbricks_CPPFLAGS = \
 	$(GTKMM_CFLAGS) \

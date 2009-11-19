@@ -12,7 +12,7 @@ public:
     
     virtual void move_handle(Handle* handle, const Point& delta);
     virtual void move(const Point& delta);
-
+    virtual bool cover (const Point& point);
 private:
     void update_handles();
     

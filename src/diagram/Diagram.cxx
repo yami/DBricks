@@ -18,17 +18,32 @@ Shape*
 Diagram::find_closest_shape(const Point& point) const
 {
     /* @FIXME */
-    double max_dist = 300.0;
+    double max_dist = 30.0;
+    Shape* closest  = 0;
+    double min_dist = 0;
 
-    for (ShapesType::const_iterator iter = m_shapes.begin();
-         iter != m_shapes.end();
-         ++iter) {
-        if ((*iter)->distance(point) <= max_dist) {
-            return *iter;
+    ShapesType::const_iterator iter = m_shapes.begin();
+    for(; iter != m_shapes.end(); ++iter) {
+        if ((*iter)->cover(point)) {
+            closest = *iter;
+            min_dist = closest->distance(point);
         }
     }
 
-    return 0;
+    if (!closest) 
+        return 0;
+
+    for(++iter; iter != m_shapes.end(); ++iter) {
+        if ((*iter)->cover(point)) {
+            double dist = (*iter)->distance(point);
+            if (dist < min_dist) {
+                closest  = *iter;
+                min_dist = dist;
+            }
+        }
+    }
+
+    return closest;
 }
 
 Handle*

@@ -20,7 +20,10 @@ public:
     virtual void draw (Cairo::RefPtr<Cairo::Context> ctx) const;
     virtual void move_handle(Handle* handle, const Point& delta);
     virtual void move(const Point& delta);
-    
+    virtual bool cover(const Point& point)
+    {
+        return false;
+    }
 private:
     void update_handle(const std::string& name, const Point& point);
     void update_corner(const Point& delta);

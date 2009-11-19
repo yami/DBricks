@@ -7,10 +7,10 @@ namespace DBricks {
 BoxShape::BoxShape(double x, double y, double width, double height)
     :Shape(x, y), m_x(m_corner.x), m_y(m_corner.y),
      m_width(width), m_height(height),
-     m_lhandle("left", Point(0, height/2)),
-     m_rhandle("right", Point(width, height/2)),
-     m_thandle("top", Point(width/2, 0)),
-     m_bhandle("bottom", Point(width/2, height))
+     m_lhandle("left", this, Point(0, height/2)),
+     m_rhandle("right", this, Point(width, height/2)),
+     m_thandle("top", this, Point(width/2, 0)),
+     m_bhandle("bottom", this, Point(width/2, height))
 {
     m_handles.push_back(&m_lhandle);
     m_handles.push_back(&m_rhandle);
@@ -52,6 +52,13 @@ void
 BoxShape::move(const Point& delta)
 {
     m_corner += delta;
+}
+
+bool
+BoxShape::cover(const Point& point)
+{
+    return point.x >= m_x && point.x <= m_x + m_width &&
+        point.y >= m_y && point.y <= m_y + m_height;
 }
 
 

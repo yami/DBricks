@@ -83,7 +83,7 @@ CustomShape::update_handle(const std::string& name, const Point& point)
         }
     }
 
-    m_handles.push_back(new Handle(name, point));
+    m_handles.push_back(new Handle(name, this, point));
 }
 
 void

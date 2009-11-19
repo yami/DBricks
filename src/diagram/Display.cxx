@@ -12,6 +12,7 @@
 #include "gtkutil.hxx"
 
 #include "Shape.hxx"
+#include "Handle.hxx"
 #include "Diagram.hxx"
 
 #include "ModifyContext.hxx"
@@ -118,6 +119,14 @@ Display::draw(GdkEventExpose* event)
              iter != m_diagram->shapes().end();
              ++iter) {
             (*iter)->draw(ctx);
+        }
+
+        if (m_event_shape) {
+            for (Shape::HandlesType::const_iterator iter=m_event_shape->handles().begin();
+                 iter != m_event_shape->handles().end();
+                 ++iter) {
+                (*iter)->draw(ctx);
+            }
         }
         //std::for_each(m_diagram->shapes().begin(), m_diagram->shapes().end(),
         //              std::mem_fun(&Shape::draw));
