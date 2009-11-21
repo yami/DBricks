@@ -12,17 +12,24 @@ public:
     {
     }
     
-    virtual bool on_event(GdkEvent *event);
+    virtual bool on_event(Shape* shape, GdkEvent *event);
 private:
-    virtual bool on_button_press_event(GdkEventButton* e)
+    virtual bool on_button_press_event(Shape* shape, GdkEventButton* e)
     {
         return true;
     }
 
-    virtual bool on_motion_notify_event(GdkEventMotion* e)
+    virtual bool on_motion_notify_event(Shape* shape, GdkEventMotion* e)
     {
         return true;
     }
+
+    virtual bool on_button_release_event(Shape* shape, GdkEventButton*e )
+    {
+        return true;
+    }
+    
+    Shape* m_shape;
 };
 
 } // namespace DBricks

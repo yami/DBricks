@@ -1,6 +1,8 @@
 #ifndef MODIFYCONTEXT_HXX
 #define MODIFYCONTEXT_HXX
 
+#include <vector>
+
 #include "DispatchContext.hxx"
 #include <geom/Point.hxx>
 
@@ -16,20 +18,22 @@ public:
     {
     }
 private:
-    virtual bool on_button_press_event(GdkEventButton* e);
+    virtual bool on_button_press_event(Shape* shape, GdkEventButton* e);
+    virtual bool on_button_release_event(Shape* shape, GdkEventButton* e);
+    virtual bool on_motion_notify_event(Shape* shape, GdkEventMotion* e);
 
-    virtual bool on_motion_notify_event(GdkEventMotion* e);
+    bool pick_current_shape(Shape* shape);
     
-    enum State {
-        None,
-        Handle_Moving,
-        Shape_Moving
-    };
+    static const unsigned int Dragging  = 0x1;
+    static const unsigned int Selecting = 0x2;
 
-    Point   m_motion_opoint;
-    State   m_state;
+    Point   m_mpoint;
+    Point   m_opoint;
     Shape*  m_shape;
     Handle* m_handle;
+    unsigned int   m_state;
+
+    std::vector<Shape*> m_selected_shapes;
 };
 
 }

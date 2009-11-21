@@ -26,6 +26,12 @@ void delete_value(ContainerT& c, const ValueT& v)
     c.erase(std::remove(c.begin(), c.end(), v), c.end());
 }
 
+template<class ContainerT, class ValueT>
+bool in_container(const ContainerT& c, const ValueT& v)
+{
+    return std::find(c.begin(), c.end(), v) != c.end();
+}
+
 } // namespace util
 
 #endif //STL_HXX

@@ -15,16 +15,22 @@ public:
     
     ~CustomShape()
     {
-    }
-    
-    virtual void draw (Cairo::RefPtr<Cairo::Context> ctx) const;
+    }    
+
     virtual void move_handle(Handle* handle, const Point& delta);
     virtual void move(const Point& delta);
-    virtual bool cover(const Point& point)
+    virtual bool cover(const Point& point) const
+    {
+        return false;
+    }
+
+    virtual bool in(const Rect& rect) const
     {
         return false;
     }
 private:
+    virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const;
+    
     void update_handle(const std::string& name, const Point& point);
     void update_corner(const Point& delta);
     void read_handles();

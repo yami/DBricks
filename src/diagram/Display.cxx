@@ -22,8 +22,7 @@
 namespace DBricks {
 
 Display::Display(Diagram* diagram)
-    :DiagramObserver(diagram), m_current_context(0),
-     m_event_shape(0), m_event_handle(0)
+    :DiagramObserver(diagram), m_current_context(0), m_select_state(Select_None)
 {
     add_events(Gdk::EXPOSURE_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
@@ -47,7 +46,7 @@ Display::~Display()
 
 bool
 Display::on_event(GdkEvent* event)
-{
+{    
     if (event->type == GDK_BUTTON_PRESS) {
         GdkEventButton *e = (GdkEventButton*)event;
 
@@ -60,13 +59,13 @@ Display::on_event(GdkEvent* event)
     }
 
     Point point;
-
+    Shape* shape;
+    
     if (point_of_event(event, &point)) {
-        m_event_shape  = m_diagram->find_closest_shape(point);
-        m_event_handle = m_diagram->find_closest_handle(m_event_shape, point);
+        shape  = m_diagram->find_closest_shape(point);
     }
     
-    m_contexts[m_current_context]->on_event(event);
+    m_contexts[m_current_context]->on_event(shape, event);
     update();
     return false;
 }
@@ -121,19 +120,38 @@ Display::draw(GdkEventExpose* event)
             (*iter)->draw(ctx);
         }
 
-        if (m_event_shape) {
-            for (Shape::HandlesType::const_iterator iter=m_event_shape->handles().begin();
-                 iter != m_event_shape->handles().end();
-                 ++iter) {
-                (*iter)->draw(ctx);
-            }
-        }
-        //std::for_each(m_diagram->shapes().begin(), m_diagram->shapes().end(),
-        //              std::mem_fun(&Shape::draw));
+        draw_select(ctx);
 
         window->end_paint();
     }
 }
 
+void
+Display::draw_select(Cairo::RefPtr<Cairo::Context> ctx)
+{
+    switch (m_select_state) {
+        case Select_None:
+            break;
+        case Select_Selecting:
+        {
+            std::vector<double> d;
+            Rect rect(m_select_origin, m_select_current);
+            d.push_back(4);
+            d.push_back(1);
+            
+            ctx->save();
+            ctx->rectangle(rect.x1(), rect.y1(), rect.width(), rect.height());
+            ctx->set_dash(d, 0);
+            ctx->stroke();
+            ctx->restore();
+            break;
+        }
+        case Select_Selected:
+        {
+            m_select_state = Select_None;
+            break;
+        }
+    }
+}
 
 } // namespace DBricks

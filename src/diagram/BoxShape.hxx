@@ -12,7 +12,8 @@ public:
     
     virtual void move_handle(Handle* handle, const Point& delta);
     virtual void move(const Point& delta);
-    virtual bool cover (const Point& point);
+    virtual bool cover (const Point& point) const;
+    virtual bool in(const Rect& rect) const;
 private:
     void update_handles();
     

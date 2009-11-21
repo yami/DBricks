@@ -7,6 +7,7 @@ namespace DBricks {
 
 class Diagram;
 class Display;
+class Shape;
 
 class EventContext {
 public:
@@ -27,7 +28,7 @@ public:
     {
     }
     
-    virtual bool on_event(GdkEvent *event)
+    virtual bool on_event(Shape* shape, GdkEvent *event)
     {
     }
 protected:

@@ -55,11 +55,20 @@ BoxShape::move(const Point& delta)
 }
 
 bool
-BoxShape::cover(const Point& point)
+BoxShape::cover(const Point& point) const
 {
     return point.x >= m_x && point.x <= m_x + m_width &&
         point.y >= m_y && point.y <= m_y + m_height;
 }
 
+bool
+BoxShape::in(const Rect& rect) const
+{
+    return
+        m_corner.x >= rect.x1() &&
+        m_corner.y >= rect.y1() &&
+        (m_corner.x + m_width) <= rect.x2() &&
+        (m_corner.y + m_height) <= rect.y2();
+}
 
 } // namespace DBricks

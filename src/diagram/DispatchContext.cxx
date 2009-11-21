@@ -3,17 +3,17 @@
 namespace DBricks {
 
 bool
-DispatchContext::on_event(GdkEvent *event)
+DispatchContext::on_event(Shape* shape, GdkEvent *event)
 {
     bool pass_down = false;
-
+    
     switch (event->type) {
         case GDK_BUTTON_PRESS:
-            pass_down = on_button_press_event(reinterpret_cast<GdkEventButton*>(event));
-            break;
+            return on_button_press_event(shape, reinterpret_cast<GdkEventButton*>(event));
+        case GDK_BUTTON_RELEASE:
+            return on_button_release_event(shape, reinterpret_cast<GdkEventButton*>(event));
         case GDK_MOTION_NOTIFY:
-            pass_down = on_motion_notify_event(reinterpret_cast<GdkEventMotion*>(event));
-            break;
+            return on_motion_notify_event(shape, reinterpret_cast<GdkEventMotion*>(event));
         default:
             pass_down = true;
     }

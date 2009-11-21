@@ -4,7 +4,7 @@
 namespace DBricks {
 
 void
-EllipseShape::draw(Cairo::RefPtr<Cairo::Context> ctx) const
+EllipseShape::draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
 {
     ctx->save();
 

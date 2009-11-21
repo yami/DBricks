@@ -12,8 +12,9 @@ public:
         :BoxShape(x, y, width, height)
     {
     }
-    
-    virtual void draw (Cairo::RefPtr<Cairo::Context> ctx) const;
+
+private:
+    virtual void draw_shape (Cairo::RefPtr<Cairo::Context> ctx) const;
 };
 
 } // namespace DBricks

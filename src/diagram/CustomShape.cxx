@@ -22,7 +22,7 @@ CustomShape::CustomShape(const std::string& name)
 }
 
 void
-CustomShape::draw(Cairo::RefPtr<Cairo::Context> ctx) const
+CustomShape::draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
 {
     GError* gerr;
     std::string filename = m_name + ".tmpl.out";

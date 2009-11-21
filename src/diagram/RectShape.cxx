@@ -3,7 +3,7 @@
 namespace DBricks {
 
 void
-RectShape::draw(Cairo::RefPtr<Cairo::Context> ctx) const
+RectShape::draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
 {
     ctx->save();
     ctx->rectangle(m_x, m_y, m_width, m_height);

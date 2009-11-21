@@ -13,7 +13,7 @@ public:
     }
 
 private:
-    virtual bool on_button_press_event(GdkEventButton* e);
+    virtual bool on_button_press_event(Shape* shape, GdkEventButton* e);
 };
 
 

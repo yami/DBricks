@@ -11,7 +11,7 @@
 namespace DBricks {
 
 bool
-CreateContext::on_button_press_event(GdkEventButton* e)
+CreateContext::on_button_press_event(Shape* shape, GdkEventButton* e)
 {
     static int s = 0;
     

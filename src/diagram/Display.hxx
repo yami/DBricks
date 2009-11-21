@@ -4,7 +4,9 @@
 #include <vector>
 
 #include <gtkmm/drawingarea.h>
+#include <cairomm/context.h>
 
+#include <geom/Point.hxx>
 #include "DiagramObserver.hxx"
 
 // Perhaps I should change Display to Canvas or some other name?
@@ -33,23 +35,39 @@ public:
     virtual bool on_event(GdkEvent* event);
 
     // own interfaces
-    Shape* event_shape() const
+    void selecting(const Point& origin, const Point& last, const Point& current)
     {
-        return m_event_shape;
-    }
+        m_select_origin  = origin;
+        m_select_last    = last;
+        m_select_current = current;
 
-    Handle* event_handle() const
+        m_select_state   = Select_Selecting;
+    }
+    
+    void selected(const Point& origin, const Point& last)
     {
-        return m_event_handle;
+        m_select_origin = origin;
+        m_select_last   = last;
+
+        m_select_state  = Select_Selected;
     }
 private:
     void draw(GdkEventExpose* event=NULL);
+    void draw_select(Cairo::RefPtr<Cairo::Context> ctx);
     
     std::vector<EventContext*> m_contexts;
     size_t                     m_current_context;
 
-    Shape*  m_event_shape;
-    Handle* m_event_handle;
+    enum SelectState {
+        Select_None,
+        Select_Selecting,
+        Select_Selected,
+    };
+
+    SelectState m_select_state;
+    Point m_select_origin;
+    Point m_select_last;
+    Point m_select_current;
 };
 
 } // namespace DBricks
