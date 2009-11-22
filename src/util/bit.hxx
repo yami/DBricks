@@ -2,6 +2,18 @@
 #define BIT_HXX
 
 template<class ValueT>
+inline void bit_zero(ValueT& flags)
+{
+    flags = (ValueT)0;
+}
+
+template<class ValueT>
+inline void bit_one(ValueT& flags)
+{
+    flags = (ValueT)~0;
+}
+
+template<class ValueT>
 inline void bit_set(ValueT& flags, const ValueT& mask)
 {
     flags |= mask;

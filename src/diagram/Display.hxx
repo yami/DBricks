@@ -5,6 +5,7 @@
 
 #include <gtkmm/drawingarea.h>
 #include <cairomm/context.h>
+#include <gdkmm/cursor.h>
 
 #include <geom/Point.hxx>
 #include "DiagramObserver.hxx"
@@ -51,6 +52,9 @@ public:
 
         m_select_state  = Select_Selected;
     }
+
+    void set_cursor(Gdk::CursorType cursor_type);
+    void set_cursor();
 private:
     void draw(GdkEventExpose* event=NULL);
     void draw_select(Cairo::RefPtr<Cairo::Context> ctx);

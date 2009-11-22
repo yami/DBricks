@@ -39,40 +39,27 @@ bool
 ModifyContext::on_button_press_event(Shape* shape, GdkEventButton* e)
 {
     bool pass_down = false;
-
+    Point point(e->x, e->y);
+    
     if (e->button == Left_Button) {
         pick_current_shape(shape);
 
-        if (!m_selected_shapes.empty())
-            bit_set(m_state, Dragging);
-        else
+        if (!m_selected_shapes.empty()) {
+            m_selected_handle = m_diagram->find_closest_handle(m_selected_shapes[0], point);
+            if (m_selected_handle) {
+                bit_set(m_state, HandleMoving);
+            } else {
+                bit_set(m_state, Dragging);
+                m_display->set_cursor(Gdk::FLEUR);
+            }
+        } else {
             bit_set(m_state, Selecting);
-
+        }
+        
         m_mpoint.x = e->x;
         m_mpoint.y = e->y;
         m_opoint   = m_mpoint;
-    }
-    
-    // if (e->button == Left_Button) {
-    //     DLOG(DIAGRAM, DEBUG, "ModifyContext left button pressed \n");
-
-    //     if (m_state == None) {
-    //         m_shape  = m_display->event_shape();
-    //         m_handle = m_display->event_handle();
-
-    //         DLOG(DIAGRAM, DEBUG, "closest shape=%p, handle=%p\n", m_shape, m_handle);
-            
-    //         if (m_handle)
-    //             m_state = Handle_Moving;
-    //         else if (m_shape)
-    //             m_state = Shape_Moving;
-    //     } else {
-    //         DLOG(DIAGRAM, DEBUG, "ModifyContext state is %d\n", (int)m_state);
-    //         m_state     = None;
-    //         m_shape     = 0;
-    //         m_handle    = 0;
-    //     }
-    // }
+    }    
 
     return pass_down;
 }
@@ -85,29 +72,23 @@ ModifyContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
     Point point(e->x, e->y);
 
     if (bit_is_set(m_state, Dragging)) {
+        m_display->set_cursor(Gdk::FLEUR);
         m_selected_shapes[0]->move(point - m_mpoint);
     } else if (bit_is_set(m_state, Selecting)) {
         m_display->selecting(m_opoint, m_mpoint, point);
+    } else if (bit_is_set(m_state, HandleMoving)) {
+        m_display->set_cursor(Gdk::X_CURSOR);
+        m_selected_shapes[0]->move_handle(m_selected_handle, point - m_mpoint);
     } else {
+        if (!m_selected_shapes.empty() && m_diagram->find_closest_handle(m_selected_shapes[0], point)) {
+            m_display->set_cursor(Gdk::X_CURSOR);
+        } else {
+            m_display->set_cursor();
+        }
         DLOG(DIAGRAM, DEBUG, "on_motion_notify_event: dangling in else\n");
     }
 
-    m_mpoint = point;
-    
-    // switch (m_state) {
-    //     case Shape_Moving:
-    //         ASSERT(m_shape);
-    //         m_shape->move(delta);
-    //         break;
-    //     case Handle_Moving:
-    //         ASSERT(m_shape);
-    //         ASSERT(m_handle);
-    //         m_shape->move_handle(m_handle, delta);
-    //         break;
-    //     case None:
-    //         // do nothing
-    //         break;
-    // }
+    m_mpoint = point;    
 
     return pass_down;
 }
@@ -116,11 +97,8 @@ bool
 ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
 {
     Point point(e->x, e->y);
-    
-    if (bit_is_set(m_state, Dragging)) {
-        bit_clr(m_state, Dragging);
-    } else if (bit_is_set(m_state, Selecting)) {
-        bit_clr(m_state, Selecting);
+
+    if (bit_is_set(m_state, Selecting)) {
         m_display->selected(m_opoint, point);
 
         for(Diagram::ShapesType::const_iterator iter = m_diagram->shapes().begin();
@@ -134,10 +112,11 @@ ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
                 break;          // FIXME: remove me when supporting selecting multiple shapes
             }
         }
-    } else {
-        DLOG(DIAGRAM, DEBUG, "on_button_release_event: dangling in else\n");
     }
 
+    bit_zero(m_state);
+    m_display->set_cursor();
+    
     return true;
 }
 

@@ -14,7 +14,7 @@ class Handle;
 class ModifyContext : public DispatchContext {
 public:
     ModifyContext(Diagram* diagram, Display* display)
-        :DispatchContext(diagram, display)
+        :DispatchContext(diagram, display), m_selected_handle(0)
     {
     }
 private:
@@ -24,16 +24,16 @@ private:
 
     bool pick_current_shape(Shape* shape);
     
-    static const unsigned int Dragging  = 0x1;
-    static const unsigned int Selecting = 0x2;
-
+    static const unsigned int Dragging     = 0x1;
+    static const unsigned int Selecting    = 0x2;
+    static const unsigned int HandleMoving = 0x4;
+    
     Point   m_mpoint;
     Point   m_opoint;
-    Shape*  m_shape;
-    Handle* m_handle;
     unsigned int   m_state;
 
     std::vector<Shape*> m_selected_shapes;
+    Handle* m_selected_handle;
 };
 
 }

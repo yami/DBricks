@@ -154,4 +154,19 @@ Display::draw_select(Cairo::RefPtr<Cairo::Context> ctx)
     }
 }
 
+void
+Display::set_cursor(Gdk::CursorType cursor_type)
+{
+    Glib::RefPtr<Gdk::Window> window = get_window();
+    Gdk::Cursor cursor(cursor_type);
+    window->set_cursor(cursor);
+}
+
+void
+Display::set_cursor()
+{
+    get_window()->set_cursor();
+}
+
+
 } // namespace DBricks
