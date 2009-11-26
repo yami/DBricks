@@ -15,6 +15,20 @@ public:
         m_height = std::max(a.y, b.y) - m_y;
     }
 
+    Rect(double x1, double y1, double x2, double y2)
+    {
+        m_x = std::min(x1, x2);
+        m_y = std::min(y1, y2);
+        m_width  = std::max(x1, x2) - m_x;
+        m_height = std::max(y1, y2) - m_y;
+    }
+
+    Rect(const Point& left_top, double width, double height)
+        :m_x(left_top.x), m_y(left_top.y), m_width(width), m_height(height)
+    {
+    }
+    
+
     double x1() const
     {
         return m_x;

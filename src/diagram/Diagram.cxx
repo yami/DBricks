@@ -14,6 +14,12 @@ Diagram::add_shape(Shape* shape)
     m_shapes.push_back(shape);
 }
 
+void
+Diagram::del_shape(Shape* shape)
+{
+    util::delete_value(m_shapes, shape);
+}
+
 Shape*
 Diagram::find_closest_shape(const Point& point) const
 {

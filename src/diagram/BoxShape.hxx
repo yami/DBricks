@@ -9,15 +9,18 @@ namespace DBricks {
 class BoxShape : public Shape {
 public:
     BoxShape(double x, double y, double width, double height);
+    BoxShape(const Rect& rect);
+
     
     virtual void move_handle(Handle* handle, const Point& delta);
     virtual void move(const Point& delta);
     virtual bool cover (const Point& point) const;
     virtual bool in(const Rect& rect) const;
-private:
+    virtual Rect bb() const;
+
+protected:
     void update_handles();
     
-protected:    
     double& m_x;
     double& m_y;
     double  m_width;

@@ -53,6 +53,7 @@ public:
 
     virtual bool cover(const Point& point) const = 0;
     virtual bool in(const Rect& rect) const = 0;
+    virtual Rect bb() const = 0;
     
     HandlesType& handles()
     {

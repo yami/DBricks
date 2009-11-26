@@ -17,6 +17,7 @@ public:
     typedef std::list<DiagramObserver*> ObserversType;
 
     void add_shape(Shape* shape);
+    void del_shape(Shape* shape);
     
     Shape* find_closest_shape(const Point& point) const;
     

@@ -4,6 +4,20 @@
 
 namespace DBricks {
 
+BoxShape::BoxShape(const Rect& rect)
+    :Shape(rect.x1(), rect.y1()), m_x(m_corner.x), m_y(m_corner.y),
+     m_width(rect.width()), m_height(rect.height()),
+     m_lhandle("left", this, Point(0, rect.height()/2)),
+     m_rhandle("right", this, Point(rect.width(), rect.height()/2)),
+     m_thandle("top", this, Point(rect.width()/2, 0)),
+     m_bhandle("bottom", this, Point(rect.width()/2, rect.height()))
+{
+    m_handles.push_back(&m_lhandle);
+    m_handles.push_back(&m_rhandle);
+    m_handles.push_back(&m_thandle);
+    m_handles.push_back(&m_bhandle);    
+}
+
 BoxShape::BoxShape(double x, double y, double width, double height)
     :Shape(x, y), m_x(m_corner.x), m_y(m_corner.y),
      m_width(width), m_height(height),
@@ -69,6 +83,12 @@ BoxShape::in(const Rect& rect) const
         m_corner.y >= rect.y1() &&
         (m_corner.x + m_width) <= rect.x2() &&
         (m_corner.y + m_height) <= rect.y2();
+}
+
+Rect
+BoxShape::bb() const
+{
+    return Rect(m_corner, m_width, m_height);
 }
 
 } // namespace DBricks

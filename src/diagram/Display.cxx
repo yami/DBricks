@@ -50,7 +50,7 @@ Display::on_event(GdkEvent* event)
     if (event->type == GDK_BUTTON_PRESS) {
         GdkEventButton *e = (GdkEventButton*)event;
 
-        if (e->button == Right_Button) {
+        if (e->button == Middle_Button) {
             m_current_context = (m_current_context + 1) % m_contexts.size();
 
             DLOG(DIAGRAM, INFO, "context changed!\n");

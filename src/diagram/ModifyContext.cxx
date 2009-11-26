@@ -8,6 +8,7 @@
 #include "Handle.hxx"
 #include "Diagram.hxx"
 #include "Display.hxx"
+#include "GroupShape.hxx"
 
 #include <util/stl.hxx>
 #include <util/bit.hxx>
@@ -59,7 +60,24 @@ ModifyContext::on_button_press_event(Shape* shape, GdkEventButton* e)
         m_mpoint.x = e->x;
         m_mpoint.y = e->y;
         m_opoint   = m_mpoint;
-    }    
+    } else if (e->button == Right_Button) {
+        if (!m_selected_shapes.empty()) {
+            DLOG(DIAGRAM, DEBUG, "grouping...");
+
+            GroupShape* group = new GroupShape(m_selected_shapes.begin(), m_selected_shapes.end());
+            m_diagram->add_shape(group);
+            for (std::vector<Shape*>::iterator iter = m_selected_shapes.begin();
+                 iter != m_selected_shapes.end();
+                 ++iter) {
+                m_diagram->del_shape(*iter);
+            }
+
+            std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::hide_handles));
+            m_selected_shapes.clear();
+            m_selected_shapes.push_back(group);
+            std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::show_handles));
+        }
+    }
 
     return pass_down;
 }
@@ -73,7 +91,11 @@ ModifyContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
 
     if (bit_is_set(m_state, Dragging)) {
         m_display->set_cursor(Gdk::FLEUR);
-        m_selected_shapes[0]->move(point - m_mpoint);
+        for (std::vector<Shape*>::iterator iter = m_selected_shapes.begin();
+             iter != m_selected_shapes.end();
+             ++iter) {
+            (*iter)->move(point - m_mpoint);
+        }
     } else if (bit_is_set(m_state, Selecting)) {
         m_display->selecting(m_opoint, m_mpoint, point);
     } else if (bit_is_set(m_state, HandleMoving)) {
@@ -85,7 +107,6 @@ ModifyContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
         } else {
             m_display->set_cursor();
         }
-        DLOG(DIAGRAM, DEBUG, "on_motion_notify_event: dangling in else\n");
     }
 
     m_mpoint = point;    
@@ -101,17 +122,18 @@ ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
     if (bit_is_set(m_state, Selecting)) {
         m_display->selected(m_opoint, point);
 
+        std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::hide_handles));
+        m_selected_shapes.clear();
+        
         for(Diagram::ShapesType::const_iterator iter = m_diagram->shapes().begin();
             iter != m_diagram->shapes().end();
             ++iter) {
             if ((*iter)->in(Rect(m_opoint, point))) {
-                std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::hide_handles));
-                m_selected_shapes.clear();
                 m_selected_shapes.push_back(*iter);
-                std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::show_handles));
-                break;          // FIXME: remove me when supporting selecting multiple shapes
             }
         }
+
+        std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::show_handles));        
     }
 
     bit_zero(m_state);

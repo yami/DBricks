@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include <util/assert.hxx>
 #include <geom/Point.hxx>
 
 #include "Shape.hxx"
@@ -26,7 +27,14 @@ public:
 
     virtual bool in(const Rect& rect) const
     {
+        ASSERT_NOT_IMPLEMENTED();
         return false;
+    }
+
+    virtual Rect bb() const
+    {
+        ASSERT_NOT_IMPLEMENTED();
+        return Rect(0, 0, 0, 0);
     }
 private:
     virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const;
