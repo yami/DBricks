@@ -7,23 +7,30 @@
 #include "CustomShape.hxx"
 #include "RectShape.hxx"
 #include "EllipseShape.hxx"
+#include "LineShape.hxx"
 
 namespace DBricks {
 
 bool
 CreateContext::on_button_press_event(Shape* shape, GdkEventButton* e)
 {
+    static int max_shapes = 3;
     static int s = 0;
     
     if (e->button == Left_Button) {
-        if (s == 0) {
-            DLOG(SHAPE, INFO, "CreateContext:: add rect shape\n");
-            m_diagram->add_shape(new RectShape(10, 20, 40, 40));
-            s = 1;
-        } else {
-            DLOG(SHAPE, INFO, "CreateContext:: add elli shape\n");
-            m_diagram->add_shape(new EllipseShape(20, 40, 50, 50));
-            s = 0;            
+        switch ((s++)%max_shapes) {
+            case 0:
+                DLOG(SHAPE, INFO, "CreateContext:: add rect shape\n");
+                m_diagram->add_shape(new RectShape(10, 20, 40, 40));
+                break;
+            case 1:
+                DLOG(SHAPE, INFO, "CreateContext:: add elli shape\n");
+                m_diagram->add_shape(new EllipseShape(20, 40, 50, 50));
+                break;
+            case 2:
+                DLOG(SHAPE, INFO, "CreateContext:: add line shape\n");
+                m_diagram->add_shape(new LineShape(Point(20, 40), Point(50, 50)));
+                break;
         }
     }
     return false;

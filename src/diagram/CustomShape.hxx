@@ -19,6 +19,9 @@ public:
     }    
 
     virtual void move_handle(Handle* handle, const Point& delta);
+    virtual void move_connector(Connector* connector, const Point& delta)
+    {
+    }
     virtual void move(const Point& delta);
     virtual bool cover(const Point& point) const
     {

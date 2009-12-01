@@ -11,18 +11,20 @@
 
 namespace DBricks {
 
+class Connector;
 
 class Shape {
 public:
     typedef std::vector<Handle*> HandlesType;
-
+    typedef std::vector<Connector*> ConnectorsType;
+    
     Shape()
-        :m_corner(0, 0)
+        :m_corner(0, 0), m_show_handles(false), m_show_connectors(false)
     {
     }
 
     Shape(double x, double y)
-        :m_corner(x, y)
+        :m_corner(x, y), m_show_handles(false), m_show_connectors(false)
     {
     }
     
@@ -44,9 +46,11 @@ public:
     }
 
     virtual void move_handle(Handle* handle, const Point& delta) = 0;
+    virtual void move_connector(Connector* connector, const Point& delta) = 0;
+    
     virtual void move(const Point& delta) = 0;
 
-    virtual double distance(const Point& point)
+    virtual double distance(const Point& point) const
     {
         return fabs(m_corner.x - point.x) + fabs(m_corner.y - point.y);
     }
@@ -58,6 +62,11 @@ public:
     HandlesType& handles()
     {
         return m_handles;
+    }
+
+    ConnectorsType& connectors()
+    {
+        return m_connectors;
     }
 
     const Point& corner() const
@@ -74,13 +83,26 @@ public:
     {
         m_show_handles = false;
     }
+
+    void show_connectors()
+    {
+        m_show_connectors = true;
+    }
+
+    void hide_connectors()
+    {
+        m_show_connectors = false;
+    }
     
 private:
     virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const = 0;
 protected:
     HandlesType m_handles;
+    ConnectorsType m_connectors;
+    
     Point m_corner;
     bool  m_show_handles;
+    bool  m_show_connectors;
 };
 
 } // namespace DBricks

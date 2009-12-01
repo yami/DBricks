@@ -91,11 +91,7 @@ ModifyContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
 
     if (bit_is_set(m_state, Dragging)) {
         m_display->set_cursor(Gdk::FLEUR);
-        for (std::vector<Shape*>::iterator iter = m_selected_shapes.begin();
-             iter != m_selected_shapes.end();
-             ++iter) {
-            (*iter)->move(point - m_mpoint);
-        }
+        move_shapes(m_selected_shapes, point - m_mpoint);
     } else if (bit_is_set(m_state, Selecting)) {
         m_display->selecting(m_opoint, m_mpoint, point);
     } else if (bit_is_set(m_state, HandleMoving)) {
@@ -134,12 +130,47 @@ ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
         }
 
         std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::show_handles));        
+    } else if (bit_is_set(m_state, HandleMoving)) {
+        assert(!m_selected_shapes.empty());
+        Connector* connector1 = this->find_closest_connector(m_selected_shapes, point);
+        Connector* connector2 = m_diagram->find_closest_connector(m_selected_shapes, point);
+
+        if (connector1 && connector2) {
+            Connector::connect(connector1, connector2);
+        }
+
+        DLOG(DIAGRAM, DEBUG, "on_button_release: c1=%p, c2=%p\n", connector1, connector2);
     }
 
     bit_zero(m_state);
     m_display->set_cursor();
     
     return true;
+}
+
+Connector*
+ModifyContext::find_closest_connector(const std::vector<Shape*>& shapes, const Point& point) const
+{
+    double min_dist = 3;
+    Connector* closest = 0;
+    
+    if (shapes.empty())
+        return closest;    
+    
+    for (std::vector<Shape*>::const_iterator iter = shapes.begin();
+         iter != shapes.end();
+         ++iter) {
+        for (Shape::ConnectorsType::const_iterator c = (*iter)->connectors().begin();
+             c != (*iter)->connectors().end();
+             ++c) {
+            if ((*c)->distance(point) < min_dist) {
+                closest = *c;
+                min_dist = (*c)->distance(point);
+            }
+        }
+    }
+
+    return closest;
 }
 
 }

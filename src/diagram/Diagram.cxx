@@ -2,6 +2,8 @@
 #include "DiagramObserver.hxx"
 #include "Shape.hxx"
 #include "Handle.hxx"
+#include "Connector.hxx"
+
 
 #include <geom/Point.hxx>
 #include <util/stl.hxx>
@@ -77,6 +79,31 @@ Diagram::find_closest_handle(Shape* shape, const Point& point) const
 }
 
 
+Connector*
+Diagram::find_closest_connector(const std::vector<Shape*>& shapes, const Point& point) const
+{
+    double min_dist = 3;
+    Connector* closest = 0;
+    
+    for (ShapesType::const_iterator siter = m_shapes.begin();
+         siter != m_shapes.end();
+         ++siter) {
+        if (util::in_container(shapes, *siter))
+            continue;
+
+        for (Shape::ConnectorsType::const_iterator citer = (*siter)->connectors().begin();
+             citer != (*siter)->connectors().end();
+             ++citer) {
+            if ((*citer)->distance(point) < min_dist) {
+                closest = *citer;
+                min_dist = (*citer)->distance(point);
+            }
+        }
+    }
+
+    return closest;
+}
+
 const Diagram::ShapesType&
 Diagram::shapes() const
 {
@@ -103,6 +130,33 @@ void
 Diagram::detach_observer(DiagramObserver* observer)
 {
     util::delete_value(m_observers, observer);
+}
+
+void
+move_shapes(std::vector<Shape*>& shapes, const Point& delta)
+{
+    // We did not consider rotation right now, so every point (hence connector)
+    // moves same delta.
+    //
+    // and we assume a all of a moved shape's handles are moved too.
+    // 
+    for (std::vector<Shape*>::iterator siter = shapes.begin();
+         siter != shapes.end();
+         ++siter) {
+        (*siter)->move(delta);
+
+        for (Shape::ConnectorsType::iterator citer = (*siter)->connectors().begin();
+             citer != (*siter)->connectors().end();
+             ++citer) {
+            Connector::ConnectorsType& connectors = (*citer)->connectors();
+            for (Connector::ConnectorsType::iterator iter = connectors.begin();
+                 iter != connectors.end();
+                 ++iter) {
+                Shape* shape = (*iter)->shape();
+                shape->move_connector(*iter, delta);
+            }
+        }
+    }
 }
 
 } // namespace DBricks

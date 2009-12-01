@@ -2,6 +2,7 @@
 #define DIAGRAM_HXX
 
 #include <list>
+#include <vector>
 
 namespace DBricks {
 
@@ -9,6 +10,7 @@ class Shape;
 class DiagramObserver;
 class Handle;
 class Point;
+class Connector;
 
 class Diagram
 {
@@ -22,6 +24,8 @@ public:
     Shape* find_closest_shape(const Point& point) const;
     
     Handle* find_closest_handle(Shape* shape, const Point& point) const;    
+
+    Connector* find_closest_connector(const std::vector<Shape*>& shapes, const Point& point) const;
     
     const ShapesType& shapes() const;
 
@@ -34,6 +38,8 @@ private:
     ShapesType m_shapes;
     ObserversType m_observers;
 };
+
+void move_shapes(std::vector<Shape*>& shapes, const Point& delta);
 
 } // namespace DBricks
 

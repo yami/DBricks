@@ -10,6 +10,7 @@ namespace DBricks {
 
 class Shape;
 class Handle;
+class Connector;
 
 class ModifyContext : public DispatchContext {
 public:
@@ -23,6 +24,7 @@ private:
     virtual bool on_motion_notify_event(Shape* shape, GdkEventMotion* e);
 
     bool pick_current_shape(Shape* shape);
+    Connector* find_closest_connector(const std::vector<Shape*>& shapes, const Point& point) const;
     
     static const unsigned int Dragging     = 0x1;
     static const unsigned int Selecting    = 0x2;
