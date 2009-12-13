@@ -26,6 +26,12 @@ void delete_value(ContainerT& c, const ValueT& v)
     c.erase(std::remove(c.begin(), c.end(), v), c.end());
 }
 
+template<class ContainerT, class PredicatorT>
+void delete_if(ContainerT& c, PredicatorT p)
+{
+    c.erase(std::remove_if(c.begin(), c.end(), p), c.end());
+}
+
 template<class ContainerT, class ValueT>
 bool in_container(const ContainerT& c, const ValueT& v)
 {

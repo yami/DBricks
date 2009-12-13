@@ -23,4 +23,20 @@ Connector::distance(const Point& point) const
 }
 
 
+void
+Connector::break_connections(Connector* c)
+{
+    if (!c)
+        return;
+
+    ConnectorsType& connectors = c->connectors();
+    for (ConnectorsType::iterator iter = connectors.begin();
+         iter != connectors.end();
+         ++iter) {
+            (*iter)->disconnect(c);
+    }
+
+    connectors.clear();
+}
+
 } // namespace DBricks

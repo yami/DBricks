@@ -7,6 +7,8 @@
 #include <geom/Rect.hxx>
 #include <cairomm/context.h>
 
+#include <util/bit.hxx>
+
 #include "Handle.hxx"
 
 namespace DBricks {
@@ -15,16 +17,19 @@ class Connector;
 
 class Shape {
 public:
-    typedef std::vector<Handle*> HandlesType;
+    typedef std::vector<Handle*>    HandlesType;
     typedef std::vector<Connector*> ConnectorsType;
+    typedef unsigned int            FlagsType;
+
+    static const FlagsType Break_Connections = 0x1;
     
-    Shape()
-        :m_corner(0, 0), m_show_handles(false), m_show_connectors(false)
+    Shape(FlagsType flags=0)
+        :m_flags(flags), m_corner(0, 0), m_show_handles(false), m_show_connectors(false)
     {
     }
 
-    Shape(double x, double y)
-        :m_corner(x, y), m_show_handles(false), m_show_connectors(false)
+    Shape(double x, double y, FlagsType flags=0)
+        :m_flags(flags), m_corner(x, y), m_show_handles(false), m_show_connectors(false)
     {
     }
     
@@ -69,6 +74,11 @@ public:
         return m_connectors;
     }
 
+    bool break_connections() const
+    {
+        return bit_is_set(m_flags, Break_Connections);
+    }
+    
     const Point& corner() const
     {
         return m_corner;
@@ -99,6 +109,8 @@ private:
 protected:
     HandlesType m_handles;
     ConnectorsType m_connectors;
+
+    FlagsType m_flags;
     
     Point m_corner;
     bool  m_show_handles;

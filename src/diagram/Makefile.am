@@ -17,12 +17,14 @@ dbricks_SOURCES = main.cxx \
 	LineShape.cxx
 
 dbricks_CPPFLAGS = \
+	$(PANGOMM_CFLAGS) \
 	$(GTKMM_CFLAGS) \
 	$(RSVG_CFLAGS) \
 	$(CAIROMM_CFLAGS) \
 	-I$(top_srcdir)/src
 
 dbricks_LDADD = \
+	$(PANGOMM_LIBS) \
 	$(GTKMM_LIBS) \
 	$(RSVG_LIBS) \
 	$(CAIROMM_LIBS) \

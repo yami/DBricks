@@ -133,7 +133,7 @@ Diagram::detach_observer(DiagramObserver* observer)
 }
 
 void
-move_shapes(std::vector<Shape*>& shapes, const Point& delta)
+Diagram::move_shapes(std::vector<Shape*>& shapes, const Point& delta)
 {
     // We did not consider rotation right now, so every point (hence connector)
     // moves same delta.
@@ -145,16 +145,40 @@ move_shapes(std::vector<Shape*>& shapes, const Point& delta)
          ++siter) {
         (*siter)->move(delta);
 
-        for (Shape::ConnectorsType::iterator citer = (*siter)->connectors().begin();
-             citer != (*siter)->connectors().end();
-             ++citer) {
-            Connector::ConnectorsType& connectors = (*citer)->connectors();
-            for (Connector::ConnectorsType::iterator iter = connectors.begin();
-                 iter != connectors.end();
-                 ++iter) {
-                Shape* shape = (*iter)->shape();
-                shape->move_connector(*iter, delta);
+        if ((*siter)->break_connections()) {
+            std::for_each((*siter)->connectors().begin(), (*siter)->connectors().end(), Connector::break_connections);
+        } else {
+            for (Shape::ConnectorsType::iterator citer = (*siter)->connectors().begin();
+                 citer != (*siter)->connectors().end();
+                 ++citer) {
+                move_connector(*citer, delta);
             }
+        }
+    }
+}
+
+void
+Diagram::move_connector(Connector* connector, const Point& delta)
+{
+    Connector::ConnectorsType& connectors = connector->connectors();
+    for (Connector::ConnectorsType::iterator iter = connectors.begin();
+         iter != connectors.end();
+         ++iter) {
+        Shape* shape = (*iter)->shape();
+        shape->move_connector(*iter, delta);
+    }
+}
+
+void
+Diagram::move_handle(Shape* shape, Handle* handle, const Point& delta)
+{
+    shape->move_handle(handle, delta);
+    
+    if (handle->connector()) {
+        if (shape->break_connections()) {
+            Connector::break_connections(handle->connector());
+        } else {
+            move_connector(handle->connector(), delta);
         }
     }
 }

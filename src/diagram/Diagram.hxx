@@ -18,6 +18,11 @@ public:
     typedef std::list<Shape*> ShapesType;
     typedef std::list<DiagramObserver*> ObserversType;
 
+    static void move_shapes(std::vector<Shape*>& shapes, const Point& delta);    
+    static void move_handle(Shape* shape, Handle* handle, const Point& delta);
+    static void move_connector(Connector* connector, const Point& delta);
+
+    
     void add_shape(Shape* shape);
     void del_shape(Shape* shape);
     
@@ -38,8 +43,6 @@ private:
     ShapesType m_shapes;
     ObserversType m_observers;
 };
-
-void move_shapes(std::vector<Shape*>& shapes, const Point& delta);
 
 } // namespace DBricks
 

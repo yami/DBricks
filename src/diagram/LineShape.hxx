@@ -19,10 +19,11 @@ public:
     virtual bool in(const Rect& rect) const;
     virtual Rect bb() const;
 private:
-    Handle m_fhandle;
-    Handle m_thandle;
     Connector m_fconnector;
     Connector m_tconnector;
+    
+    Handle m_fhandle;
+    Handle m_thandle;
 };
 
 } // namespace DBricks

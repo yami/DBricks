@@ -22,6 +22,9 @@ AC_HEADER_STDBOOL
 
 # pkg-config checks
 # FIXME: now these versions are the one in my own system
+
+PKG_CHECK_MODULES(PANGOMM, pangomm-1.4 >= 0.22)
+
 PKG_CHECK_MODULES(GTKMM, gtkmm-2.4 >= 2.16.0)
 
 PKG_CHECK_MODULES(RSVG, librsvg-2.0 >= 2.26.0)

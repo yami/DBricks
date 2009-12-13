@@ -6,10 +6,13 @@
 namespace DBricks {
 
 LineShape::LineShape(const Point& from, const Point& to)
-    :m_fhandle("from", this, Point(0, 0)),
-     m_thandle("to", this, Point(0, 0)),
+    :Shape(Break_Connections),
+     
      m_fconnector(this, Point(0, 0)),
-     m_tconnector(this, Point(0, 0))
+     m_tconnector(this, Point(0, 0)),
+    
+     m_fhandle("from", this, &m_fconnector, Point(0, 0)),
+     m_thandle("to",   this, &m_tconnector, Point(0, 0))
 {
     m_corner.x = std::min(from.x, to.x);
     m_corner.y = std::min(from.y, to.y);

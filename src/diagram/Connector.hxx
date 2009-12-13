@@ -23,16 +23,24 @@ public:
     
     typedef std::vector<Connector*> ConnectorsType;
     
-    static void connect(Connector* a, Connector* b)
+    static void build_connections(Connector* a, Connector* b)
     {
         a->connect_to(b);
         b->connect_to(a);
     }
+
+    static void break_connections(Connector* c);
     
     void connect_to(Connector* c)
     {
         ASSERT(!util::in_container(m_connectors, c));
         m_connectors.push_back(c);
+    }
+
+    void disconnect(Connector* c)
+    {
+        ASSERT(util::in_container(m_connectors, c));
+        util::delete_value(m_connectors, c);
     }
 
     ConnectorsType& connectors()

@@ -28,15 +28,15 @@ protected:
     double  m_width;
     double  m_height;
 
+    Connector  m_lconnector;
+    Connector  m_rconnector;
+    Connector  m_tconnector;
+    Connector  m_bconnector;
+    
     Handle  m_lhandle;
     Handle  m_rhandle;
     Handle  m_thandle;
     Handle  m_bhandle;
-
-    Connector  m_lconnector;
-    Connector  m_rconnector;
-    Connector  m_tconnector;
-    Connector  m_bconnector;    
 };
 
 
