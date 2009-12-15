@@ -46,7 +46,7 @@ Display::~Display()
 
 bool
 Display::on_event(GdkEvent* event)
-{    
+{
     if (event->type == GDK_BUTTON_PRESS) {
         GdkEventButton *e = (GdkEventButton*)event;
 
@@ -66,6 +66,7 @@ Display::on_event(GdkEvent* event)
     }
     
     m_contexts[m_current_context]->on_event(shape, event);
+
     update();
     return false;
 }
@@ -85,12 +86,13 @@ Display::draw(GdkEventExpose* event)
             
     if (window) {
         Gtk::Allocation allocation = get_allocation();
+
         const int width = allocation.get_width();
         const int height = allocation.get_height();
-                
 
         // XXX: use my own double buffering?
         // double buffering
+
         Gdk::Rectangle rect(0, 0, width, height);
         window->begin_paint_rect(rect);
                 
