@@ -36,6 +36,7 @@ LineShape::draw_shape (Cairo::RefPtr<Cairo::Context> ctx) const
     ctx->save();
     ctx->move_to(from.x, from.y);
     ctx->line_to(to.x, to.y);
+    ctx->stroke();
     ctx->restore();
 }
 

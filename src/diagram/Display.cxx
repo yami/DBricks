@@ -115,11 +115,13 @@ Display::draw(GdkEventExpose* event)
         ctx->move_to(10.0, 50.0);
         ctx->show_text("Disziplin ist Macht.");
 
-
+        DLOG(DIAGRAM, DEBUG, ">>>>>>>>>>>>>>>>>>\n");
         for (Diagram::ShapesType::const_iterator iter=m_diagram->shapes().begin();
              iter != m_diagram->shapes().end();
              ++iter) {
             (*iter)->draw(ctx);
+
+            DLOG(DIAGRAM, DEBUG, "draw shape %p\n", (*iter));
         }
 
         draw_select(ctx);
