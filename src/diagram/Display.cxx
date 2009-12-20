@@ -4,6 +4,8 @@
 #include <functional>
 
 #include <cairomm/context.h>
+#include <gtkmm/uimanager.h>
+#include <gtkmm/menu.h>
 
 #include <util/stl.hxx>
 #include <logging/logging.hxx>
@@ -14,6 +16,8 @@
 #include "Shape.hxx"
 #include "Handle.hxx"
 #include "Diagram.hxx"
+#include "Menu.hxx"
+
 
 #include "ModifyContext.hxx"
 #include "CreateContext.hxx"
@@ -115,13 +119,10 @@ Display::draw(GdkEventExpose* event)
         ctx->move_to(10.0, 50.0);
         ctx->show_text("Disziplin ist Macht.");
 
-        DLOG(DIAGRAM, DEBUG, ">>>>>>>>>>>>>>>>>>\n");
         for (Diagram::ShapesType::const_iterator iter=m_diagram->shapes().begin();
              iter != m_diagram->shapes().end();
              ++iter) {
             (*iter)->draw(ctx);
-
-            DLOG(DIAGRAM, DEBUG, "draw shape %p\n", (*iter));
         }
 
         draw_select(ctx);
@@ -171,6 +172,53 @@ Display::set_cursor()
 {
     get_window()->set_cursor();
 }
+
+Glib::ustring
+menu_to_uiinfo(const Menu& menu)
+{
+    Glib::ustring uiinfo =
+        "<ui>"
+        "  <popup name='ShapeMenu'>";
+    for (size_t i = 0; i<menu.size(); ++i) {
+        uiinfo += "    <menuitem action='" + menu[i]->name() + "'/>";
+    }
+
+    uiinfo +=
+        "  </popup>"
+        "</ui>";
+
+    return uiinfo;
+}
+
+Glib::RefPtr<Gtk::ActionGroup>
+menu_to_action_group(Shape* shape, const Menu& menu)
+{
+    Glib::RefPtr<Gtk::ActionGroup> action_group = Gtk::ActionGroup::create();
+
+    action_group->add(Gtk::Action::create("ShapeMenu", "Shape Menu"));
+    for (size_t i = 0; i<menu.size(); ++i) {
+        action_group->add(Gtk::Action::create(menu[i]->name().c_str(), menu[i]->text().c_str()),
+                          sigc::bind(sigc::mem_fun(*menu[i], &MenuItem::operator()), shape));
+    }
+
+    return action_group;
+}
+
+
+void
+Display::popup(Shape* shape, Menu* menu, GdkEventButton* event)
+{
+    Glib::RefPtr<Gtk::ActionGroup> action_group = menu_to_action_group(shape, *menu);
+    Glib::ustring                  uiinfo       = menu_to_uiinfo(*menu);
+
+    Glib::RefPtr<Gtk::UIManager> uimgr = Gtk::UIManager::create();
+    uimgr->insert_action_group(action_group);
+    uimgr->add_ui_from_string(uiinfo);
+
+    Gtk::Menu* popup = dynamic_cast<Gtk::Menu*>(uimgr->get_widget("/ShapeMenu"));
+    popup->popup(event->button, event->time);
+}
+
 
 
 } // namespace DBricks

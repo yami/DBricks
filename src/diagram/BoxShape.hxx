@@ -9,9 +9,12 @@ namespace DBricks {
 
 class BoxShape : public Shape {
 public:
+    typedef void (BoxShape::*MenuActionMethodType) ();
+    
     BoxShape(double x, double y, double width, double height);
     BoxShape(const Rect& rect);
-
+    
+    static void initialize();
     
     virtual void move_handle(Handle* handle, const Point& delta);
     virtual void move_connector(Connector* connector, const Point& delta);
@@ -19,9 +22,14 @@ public:
     virtual bool cover (const Point& point) const;
     virtual bool in(const Rect& rect) const;
     virtual Rect bb() const;
+    virtual Menu* menu(const Point& point) const;
 
+    void set_fixed_aspect();
+    void set_square();
 protected:
     void update_handles();
+
+    static Menu s_menu;
     
     double& m_x;
     double& m_y;

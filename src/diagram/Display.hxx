@@ -23,6 +23,7 @@ class Diagram;
 class Shape;
 class Handle;
 class EventContext;
+class Menu;
 
 class Display : public Gtk::DrawingArea, public DiagramObserver {
 public:
@@ -55,6 +56,8 @@ public:
 
     void set_cursor(Gdk::CursorType cursor_type);
     void set_cursor();
+
+    void popup(Shape* shape, Menu* menu, GdkEventButton* event);
 private:
     void draw(GdkEventExpose* event=NULL);
     void draw_select(Cairo::RefPtr<Cairo::Context> ctx);

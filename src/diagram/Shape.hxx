@@ -15,6 +15,8 @@ namespace DBricks {
 
 class Connector;
 
+class Menu;
+
 class Shape {
 public:
     typedef std::vector<Handle*>    HandlesType;
@@ -63,6 +65,11 @@ public:
     virtual bool cover(const Point& point) const = 0;
     virtual bool in(const Rect& rect) const = 0;
     virtual Rect bb() const = 0;
+
+    virtual Menu* menu(const Point& point) const
+    {
+        return 0;
+    }
     
     HandlesType& handles()
     {

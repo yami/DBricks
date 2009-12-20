@@ -3,6 +3,7 @@
 #include <logging/logging.hxx>
 
 #include "Desktop.hxx"
+#include "BoxShape.hxx"
 
 int main(int argc, char** argv)
 {
@@ -10,6 +11,10 @@ int main(int argc, char** argv)
     
     Gtk::Main kit(argc, argv);
 
+    // TODO: move to else where
+    DBricks::BoxShape::initialize();
+
+    
     DBricks::Desktop desktop;
     desktop.show_all();
 

@@ -111,7 +111,7 @@ LineShape::in(const Rect& rect) const
 bool
 LineShape::cover(const Point& point) const
 {
-    return distance(point);
+    return distance(point) < 50;
 }
 
 Rect

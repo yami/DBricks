@@ -1,8 +1,21 @@
 #include "BoxShape.hxx"
 
+#include "Menu.hxx"
+
 #include <util/assert.hxx>
+#include <logging/logging.hxx>
 
 namespace DBricks {
+
+Menu BoxShape::s_menu;
+
+void
+BoxShape::initialize()
+{
+    s_menu
+        .append(new MenuItem("Aspect", "Fixed Aspect", new ShapeMenuAction<BoxShape, BoxShape::MenuActionMethodType>(&BoxShape::set_fixed_aspect)))
+        .append(new MenuItem("Square", "Square",       new ShapeMenuAction<BoxShape, BoxShape::MenuActionMethodType>(&BoxShape::set_square)));    
+}
 
 BoxShape::BoxShape(const Rect& rect)
     :Shape(rect.x1(), rect.y1()), m_x(m_corner.x), m_y(m_corner.y),
@@ -134,6 +147,24 @@ Rect
 BoxShape::bb() const
 {
     return Rect(m_corner, m_width, m_height);
+}
+
+Menu*
+BoxShape::menu(const Point& point) const
+{
+    return &s_menu;
+}
+
+void
+BoxShape::set_fixed_aspect()
+{
+    DLOG(DIAGRAM, DEBUG, "set_fixed_aspect is called\n");
+}
+
+void
+BoxShape::set_square()
+{
+    DLOG(DIAGRAM, DEBUG, "set_square is called\n");
 }
 
 } // namespace DBricks
