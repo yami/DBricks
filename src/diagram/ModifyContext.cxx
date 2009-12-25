@@ -19,6 +19,13 @@
 
 namespace DBricks {
 
+
+// TODO: add near-selection
+// near-selection:
+//   when there's already a shape selected, and new click point is outside of this selected shape
+//   normal the old shape will be unselected. However if the new click point is closest to
+//   a handle of the old selected shape, we should select the old shape. Otherwise it is hard
+//   to grab a handle...
 bool
 ModifyContext::pick_current_shape(Shape* shape)
 {

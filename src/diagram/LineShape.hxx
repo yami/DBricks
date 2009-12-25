@@ -15,6 +15,7 @@ public:
     virtual void move_handle(Handle* handle, const Point& delta);
     virtual void move_connector(Connector* connector, const Point& delta);
     virtual void move(const Point& delta);
+    virtual double distance(const Point& point) const;
     virtual bool cover(const Point& point) const;
     virtual bool in(const Rect& rect) const;
     virtual Rect bb() const;

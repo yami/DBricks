@@ -19,8 +19,7 @@ Connector::draw(Cairo::RefPtr<Cairo::Context> ctx) const
 double
 Connector::distance(const Point& point) const
 {
-    Point cpoint(m_point+m_shape->corner());
-    return std::fabs(cpoint.x - point.x) + std::fabs(cpoint.y - point.y);
+    return std::fabs(m_point.x - point.x) + std::fabs(m_point.y - point.y);
 }
 
 

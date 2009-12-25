@@ -1,5 +1,6 @@
 #include "LineShape.hxx"
 
+#include <geom/computation.hxx>
 #include <logging/logging.hxx>
 #include <algorithm>
 
@@ -104,10 +105,19 @@ LineShape::in(const Rect& rect) const
 }
 
 
+double
+LineShape::distance(const Point& point) const
+{
+    return point_line_distance(point, m_fhandle.point(), m_thandle.point());
+}
+
 bool
 LineShape::cover(const Point& point) const
 {
-    return distance(point) < 50;
+    Rect r = bb();
+    return distance(point) < 50 &&
+        point.x >= r.x1() && point.y >= r.y1() &&
+        point.x <= r.x2() && point.y <= r.y2();
 }
 
 Rect
