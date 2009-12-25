@@ -16,8 +16,14 @@ class Shape;
 // A connects to B, B connects to C, then A connects to C.
 class Connector {
 public:
-    Connector(Shape* shape, const Point& point)
-        :m_shape(shape), m_point(point)
+
+    enum ConnectorKind {
+        Passive,
+        Active,
+    };
+    
+    Connector(Shape* shape, const Point& point, ConnectorKind kind = Passive)
+        :m_shape(shape), m_point(point), m_kind(kind)
     {
     }
     
@@ -66,11 +72,16 @@ public:
     }
 
     void draw(Cairo::RefPtr<Cairo::Context> ctx) const;
-    
+
+    bool is_active() const
+    {
+        return m_kind == Active;
+    }
 private:
     Shape*         m_shape;
     ConnectorsType m_connectors;
     Point          m_point;
+    ConnectorKind  m_kind;
 };
 
 } // namespace DBricks

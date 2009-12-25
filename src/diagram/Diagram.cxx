@@ -78,7 +78,7 @@ Diagram::find_closest_handle(Shape* shape, const Point& point) const
 Connector*
 Diagram::find_closest_connector(const std::vector<Shape*>& shapes, const Point& point) const
 {
-    double min_dist = 3;
+    double min_dist = 10;
     Connector* closest = 0;
     
     for (ShapesType::const_iterator siter = m_shapes.begin();

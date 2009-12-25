@@ -9,8 +9,8 @@ namespace DBricks {
 LineShape::LineShape(const Point& from, const Point& to)
     :Shape(Break_Connections),
      
-     m_fconnector(this, from),
-     m_tconnector(this, to),
+     m_fconnector(this, from, Connector::Active),
+     m_tconnector(this, to, Connector::Active),
     
      m_fhandle("from", this, &m_fconnector, from),
      m_thandle("to",   this, &m_tconnector, to)
