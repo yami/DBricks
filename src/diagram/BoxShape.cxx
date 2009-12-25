@@ -21,15 +21,15 @@ BoxShape::BoxShape(const Rect& rect)
     :Shape(rect.x1(), rect.y1()), m_x(m_corner.x), m_y(m_corner.y),
      m_width(rect.width()), m_height(rect.height()),
 
-     m_lconnector(this, Point(0, rect.height()/2)),
-     m_rconnector(this, Point(rect.width(), rect.height()/2)),
-     m_tconnector(this, Point(rect.width()/2, 0)),
-     m_bconnector(this, Point(rect.width()/2, rect.height())),
+     m_lconnector(this, Point(m_x                 , m_y + rect.height()/2)),
+     m_rconnector(this, Point(m_x + rect.width()  , m_y + rect.height()/2)),
+     m_tconnector(this, Point(m_x + rect.width()/2, m_y)),
+     m_bconnector(this, Point(m_x + rect.width()/2, m_y + rect.height())),
      
-     m_lhandle("left",   this, &m_lconnector, Point(0, rect.height()/2)),
-     m_rhandle("right",  this, &m_rconnector, Point(rect.width(), rect.height()/2)),
-     m_thandle("top",    this, &m_tconnector, Point(rect.width()/2, 0)),
-     m_bhandle("bottom", this, &m_bconnector, Point(rect.width()/2, rect.height()))
+     m_lhandle("left",   this, &m_lconnector, Point(m_x                 , m_y + rect.height()/2)),
+     m_rhandle("right",  this, &m_rconnector, Point(m_x + rect.width()  , m_y + rect.height()/2)),
+     m_thandle("top",    this, &m_tconnector, Point(m_x + rect.width()/2, m_y)),
+     m_bhandle("bottom", this, &m_bconnector, Point(m_x + rect.width()/2, m_y + rect.height()))
 {
     m_handles.push_back(&m_lhandle);
     m_handles.push_back(&m_rhandle);
@@ -46,15 +46,15 @@ BoxShape::BoxShape(double x, double y, double width, double height)
     :Shape(x, y), m_x(m_corner.x), m_y(m_corner.y),
      m_width(width), m_height(height),
 
-     m_lconnector(this, Point(0, height/2)),
-     m_rconnector(this, Point(width, height/2)),
-     m_tconnector(this, Point(width/2, 0)),
-     m_bconnector(this, Point(width/2, height)),
-
-     m_lhandle("left",   this, &m_lconnector, Point(0, height/2)),
-     m_rhandle("right",  this, &m_rconnector, Point(width, height/2)),
-     m_thandle("top",    this, &m_tconnector, Point(width/2, 0)),
-     m_bhandle("bottom", this, &m_bconnector, Point(width/2, height))
+     m_lconnector(this, Point(m_x          , m_y + height/2)),
+     m_rconnector(this, Point(m_x + width  , m_y + height/2)),
+     m_tconnector(this, Point(m_x + width/2, m_y)),
+     m_bconnector(this, Point(m_x + width/2, m_y + height)),
+     
+     m_lhandle("left",   this, &m_lconnector, Point(m_x          , m_y + height/2)),
+     m_rhandle("right",  this, &m_rconnector, Point(m_x + width  , m_y + height/2)),
+     m_thandle("top",    this, &m_tconnector, Point(m_x + width/2, m_y)),
+     m_bhandle("bottom", this, &m_bconnector, Point(m_x + width/2, m_y + height))
 {
     m_handles.push_back(&m_lhandle);
     m_handles.push_back(&m_rhandle);
@@ -71,15 +71,15 @@ BoxShape::BoxShape(double x, double y, double width, double height)
 void
 BoxShape::update_handles()
 {
-    m_lhandle.point(Point(0         , m_height/2));
-    m_rhandle.point(Point(m_width   , m_height/2));
-    m_thandle.point(Point(m_width/2 , 0));
-    m_bhandle.point(Point(m_width/2 , m_height));
+    m_lhandle.point(Point(m_x            , m_y + m_height/2));
+    m_rhandle.point(Point(m_x + m_width  , m_y + m_height/2));
+    m_thandle.point(Point(m_x + m_width/2, m_y));
+    m_bhandle.point(Point(m_x + m_width/2, m_y + m_height));
 
-    m_lconnector.point(Point(0         , m_height/2));
-    m_rconnector.point(Point(m_width   , m_height/2));
-    m_tconnector.point(Point(m_width/2 , 0));
-    m_bconnector.point(Point(m_width/2 , m_height));    
+    m_lconnector.point(Point(m_x            , m_y + m_height/2));
+    m_rconnector.point(Point(m_x + m_width  , m_y + m_height/2));
+    m_tconnector.point(Point(m_x + m_width/2, m_y));
+    m_bconnector.point(Point(m_x + m_width/2, m_y + m_height));
 }
 
 void
@@ -124,6 +124,7 @@ void
 BoxShape::move(const Point& delta)
 {
     m_corner += delta;
+    update_handles();
 }
 
 bool

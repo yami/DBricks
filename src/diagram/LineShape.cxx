@@ -8,17 +8,14 @@ namespace DBricks {
 LineShape::LineShape(const Point& from, const Point& to)
     :Shape(Break_Connections),
      
-     m_fconnector(this, Point(0, 0)),
-     m_tconnector(this, Point(0, 0)),
+     m_fconnector(this, from),
+     m_tconnector(this, to),
     
-     m_fhandle("from", this, &m_fconnector, Point(0, 0)),
-     m_thandle("to",   this, &m_tconnector, Point(0, 0))
+     m_fhandle("from", this, &m_fconnector, from),
+     m_thandle("to",   this, &m_tconnector, to)
 {
     m_corner.x = std::min(from.x, to.x);
     m_corner.y = std::min(from.y, to.y);
-
-    m_fhandle.point(from - m_corner);
-    m_thandle.point(to - m_corner);
 
     m_handles.push_back(&m_fhandle);
     m_handles.push_back(&m_thandle);
@@ -30,8 +27,8 @@ LineShape::LineShape(const Point& from, const Point& to)
 void
 LineShape::draw_shape (Cairo::RefPtr<Cairo::Context> ctx) const
 {
-    Point from(m_fhandle.point()+m_corner);
-    Point to(m_thandle.point()+m_corner);
+    Point from(m_fhandle.point());
+    Point to(m_thandle.point());
     
     ctx->save();
     ctx->move_to(from.x, from.y);
@@ -51,17 +48,14 @@ LineShape::move_handle(Handle* handle, const Point& delta)
         ASSERT_NOT_REACHED();
     }
 
-    Point from(m_fhandle.point() + m_corner);
-    Point to(m_thandle.point() + m_corner);
+    Point from(m_fhandle.point());
+    Point to(m_thandle.point());
 
     m_corner.x = std::min(from.x, to.x);
     m_corner.y = std::min(from.y, to.y);
 
-    m_fhandle.point(from - m_corner);
-    m_thandle.point(to - m_corner);
-
-    m_fconnector.point(from - m_corner);
-    m_tconnector.point(to - m_corner);
+    m_fconnector.point(from);
+    m_tconnector.point(to);
 }
 
 void
@@ -75,30 +69,32 @@ LineShape::move_connector(Connector* connector, const Point& delta)
         ASSERT_NOT_REACHED();
     }
 
-    Point from(m_fconnector.point() + m_corner);
-    Point to(m_tconnector.point() + m_corner);
+    Point from(m_fconnector.point());
+    Point to(m_tconnector.point());
 
     m_corner.x = std::min(from.x, to.x);
     m_corner.y = std::min(from.y, to.y);
 
-    m_fhandle.point(from - m_corner);
-    m_thandle.point(to - m_corner);
-
-    m_fconnector.point(from - m_corner);
-    m_tconnector.point(to - m_corner);
+    m_fhandle.point(from);
+    m_thandle.point(to);
 }
 
 void
 LineShape::move(const Point& delta)
 {
     m_corner += delta;
+    m_fhandle.point(m_fhandle.point() + delta);
+    m_thandle.point(m_thandle.point() + delta);
+
+    m_fconnector.point(m_fconnector.point() + delta);
+    m_tconnector.point(m_tconnector.point() + delta);
 }
 
 bool
 LineShape::in(const Rect& rect) const
 {
-    Point from(m_corner + m_fhandle.point());
-    Point to(m_corner + m_thandle.point());
+    Point from(m_fhandle.point());
+    Point to(m_thandle.point());
 
     return
         from.x >= rect.x1() && to.x >= rect.x1() &&
@@ -117,10 +113,7 @@ LineShape::cover(const Point& point) const
 Rect
 LineShape::bb() const
 {
-    Point from(m_fhandle.point() + m_corner);
-    Point to(m_thandle.point() + m_corner);
-
-    return Rect(from, to);
+    return Rect(m_fhandle.point(), m_thandle.point());
 }
 
 } // namespace DBricks

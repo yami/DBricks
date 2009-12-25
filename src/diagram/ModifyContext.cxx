@@ -110,6 +110,7 @@ ModifyContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
     } else if (bit_is_set(m_state, HandleMoving)) {
         m_display->set_cursor(Gdk::X_CURSOR);
         Diagram::move_handle(m_selected_shapes[0], m_selected_handle, point - m_mpoint);
+        std::for_each(m_diagram->shapes().begin(), m_diagram->shapes().end(), std::mem_fun(&Shape::show_connectors));
     } else {
         if (!m_selected_shapes.empty() && m_diagram->find_closest_handle(m_selected_shapes[0], point)) {
             m_display->set_cursor(Gdk::X_CURSOR);
@@ -152,6 +153,7 @@ ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
             Connector::build_connections(connector1, connector2);
         }
 
+        std::for_each(m_diagram->shapes().begin(), m_diagram->shapes().end(), std::mem_fun(&Shape::hide_connectors));
         DLOG(DIAGRAM, DEBUG, "on_button_release: c1=%p, c2=%p\n", connector1, connector2);
     }
 

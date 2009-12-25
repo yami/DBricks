@@ -10,6 +10,7 @@
 #include <util/bit.hxx>
 
 #include "Handle.hxx"
+#include "Connector.hxx"
 
 namespace DBricks {
 
@@ -46,6 +47,14 @@ public:
         if (m_show_handles) {
             for (HandlesType::const_iterator iter = m_handles.begin();
                  iter != m_handles.end();
+                 ++iter) {
+                (*iter)->draw(ctx);
+            }
+        }
+
+        if (m_show_connectors) {
+            for (ConnectorsType::const_iterator iter = m_connectors.begin();
+                 iter != m_connectors.end();
                  ++iter) {
                 (*iter)->draw(ctx);
             }

@@ -64,14 +64,10 @@ Diagram::find_closest_handle(Shape* shape, const Point& point) const
     double max_dist = 3.0;
     Shape::HandlesType& handles = shape->handles();
 
-    Point delta_point = point;
-    delta_point.x -= shape->corner().x;
-    delta_point.y -= shape->corner().y;
-        
     for (Shape::HandlesType::const_iterator iter = handles.begin();
          iter != handles.end();
          ++iter) {
-        if ((*iter)->distance(delta_point) <= max_dist)
+        if ((*iter)->distance(point) <= max_dist)
             return *iter;
     }
 
