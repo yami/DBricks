@@ -7,6 +7,7 @@
 
 #include <geom/Point.hxx>
 #include <util/stl.hxx>
+#include <algorithm>
 
 namespace DBricks {
 
@@ -25,33 +26,20 @@ Diagram::del_shape(Shape* shape)
 Shape*
 Diagram::find_closest_shape(const Point& point) const
 {
-    /* @FIXME */
-    double max_dist = 30.0;
-    Shape* closest  = 0;
-    double min_dist = 0;
-
-    ShapesType::const_iterator iter = m_shapes.begin();
-    for(; iter != m_shapes.end(); ++iter) {
-        if ((*iter)->cover(point)) {
-            closest = *iter;
-            min_dist = closest->distance(point);
-        }
-    }
-
-    if (!closest) 
+    // if m_shapes is empty, then we have no begin().
+    if (m_shapes.empty())
         return 0;
 
-    for(++iter; iter != m_shapes.end(); ++iter) {
+    // we should search from the back to the front, so that shape
+    // close to stack_top is first found.    
+    ShapesType::const_iterator iter = m_shapes.end();
+    for(--iter; iter != m_shapes.begin(); --iter) {
         if ((*iter)->cover(point)) {
-            double dist = (*iter)->distance(point);
-            if (dist < min_dist) {
-                closest  = *iter;
-                min_dist = dist;
-            }
+            return *iter;
         }
     }
 
-    return closest;
+    return (*iter)->cover(point) ? *iter : 0;    
 }
 
 Handle*
@@ -177,6 +165,38 @@ Diagram::move_handle(Shape* shape, Handle* handle, const Point& delta)
             move_connector(handle->connector(), delta);
         }
     }
+}
+
+void
+Diagram::stack_forward(Shape* shape)
+{
+    if (m_shapes.size() < 2)
+        return;
+
+    ShapesType::iterator curr = std::find(m_shapes.begin(), m_shapes.end(), shape);
+    ASSERT(curr != m_shapes.end());
+
+    ShapesType::iterator next = curr; ++next;
+    if (next == m_shapes.end())
+        return;
+
+    std::swap(*next, *curr);
+}
+
+void
+Diagram::stack_backward(Shape* shape)
+{
+    if (m_shapes.size() < 2)
+        return;
+
+    ShapesType::iterator curr = std::find(m_shapes.begin(), m_shapes.end(), shape);
+    ASSERT(curr != m_shapes.end());
+
+    if (curr == m_shapes.begin())
+        return;
+
+    ShapesType::iterator prev = curr; --prev;
+    std::swap(*prev, *curr);    
 }
 
 } // namespace DBricks

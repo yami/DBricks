@@ -28,7 +28,10 @@ public:
     }
 private:
     typedef void (ModifyContext::*MenuActionMethodType) ();
+
     void group_shapes();
+    void stack_forward();
+    void stack_backward();
     
     virtual bool on_button_press_event(Shape* shape, GdkEventButton* e);
     virtual bool on_button_release_event(Shape* shape, GdkEventButton* e);

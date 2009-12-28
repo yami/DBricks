@@ -22,6 +22,9 @@ public:
     static void move_handle(Shape* shape, Handle* handle, const Point& delta);
     static void move_connector(Connector* connector, const Point& delta);
 
+    void stack_forward(Shape* shape);
+    void stack_backward(Shape* shape);
+    
     
     void add_shape(Shape* shape);
     void del_shape(Shape* shape);

@@ -25,7 +25,9 @@ void
 ModifyContext::initialize()
 {
     s_menu
-        .append(new MenuItem("Group", "Group", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::group_shapes)));
+        .append(new MenuItem("Group",        "Group",         new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::group_shapes)))
+        .append(new MenuItem("StackForward", "Stack Forward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_forward)))
+        .append(new MenuItem("StackBackward", "Stack Backward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_backward)));
 }
 
 // TODO: add near-selection
@@ -201,6 +203,24 @@ ModifyContext::group_shapes()
     m_selected_shapes.clear();
     m_selected_shapes.push_back(group);
     std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::show_handles));    
+}
+
+void
+ModifyContext::stack_backward()
+{
+    DLOG(DIAGRAM, DEBUG, "stacking backward...\n");
+
+    if (!m_selected_shapes.empty())
+        m_diagram->stack_backward(m_selected_shapes[0]);
+}
+
+void
+ModifyContext::stack_forward()
+{
+    DLOG(DIAGRAM, DEBUG, "stacking forward...\n");
+
+    if (!m_selected_shapes.empty())
+        m_diagram->stack_forward(m_selected_shapes[0]);
 }
 
 }
