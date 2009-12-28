@@ -29,6 +29,11 @@ public:
     }
     
 
+    Rect(const Rect& rect)
+        :m_x(rect.m_x), m_y(rect.m_y), m_width(rect.m_width), m_height(rect.m_height)
+    {
+    }
+    
     double x1() const
     {
         return m_x;

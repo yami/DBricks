@@ -11,15 +11,7 @@ public:
     template<class ForwardIterT>
     GroupShape(ForwardIterT begin, ForwardIterT end);
     
-    virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
-    {
-        for (std::vector<Shape*>::const_iterator iter = m_shapes.begin();
-             iter != m_shapes.end();
-             ++iter) {
-            (*iter)->draw(ctx);
-        }
-    }
-
+    virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const;
     virtual void move(const Point& delta)
     {
         BoxShape::move(delta);
@@ -29,6 +21,8 @@ public:
             (*iter)->move(delta);
         }        
     }
+
+    virtual Rect bb() const;
 private:
     std::vector<Shape*> m_shapes;
 };

@@ -14,7 +14,8 @@ dbricks_SOURCES = main.cxx \
 	BoxShape.cxx \
 	Handle.cxx \
 	Connector.cxx \
-	LineShape.cxx
+	LineShape.cxx \
+	GroupShape.cxx
 
 dbricks_CPPFLAGS = \
 	$(PANGOMM_CFLAGS) \

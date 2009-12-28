@@ -19,6 +19,14 @@
 
 namespace DBricks {
 
+Menu ModifyContext::s_menu;
+
+void
+ModifyContext::initialize()
+{
+    s_menu
+        .append(new MenuItem("Group", "Group", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::group_shapes)));
+}
 
 // TODO: add near-selection
 // near-selection:
@@ -72,30 +80,7 @@ ModifyContext::on_button_press_event(Shape* shape, GdkEventButton* e)
         if (!m_selected_shapes.empty()) {
             DLOG(DIAGRAM, DEBUG, "Test Menu...\n");
 
-            if (m_selected_shapes[0]->menu(point)) {
-                m_display->popup(m_selected_shapes[0], m_selected_shapes[0]->menu(point), e);
-            }
-            
-            // DLOG(DIAGRAM, DEBUG, "Test MenuItem...\n");
-            // if (m_selected_shapes[0]->menu(point)){
-            //     MenuItem* item = (*m_selected_shapes[0]->menu(point))[0];
-            //     (*item)(m_selected_shapes[0]);
-            // }
-            
-            // DLOG(DIAGRAM, DEBUG, "grouping...\n");
-
-            // GroupShape* group = new GroupShape(m_selected_shapes.begin(), m_selected_shapes.end());
-            // m_diagram->add_shape(group);
-            // for (std::vector<Shape*>::iterator iter = m_selected_shapes.begin();
-            //      iter != m_selected_shapes.end();
-            //      ++iter) {
-            //     m_diagram->del_shape(*iter);
-            // }
-
-            // std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::hide_handles));
-            // m_selected_shapes.clear();
-            // m_selected_shapes.push_back(group);
-            // std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::show_handles));
+            m_display->popup(this, m_selected_shapes[0], e);
         }
     }
 
@@ -197,6 +182,25 @@ ModifyContext::find_closest_connector(const std::vector<Shape*>& shapes, const P
     }
 
     return closest;
+}
+
+void
+ModifyContext::group_shapes()
+{
+    DLOG(DIAGRAM, DEBUG, "grouping...\n");
+
+    GroupShape* group = new GroupShape(m_selected_shapes.begin(), m_selected_shapes.end());
+    m_diagram->add_shape(group);
+    for (std::vector<Shape*>::iterator iter = m_selected_shapes.begin();
+         iter != m_selected_shapes.end();
+         ++iter) {
+        m_diagram->del_shape(*iter);
+    }
+
+    std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::hide_handles));
+    m_selected_shapes.clear();
+    m_selected_shapes.push_back(group);
+    std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::show_handles));    
 }
 
 }

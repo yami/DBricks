@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "DispatchContext.hxx"
+#include "Menu.hxx"
 #include <geom/Point.hxx>
 
 namespace DBricks {
@@ -18,7 +19,17 @@ public:
         :DispatchContext(diagram, display), m_selected_handle(0)
     {
     }
+
+    static void initialize();
+    
+    virtual Menu* menu(const Point& point) const
+    {
+        return &s_menu;
+    }
 private:
+    typedef void (ModifyContext::*MenuActionMethodType) ();
+    void group_shapes();
+    
     virtual bool on_button_press_event(Shape* shape, GdkEventButton* e);
     virtual bool on_button_release_event(Shape* shape, GdkEventButton* e);
     virtual bool on_motion_notify_event(Shape* shape, GdkEventMotion* e);
@@ -29,6 +40,8 @@ private:
     static const unsigned int Dragging     = 0x1;
     static const unsigned int Selecting    = 0x2;
     static const unsigned int HandleMoving = 0x4;
+
+    static Menu s_menu;
     
     Point   m_mpoint;
     Point   m_opoint;

@@ -174,13 +174,17 @@ Display::set_cursor()
 }
 
 Glib::ustring
-menu_to_uiinfo(const Menu& menu)
+menu_to_uiinfo(const Menu& context_menu, const Menu& shape_menu)
 {
     Glib::ustring uiinfo =
         "<ui>"
         "  <popup name='ShapeMenu'>";
-    for (size_t i = 0; i<menu.size(); ++i) {
-        uiinfo += "    <menuitem action='" + menu[i]->name() + "'/>";
+    for (size_t i = 0; i<shape_menu.size(); ++i) {
+        uiinfo += "    <menuitem action='" + shape_menu[i]->name() + "'/>";
+    }
+
+    for (size_t i = 0; i<context_menu.size(); ++i) {
+        uiinfo += "    <menuitem action='" + context_menu[i]->name() + "'/>";
     }
 
     uiinfo +=
@@ -191,25 +195,33 @@ menu_to_uiinfo(const Menu& menu)
 }
 
 Glib::RefPtr<Gtk::ActionGroup>
-menu_to_action_group(Shape* shape, const Menu& menu)
+menu_to_action_group(EventContext* context, const Menu& context_menu, Shape* shape, const Menu& shape_menu)
 {
     Glib::RefPtr<Gtk::ActionGroup> action_group = Gtk::ActionGroup::create();
 
     action_group->add(Gtk::Action::create("ShapeMenu", "Shape Menu"));
-    for (size_t i = 0; i<menu.size(); ++i) {
-        action_group->add(Gtk::Action::create(menu[i]->name().c_str(), menu[i]->text().c_str()),
-                          sigc::bind(sigc::mem_fun(*menu[i], &MenuItem::operator()), shape));
+    for (size_t i = 0; i<shape_menu.size(); ++i) {
+        action_group->add(Gtk::Action::create(shape_menu[i]->name().c_str(), shape_menu[i]->text().c_str()),
+                          sigc::bind(sigc::mem_fun(*shape_menu[i], &MenuItem::operator()), (void*)shape));
     }
 
+    for (size_t i = 0; i<context_menu.size(); ++i) {
+        action_group->add(Gtk::Action::create(context_menu[i]->name().c_str(), context_menu[i]->text().c_str()),
+                          sigc::bind(sigc::mem_fun(*context_menu[i], &MenuItem::operator()), (void*)context));
+    }
+    
     return action_group;
 }
 
 
 void
-Display::popup(Shape* shape, Menu* menu, GdkEventButton* event)
+Display::popup(EventContext* context, Shape* shape, GdkEventButton* event)
 {
-    Glib::RefPtr<Gtk::ActionGroup> action_group = menu_to_action_group(shape, *menu);
-    Glib::ustring                  uiinfo       = menu_to_uiinfo(*menu);
+    Menu* shape_menu   = shape->menu(Point(event->x, event->y));
+    Menu* context_menu = context->menu(Point(event->x, event->y));
+    
+    Glib::RefPtr<Gtk::ActionGroup> action_group = menu_to_action_group(context, *context_menu, shape, *shape_menu);
+    Glib::ustring                  uiinfo       = menu_to_uiinfo(*context_menu, *shape_menu);
 
     Glib::RefPtr<Gtk::UIManager> uimgr = Gtk::UIManager::create();
     uimgr->insert_action_group(action_group);

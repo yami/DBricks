@@ -2,12 +2,14 @@
 #define EVENTCONTEXT_HXX
 
 #include <gdkmm/event.h>
+#include <geom/Point.hxx>
 
 namespace DBricks {
 
 class Diagram;
 class Display;
 class Shape;
+class Menu;
 
 class EventContext {
 public:
@@ -30,6 +32,11 @@ public:
     
     virtual bool on_event(Shape* shape, GdkEvent *event)
     {
+    }
+
+    virtual Menu* menu(const Point& point) const
+    {
+        return 0;
     }
 protected:
     Diagram* m_diagram;

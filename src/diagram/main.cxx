@@ -4,6 +4,8 @@
 
 #include "Desktop.hxx"
 #include "BoxShape.hxx"
+#include "ModifyContext.hxx"
+
 
 int main(int argc, char** argv)
 {
@@ -13,7 +15,7 @@ int main(int argc, char** argv)
 
     // TODO: move to else where
     DBricks::BoxShape::initialize();
-
+    DBricks::ModifyContext::initialize();
     
     DBricks::Desktop desktop;
     desktop.show_all();

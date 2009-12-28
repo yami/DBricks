@@ -5,16 +5,18 @@
 
 #include <util/bit.hxx>
 #include <util/stl.hxx>
-
+#include <util/assert.hxx>
 
 namespace DBricks {
 
 
 class MenuAction {
 public:
-    virtual void operator () (Shape* shape) = 0;
+    // TODO: do it in better way...
+    virtual void operator () (void* object) = 0;
 };
 
+// TODO: change to a more generic name instead of ShapeMenuAction
 template<class ShapeT, class MethodT>
 class ShapeMenuAction : public MenuAction {
 public:
@@ -23,9 +25,9 @@ public:
     {
     }
 
-    virtual void operator () (Shape* shape)
+    virtual void operator () (void* shape)
     {
-        ShapeT* specific_shape = dynamic_cast<ShapeT*>(shape);
+        ShapeT* specific_shape = reinterpret_cast<ShapeT*>(shape);
         ASSERT(specific_shape);
 
         (specific_shape->*m_method)();
@@ -45,9 +47,9 @@ public:
     {
     }
 
-    void operator () (Shape* shape) const
+    void operator () (void* object) const
     {
-        (*m_action)(shape);
+        (*m_action)(object);
     }
 
     std::string name() const

@@ -57,7 +57,7 @@ public:
     void set_cursor(Gdk::CursorType cursor_type);
     void set_cursor();
 
-    void popup(Shape* shape, Menu* menu, GdkEventButton* event);
+    void popup(EventContext* context, Shape* shape, GdkEventButton* event);
 private:
     void draw(GdkEventExpose* event=NULL);
     void draw_select(Cairo::RefPtr<Cairo::Context> ctx);
