@@ -37,7 +37,7 @@ ModifyContext::initialize()
 //   a handle of the old selected shape, we should select the old shape. Otherwise it is hard
 //   to grab a handle...
 bool
-ModifyContext::pick_current_shape(Shape* shape)
+ModifyContext::pick_current_shape(Shape* shape, const Point& point)
 {
     const bool changed = true;
 
@@ -46,10 +46,16 @@ ModifyContext::pick_current_shape(Shape* shape)
     }
 
     std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::hide_handles));
-    m_selected_shapes.clear();
     if (shape) {
+        m_selected_shapes.clear();            
         m_selected_shapes.push_back(shape);
+    } else {
+        // near-selection works for single selection only. below is non-near-selection condidtion
+        if (m_selected_shapes.size() != 1 || !m_diagram->find_closest_handle(m_selected_shapes[0], point)) {
+            m_selected_shapes.clear();
+        }
     }
+    
     std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::show_handles));
     return changed;
 }
@@ -61,7 +67,7 @@ ModifyContext::on_button_press_event(Shape* shape, GdkEventButton* e)
     Point point(e->x, e->y);
     
     if (e->button == Left_Button) {
-        pick_current_shape(shape);
+        pick_current_shape(shape, point);
 
         if (!m_selected_shapes.empty()) {
             m_selected_handle = m_diagram->find_closest_handle(m_selected_shapes[0], point);

@@ -37,7 +37,7 @@ private:
     virtual bool on_button_release_event(Shape* shape, GdkEventButton* e);
     virtual bool on_motion_notify_event(Shape* shape, GdkEventMotion* e);
 
-    bool pick_current_shape(Shape* shape);
+    bool pick_current_shape(Shape* shape, const Point& point);
     Connector* find_closest_connector(const std::vector<Shape*>& shapes, const Point& point) const;
     
     static const unsigned int Dragging     = 0x1;
