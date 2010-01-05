@@ -20,8 +20,8 @@ public:
 
     static void move_shapes(std::vector<Shape*>& shapes, const Point& delta);    
     static void move_handle(Shape* shape, Handle* handle, const Point& delta);
-    static void move_connector(Connector* connector, const Point& delta);
-
+    static void update_shape_connectiors(Shape* shape);
+    static void update_shape_connectiors_internal(Shape* shape, std::vector<Shape*>& moved_shapes);
     void stack_forward(Shape* shape);
     void stack_backward(Shape* shape);
     

@@ -62,8 +62,7 @@ public:
     }
 
     virtual void move_handle(Handle* handle, const Point& delta) = 0;
-    virtual void move_connector(Connector* connector, const Point& delta) = 0;
-    
+    virtual void move_connector(Connector* connector, const Point& delta) = 0;    
     virtual void move(const Point& delta) = 0;
 
     virtual double distance(const Point& point) const

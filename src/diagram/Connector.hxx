@@ -23,7 +23,7 @@ public:
     };
     
     Connector(Shape* shape, const Point& point, ConnectorKind kind = Passive)
-        :m_shape(shape), m_point(point), m_kind(kind)
+        :m_shape(shape), m_point(point), m_last_point(point), m_kind(kind)
     {
     }
     
@@ -61,11 +61,22 @@ public:
 
     void point(const Point& point)
     {
+        m_last_point = m_point;
         m_point = point;
     }
 
-    double distance(const Point& point) const;
+    const Point& last_point() const
+    {
+        return m_last_point;
+    }
 
+    void reset_last_point()
+    {
+        m_last_point = m_point;
+    }
+    
+    double distance(const Point& point) const;
+    
     Shape* shape() const
     {
         return m_shape;
@@ -81,6 +92,7 @@ private:
     Shape*         m_shape;
     ConnectorsType m_connectors;
     Point          m_point;
+    Point          m_last_point;
     ConnectorKind  m_kind;
 };
 

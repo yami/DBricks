@@ -6,6 +6,7 @@
 
 
 #include <geom/Point.hxx>
+#include <geom/computation.hxx>
 #include <util/stl.hxx>
 #include <algorithm>
 
@@ -117,6 +118,42 @@ Diagram::detach_observer(DiagramObserver* observer)
 }
 
 void
+Diagram::update_shape_connectiors(Shape* shape)
+{
+    std::vector<Shape*> moved_shapes;
+    moved_shapes.push_back(shape);
+    update_shape_connectiors_internal(shape, moved_shapes);
+}
+
+void
+Diagram::update_shape_connectiors_internal(Shape* shape, std::vector<Shape*>& moved_shapes)
+{
+    const double Min_Move_Change = 0.001;
+    
+    for (Shape::ConnectorsType::iterator citer = shape->connectors().begin();
+         citer != shape->connectors().end();
+         ++citer) {
+        Point delta = (*citer)->point() - (*citer)->last_point();
+        if (point_origin_distance(delta) > Min_Move_Change) {
+            (*citer)->reset_last_point();
+
+            for (Connector::ConnectorsType::iterator iter = (*citer)->connectors().begin();
+                 iter != (*citer)->connectors().end();
+                 ++iter) {
+                Shape* connected_shape = (*iter)->shape();
+                if (connected_shape && !util::in_container(moved_shapes, connected_shape)) {
+                    connected_shape->move_connector(*iter, delta);
+                    moved_shapes.push_back(connected_shape);
+                    update_shape_connectiors_internal(connected_shape, moved_shapes);
+                }
+            }
+        }
+    }
+}
+
+
+
+void
 Diagram::move_shapes(std::vector<Shape*>& shapes, const Point& delta)
 {
     // We did not consider rotation right now, so every point (hence connector)
@@ -129,42 +166,23 @@ Diagram::move_shapes(std::vector<Shape*>& shapes, const Point& delta)
          ++siter) {
         (*siter)->move(delta);
 
-        if ((*siter)->break_connections()) {
+        if ((*siter)->break_connections()) 
             std::for_each((*siter)->connectors().begin(), (*siter)->connectors().end(), Connector::break_connections);
-        } else {
-            for (Shape::ConnectorsType::iterator citer = (*siter)->connectors().begin();
-                 citer != (*siter)->connectors().end();
-                 ++citer) {
-                move_connector(*citer, delta);
-            }
-        }
+        else
+            update_shape_connectiors(*siter);
     }
 }
 
-void
-Diagram::move_connector(Connector* connector, const Point& delta)
-{
-    Connector::ConnectorsType& connectors = connector->connectors();
-    for (Connector::ConnectorsType::iterator iter = connectors.begin();
-         iter != connectors.end();
-         ++iter) {
-        Shape* shape = (*iter)->shape();
-        shape->move_connector(*iter, delta);
-    }
-}
 
 void
 Diagram::move_handle(Shape* shape, Handle* handle, const Point& delta)
 {
     shape->move_handle(handle, delta);
-    
-    if (handle->connector()) {
-        if (shape->break_connections()) {
+
+    if (handle->connector() && shape->break_connections())
             Connector::break_connections(handle->connector());
-        } else {
-            move_connector(handle->connector(), delta);
-        }
-    }
+    
+    update_shape_connectiors(shape);
 }
 
 void
