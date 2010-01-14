@@ -6,6 +6,8 @@
 
 namespace DBricks {
 
+class Archiver;
+
 class LineShape: public Shape {
 public:
     LineShape(const Point& from, const Point& to);
@@ -19,6 +21,8 @@ public:
     virtual bool cover(const Point& point) const;
     virtual bool in(const Rect& rect) const;
     virtual Rect bb() const;
+
+    virtual void serialize(Archiver* ar) const;
 private:
     Connector m_fconnector;
     Connector m_tconnector;

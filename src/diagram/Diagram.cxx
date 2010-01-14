@@ -10,7 +10,20 @@
 #include <util/stl.hxx>
 #include <algorithm>
 
+#include "Archiver.hxx"
+
 namespace DBricks {
+
+void
+Diagram::serialize(Archiver* ar) const
+{
+    ar->list_begin("Diagram");
+
+    std::for_each(m_shapes.begin(), m_shapes.end(),
+            std::bind2nd(std::mem_fun(&Shape::serialize), ar));
+    
+    ar->list_end("Diagram");
+}
 
 void
 Diagram::add_shape(Shape* shape)

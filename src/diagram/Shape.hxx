@@ -11,6 +11,7 @@
 
 #include "Handle.hxx"
 #include "Connector.hxx"
+#include "Serializable.hxx"
 
 namespace DBricks {
 
@@ -18,7 +19,7 @@ class Connector;
 
 class Menu;
 
-class Shape {
+class Shape : public Serializable {
 public:
     typedef std::vector<Handle*>    HandlesType;
     typedef std::vector<Connector*> ConnectorsType;

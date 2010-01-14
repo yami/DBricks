@@ -4,6 +4,8 @@
 #include <list>
 #include <vector>
 
+#include "Serializable.hxx"
+
 namespace DBricks {
 
 class Shape;
@@ -11,8 +13,9 @@ class DiagramObserver;
 class Handle;
 class Point;
 class Connector;
+class Archiver;
 
-class Diagram
+class Diagram : public Serializable
 {
 public:
     typedef std::list<Shape*> ShapesType;
@@ -22,6 +25,9 @@ public:
     static void move_handle(Shape* shape, Handle* handle, const Point& delta);
     static void update_shape_connectiors(Shape* shape);
     static void update_shape_connectiors_internal(Shape* shape, std::vector<Shape*>& moved_shapes);
+
+    virtual void serialize(Archiver* ar) const;
+
     void stack_forward(Shape* shape);
     void stack_backward(Shape* shape);
     

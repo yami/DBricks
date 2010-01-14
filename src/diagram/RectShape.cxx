@@ -1,4 +1,5 @@
 #include "RectShape.hxx"
+#include "Archiver.hxx"
 
 namespace DBricks {
 
@@ -15,6 +16,17 @@ RectShape::draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
     ctx->stroke();
     
     ctx->restore();
+}
+
+void
+RectShape::serialize(Archiver* ar) const
+{
+    ar->object_begin("Rectangle");
+    ar->serialize("x", m_x);
+    ar->serialize("y", m_y);
+    ar->serialize("width", m_width);
+    ar->serialize("height", m_height);
+    ar->object_end("Rectangle");
 }
 
 } // namespace DBricks

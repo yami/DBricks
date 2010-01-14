@@ -6,6 +6,8 @@
 
 namespace DBricks {
 
+class Archiver;
+
 class RectShape : public BoxShape {
 public:
     RectShape(double x, double y, double width, double height)
@@ -13,6 +15,7 @@ public:
     {
     }
 
+    virtual void serialize(Archiver* ar) const;
 private:
     virtual void draw_shape (Cairo::RefPtr<Cairo::Context> ctx) const;
 };

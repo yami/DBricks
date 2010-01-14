@@ -1,5 +1,5 @@
 #include "EllipseShape.hxx"
-
+#include "Archiver.hxx"
 
 namespace DBricks {
 
@@ -24,5 +24,16 @@ EllipseShape::draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
     ctx->restore();
 }
 
+
+void
+EllipseShape::serialize(Archiver* ar) const
+{
+    ar->object_begin("Ellipse");
+    ar->serialize("x", m_x);
+    ar->serialize("y", m_y);
+    ar->serialize("width", m_width);
+    ar->serialize("height", m_height);
+    ar->object_end("Ellipse");
+}
 
 } // namespace DBricks

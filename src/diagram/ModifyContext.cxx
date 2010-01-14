@@ -11,11 +11,15 @@
 #include "GroupShape.hxx"
 #include "Menu.hxx"
 
+#include "SexpArchiver.hxx"
+
 #include <util/stl.hxx>
 #include <util/bit.hxx>
 
 #include <algorithm>
 #include <functional>
+#include <fstream>
+
 
 namespace DBricks {
 
@@ -27,7 +31,8 @@ ModifyContext::initialize()
     s_menu
         .append(new MenuItem("Group",        "Group",         new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::group_shapes)))
         .append(new MenuItem("StackForward", "Stack Forward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_forward)))
-        .append(new MenuItem("StackBackward", "Stack Backward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_backward)));
+        .append(new MenuItem("StackBackward", "Stack Backward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_backward)))
+        .append(new MenuItem("Save", "Save to file", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::save)));
 }
 
 // TODO: add near-selection
@@ -190,6 +195,16 @@ ModifyContext::find_closest_connector(const std::vector<Shape*>& shapes, const P
     }
 
     return closest;
+}
+
+void
+ModifyContext::save()
+{
+    DLOG(DIAGRAM, DEBUG, "save...\n");
+
+    std::ofstream ofile("save.txt");
+    SexpArchiver ar(ofile);
+    m_diagram->serialize(&ar);
 }
 
 void

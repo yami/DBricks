@@ -1,5 +1,7 @@
 #include "LineShape.hxx"
 
+#include "Archiver.hxx"
+
 #include <geom/computation.hxx>
 #include <logging/logging.hxx>
 #include <algorithm>
@@ -124,6 +126,17 @@ Rect
 LineShape::bb() const
 {
     return Rect(m_fhandle.point(), m_thandle.point());
+}
+
+void
+LineShape::serialize(Archiver* ar) const
+{
+    ar->object_begin("Line");
+    ar->serialize("fx", m_fhandle.point().x);
+    ar->serialize("fy", m_fhandle.point().y);
+    ar->serialize("tx", m_thandle.point().x);
+    ar->serialize("ty", m_thandle.point().y);
+    ar->object_end("Line");
 }
 
 } // namespace DBricks

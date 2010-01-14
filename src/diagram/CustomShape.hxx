@@ -10,6 +10,8 @@
 
 namespace DBricks {
 
+class Archiver;
+
 class CustomShape : public Shape {
 public:
     CustomShape(const std::string& name);
@@ -38,6 +40,10 @@ public:
     {
         ASSERT_NOT_IMPLEMENTED();
         return Rect(0, 0, 0, 0);
+    }
+
+    virtual void serialize(Archiver* ar) const
+    {
     }
 private:
     virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const;

@@ -1,6 +1,8 @@
 #include "GroupShape.hxx"
 #include <algorithm>
 
+#include "Archiver.hxx"
+
 namespace DBricks {
 
 void
@@ -35,6 +37,17 @@ GroupShape::bb() const
     }
 
     return rect;
+}
+
+void
+GroupShape::serialize(Archiver* ar) const
+{
+    ar->object_begin("Group");
+    ar->list_begin("GroupItems");
+    std::for_each(m_shapes.begin(), m_shapes.end(),
+                  std::bind2nd(std::mem_fun(&Shape::serialize), ar));
+    ar->list_end("GroupItems");
+    ar->object_end("Group");
 }
 
 

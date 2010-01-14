@@ -6,6 +6,8 @@
 
 namespace DBricks {
 
+class Archiver;
+
 class GroupShape: public BoxShape {
 public:
     template<class ForwardIterT>
@@ -23,6 +25,8 @@ public:
     }
 
     virtual Rect bb() const;
+
+    virtual void serialize(Archiver* ar) const;
 private:
     std::vector<Shape*> m_shapes;
 };
