@@ -10,19 +10,53 @@
 #include <util/stl.hxx>
 #include <algorithm>
 
-#include "Archiver.hxx"
+
+#include "ShapeFactory.hxx"
+
+#include "SML.hxx"
 
 namespace DBricks {
 
 void
-Diagram::serialize(Archiver* ar) const
+Diagram::save(Sml::Object* object) const
 {
-    ar->list_begin("Diagram");
-
-    std::for_each(m_shapes.begin(), m_shapes.end(),
-            std::bind2nd(std::mem_fun(&Shape::serialize), ar));
+    Sml::List* shape_list = new Sml::List();
     
-    ar->list_end("Diagram");
+    object->add_attribute_data("name"  , "Diagram");
+    object->add_attribute_data("type"  , "Diagram");
+    object->add_attribute_data("shapes", shape_list);
+    
+    for(ShapesType::const_iterator iter = m_shapes.begin();
+        iter != m_shapes.end();
+        ++iter) {
+        Sml::Object* shape_object = new Sml::Object();
+        shape_list->add_value(new Sml::Value(shape_object));
+        (*iter)->save(shape_object);
+    }
+}
+
+
+void
+Diagram::load(Sml::Object* object)
+{
+    Sml::List* shape_list;
+    object->get_attribute_data("shapes", shape_list);
+    for(Sml::List::ValuesType::const_iterator iter = shape_list->values().begin();
+        iter != shape_list->values().end();
+        ++iter) {
+        Sml::Object* shape_object  = (*iter)->get_object();
+        std::string  shape_type    = shape_object->get_attribute_string("type");
+        Shape* shape = ShapeFactory::create_shape(shape_type);
+        shape->load(shape_object);
+        add_shape(shape);
+    }
+}
+
+void
+Diagram::destroy()
+{
+    util::delete_entries(m_shapes.begin(), m_shapes.end());
+    m_shapes.clear();
 }
 
 void

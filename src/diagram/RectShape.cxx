@@ -1,5 +1,5 @@
 #include "RectShape.hxx"
-#include "Archiver.hxx"
+#include "SML.hxx"
 
 namespace DBricks {
 
@@ -19,14 +19,26 @@ RectShape::draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
 }
 
 void
-RectShape::serialize(Archiver* ar) const
+RectShape::save(Sml::Object* object) const
 {
-    ar->object_begin("Rectangle");
-    ar->serialize("x", m_x);
-    ar->serialize("y", m_y);
-    ar->serialize("width", m_width);
-    ar->serialize("height", m_height);
-    ar->object_end("Rectangle");
+    object->add_attribute_data("name", "Rectangle");
+    object->add_attribute_data("type", "Rectangle");
+
+    object->add_attribute_data("x", m_x);
+    object->add_attribute_data("y", m_y);
+    object->add_attribute_data("width", m_width);
+    object->add_attribute_data("height", m_height);
+}
+
+void
+RectShape::load(Sml::Object* object)
+{
+    object->get_attribute_data("x", m_x);
+    object->get_attribute_data("y", m_y);
+    object->get_attribute_data("width", m_width);
+    object->get_attribute_data("height", m_height);
+
+    initialize_handles();
 }
 
 } // namespace DBricks

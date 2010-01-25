@@ -6,10 +6,9 @@
 
 namespace DBricks {
 
-class Archiver;
-
 class LineShape: public Shape {
 public:
+    LineShape();
     LineShape(const Point& from, const Point& to);
     
     // Shape interfaces
@@ -22,7 +21,8 @@ public:
     virtual bool in(const Rect& rect) const;
     virtual Rect bb() const;
 
-    virtual void serialize(Archiver* ar) const;
+    virtual void save (Sml::Object* object) const;
+    virtual void load (Sml::Object* object);
 private:
     Connector m_fconnector;
     Connector m_tconnector;

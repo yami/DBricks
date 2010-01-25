@@ -21,10 +21,20 @@ public:
         Passive,
         Active,
     };
+
+    Connector() {}
     
     Connector(Shape* shape, const Point& point, ConnectorKind kind = Passive)
         :m_shape(shape), m_point(point), m_last_point(point), m_kind(kind)
     {
+    }
+
+    void initialize(Shape* shape, const Point& point, ConnectorKind kind = Passive)
+    {
+        m_shape      = shape;
+        m_point      = point;
+        m_last_point = point;
+        m_kind       = kind;
     }
     
     typedef std::vector<Connector*> ConnectorsType;

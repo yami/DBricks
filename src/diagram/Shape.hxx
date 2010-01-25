@@ -11,7 +11,11 @@
 
 #include "Handle.hxx"
 #include "Connector.hxx"
-#include "Serializable.hxx"
+
+namespace Sml {
+class Object;
+}
+
 
 namespace DBricks {
 
@@ -19,7 +23,7 @@ class Connector;
 
 class Menu;
 
-class Shape : public Serializable {
+class Shape {
 public:
     typedef std::vector<Handle*>    HandlesType;
     typedef std::vector<Connector*> ConnectorsType;
@@ -119,6 +123,9 @@ public:
     {
         m_show_connectors = false;
     }
+
+    virtual void save (Sml::Object* object) const = 0;
+    virtual void load (Sml::Object* object) = 0;
     
 private:
     virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const = 0;

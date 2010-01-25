@@ -1,5 +1,5 @@
 #include "EllipseShape.hxx"
-#include "Archiver.hxx"
+#include "SML.hxx"
 
 namespace DBricks {
 
@@ -24,16 +24,28 @@ EllipseShape::draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
     ctx->restore();
 }
 
+void
+EllipseShape::save(Sml::Object* object) const
+{
+    object->add_attribute_data("name", "Ellipse");
+    object->add_attribute_data("type", "Ellipse");
+
+    object->add_attribute_data("x", m_x);
+    object->add_attribute_data("y", m_y);
+    object->add_attribute_data("width", m_width);
+    object->add_attribute_data("height", m_height);
+}
 
 void
-EllipseShape::serialize(Archiver* ar) const
+EllipseShape::load(Sml::Object* object)
 {
-    ar->object_begin("Ellipse");
-    ar->serialize("x", m_x);
-    ar->serialize("y", m_y);
-    ar->serialize("width", m_width);
-    ar->serialize("height", m_height);
-    ar->object_end("Ellipse");
+    object->get_attribute_data("x", m_x);
+    object->get_attribute_data("y", m_y);
+    object->get_attribute_data("width", m_width);
+    object->get_attribute_data("height", m_height);
+
+    initialize_handles();
 }
+
 
 } // namespace DBricks

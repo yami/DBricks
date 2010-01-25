@@ -2,6 +2,8 @@
 #define STL_HXX
 
 #include <algorithm>
+#include <iostream>
+#include <fstream>
 
 namespace util {
 
@@ -36,6 +38,25 @@ template<class ContainerT, class ValueT>
 bool in_container(const ContainerT& c, const ValueT& v)
 {
     return std::find(c.begin(), c.end(), v) != c.end();
+}
+
+inline
+std::streampos file_size(std::ifstream& ifile)
+{
+    std::streampos curr = ifile.tellg();
+    std::streampos size = ifile.seekg(0, std::ios::end).tellg();
+    ifile.seekg(curr, std::ios::beg);
+
+    return size;
+}
+
+inline
+char* read_file(std::ifstream& ifile)
+{
+    std::streampos size = file_size(ifile);
+    char* buffer = new char[(size_t)size+1];
+    ifile.read(buffer, size);
+    return buffer;
 }
 
 } // namespace util

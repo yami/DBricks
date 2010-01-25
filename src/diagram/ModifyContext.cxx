@@ -11,8 +11,6 @@
 #include "GroupShape.hxx"
 #include "Menu.hxx"
 
-#include "SexpArchiver.hxx"
-
 #include <util/stl.hxx>
 #include <util/bit.hxx>
 
@@ -20,6 +18,9 @@
 #include <functional>
 #include <fstream>
 
+
+#include "SML.hxx"
+#include "ecl.hxx"
 
 namespace DBricks {
 
@@ -32,7 +33,8 @@ ModifyContext::initialize()
         .append(new MenuItem("Group",        "Group",         new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::group_shapes)))
         .append(new MenuItem("StackForward", "Stack Forward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_forward)))
         .append(new MenuItem("StackBackward", "Stack Backward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_backward)))
-        .append(new MenuItem("Save", "Save to file", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::save)));
+        .append(new MenuItem("Save", "Save to file", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::save)))
+        .append(new MenuItem("Load", "Load from file", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::load)));
 }
 
 // TODO: add near-selection
@@ -202,9 +204,23 @@ ModifyContext::save()
 {
     DLOG(DIAGRAM, DEBUG, "save...\n");
 
+    Sml::Object* diagram_object = new Sml::Object();
+    m_diagram->save(diagram_object);
+
     std::ofstream ofile("save.txt");
-    SexpArchiver ar(ofile);
-    m_diagram->serialize(&ar);
+    EclSml::EclSerializer s(ofile);
+    s.save_object(diagram_object);
+}
+
+void
+ModifyContext::load()
+{
+    DLOG(DIAGRAM, DEBUG, "load...\n");
+
+    this->destroy();
+    m_diagram->destroy();
+    Sml::Object* diagram_object = EclSml::load("save.txt");
+    m_diagram->load(diagram_object);
 }
 
 void
@@ -242,6 +258,12 @@ ModifyContext::stack_forward()
 
     if (!m_selected_shapes.empty())
         m_diagram->stack_forward(m_selected_shapes[0]);
+}
+
+void
+ModifyContext::destroy()
+{
+    m_selected_shapes.clear();
 }
 
 }

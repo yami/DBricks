@@ -15,6 +15,8 @@ class Connector;
 
 class Handle {
 public:
+    Handle() {}
+    
     Handle(const std::string& name, Shape* shape, const Point& point)
         :m_name(name), m_shape(shape), m_connector(0), m_point(point)
     {
@@ -28,6 +30,14 @@ public:
 
     ~Handle()
     {
+    }
+
+    void initialize(const std::string& name, Shape* shape, Connector* connector, const Point& point)
+    {
+        m_name      = name;
+        m_shape     = shape;
+        m_connector = connector;
+        m_point     = point;
     }
     
     const std::string& name() const

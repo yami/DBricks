@@ -4,7 +4,9 @@
 #include <list>
 #include <vector>
 
-#include "Serializable.hxx"
+namespace Sml {
+class Object;
+}
 
 namespace DBricks {
 
@@ -15,18 +17,21 @@ class Point;
 class Connector;
 class Archiver;
 
-class Diagram : public Serializable
+class Diagram
 {
 public:
     typedef std::list<Shape*> ShapesType;
     typedef std::list<DiagramObserver*> ObserversType;
 
-    static void move_shapes(std::vector<Shape*>& shapes, const Point& delta);    
+    static void move_shapes(std::vector<Shape*>& shapes, const Point& delta);
     static void move_handle(Shape* shape, Handle* handle, const Point& delta);
     static void update_shape_connectiors(Shape* shape);
     static void update_shape_connectiors_internal(Shape* shape, std::vector<Shape*>& moved_shapes);
 
-    virtual void serialize(Archiver* ar) const;
+    void destroy();
+    
+    void save (Sml::Object* object) const;
+    void load (Sml::Object* object);    
 
     void stack_forward(Shape* shape);
     void stack_backward(Shape* shape);

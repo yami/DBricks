@@ -10,7 +10,8 @@ namespace DBricks {
 class BoxShape : public Shape {
 public:
     typedef void (BoxShape::*MenuActionMethodType) ();
-    
+
+    BoxShape();
     BoxShape(double x, double y, double width, double height);
     BoxShape(const Rect& rect);
     
@@ -28,7 +29,8 @@ public:
     void set_square();
 protected:
     void update_handles();
-
+    void initialize_handles();
+    
     static Menu s_menu;
     
     double& m_x;

@@ -1,6 +1,6 @@
 #include "LineShape.hxx"
 
-#include "Archiver.hxx"
+#include "SML.hxx"
 
 #include <geom/computation.hxx>
 #include <logging/logging.hxx>
@@ -20,6 +20,15 @@ LineShape::LineShape(const Point& from, const Point& to)
     m_corner.x = std::min(from.x, to.x);
     m_corner.y = std::min(from.y, to.y);
 
+    m_handles.push_back(&m_fhandle);
+    m_handles.push_back(&m_thandle);
+
+    m_connectors.push_back(&m_fconnector);
+    m_connectors.push_back(&m_tconnector);
+}
+
+LineShape::LineShape()
+{
     m_handles.push_back(&m_fhandle);
     m_handles.push_back(&m_thandle);
 
@@ -129,14 +138,37 @@ LineShape::bb() const
 }
 
 void
-LineShape::serialize(Archiver* ar) const
+LineShape::save(Sml::Object* object) const
 {
-    ar->object_begin("Line");
-    ar->serialize("fx", m_fhandle.point().x);
-    ar->serialize("fy", m_fhandle.point().y);
-    ar->serialize("tx", m_thandle.point().x);
-    ar->serialize("ty", m_thandle.point().y);
-    ar->object_end("Line");
+    object->add_attribute_data("name", "Line");
+    object->add_attribute_data("type", "Line");
+    
+    object->add_attribute_data("fx", m_fhandle.point().x);
+    object->add_attribute_data("fy", m_fhandle.point().y);
+    object->add_attribute_data("tx", m_thandle.point().x);
+    object->add_attribute_data("ty", m_thandle.point().y);
 }
+
+void
+LineShape::load(Sml::Object* object)
+{
+    Point from;
+    Point to;
+
+    object->get_attribute_data("fx", from.x);
+    object->get_attribute_data("fy", from.y);
+    object->get_attribute_data("tx", to.x);
+    object->get_attribute_data("ty", to.y);
+    
+    m_fconnector.initialize(this, from, Connector::Active);
+    m_tconnector.initialize(this, to,   Connector::Active);
+
+    m_fhandle.initialize("from", this, &m_fconnector, from);
+    m_thandle.initialize("to",   this, &m_tconnector, to);
+
+    m_corner.x = std::min(from.x, to.x);
+    m_corner.y = std::min(from.y, to.y);
+}
+
 
 } // namespace DBricks

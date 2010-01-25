@@ -10,8 +10,6 @@
 
 namespace DBricks {
 
-class Archiver;
-
 class CustomShape : public Shape {
 public:
     CustomShape(const std::string& name);
@@ -42,9 +40,8 @@ public:
         return Rect(0, 0, 0, 0);
     }
 
-    virtual void serialize(Archiver* ar) const
-    {
-    }
+    virtual void save (Sml::Object* object) const {}
+    virtual void load (Sml::Object* object) {}
 private:
     virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const;
     

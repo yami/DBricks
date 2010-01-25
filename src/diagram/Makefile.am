@@ -15,15 +15,20 @@ dbricks_SOURCES = main.cxx \
 	Handle.cxx \
 	Connector.cxx \
 	LineShape.cxx \
-	GroupShape.cxx
+	GroupShape.cxx \
+	ShapeFactory.cxx \
+	SML.cxx \
+	ecl.cxx
 
 dbricks_CPPFLAGS = \
 	$(PANGOMM_CFLAGS) \
 	$(GTKMM_CFLAGS) \
 	$(RSVG_CFLAGS) \
 	$(CAIROMM_CFLAGS) \
-	-I$(top_srcdir)/src
+	-I$(top_srcdir)/src \
+	`ecl-config --cflags`
 
+dbricks_LDFLAGS = 	`ecl-config --libs`
 dbricks_LDADD = \
 	$(PANGOMM_LIBS) \
 	$(GTKMM_LIBS) \

@@ -7,9 +7,14 @@
 #include "ModifyContext.hxx"
 
 
+#include <ecl/ecl.h>
+#include "ecl.hxx"
+
 int main(int argc, char** argv)
 {
     DLOG_SET_LEVEL(DEBUG);
+
+    EclSml::init(argc, argv);
     
     Gtk::Main kit(argc, argv);
 
@@ -21,4 +26,8 @@ int main(int argc, char** argv)
     desktop.show_all();
 
     Gtk::Main::run(desktop);
+
+    EclSml::fini();
+    
+    cl_shutdown();
 }
