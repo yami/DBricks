@@ -48,6 +48,12 @@ Display::~Display()
     util::delete_entries(m_contexts.begin(), m_contexts.end());
 }
 
+void
+Display::reset()
+{
+    for_each(m_contexts.begin(), m_contexts.end(), std::mem_fun(&EventContext::reset));
+}
+
 bool
 Display::on_event(GdkEvent* event)
 {
@@ -230,7 +236,5 @@ Display::popup(EventContext* context, Shape* shape, GdkEventButton* event)
     Gtk::Menu* popup = dynamic_cast<Gtk::Menu*>(uimgr->get_widget("/ShapeMenu"));
     popup->popup(event->button, event->time);
 }
-
-
 
 } // namespace DBricks

@@ -38,6 +38,10 @@ public:
     {
         return 0;
     }
+
+    virtual void reset()
+    {
+    }
 protected:
     Diagram* m_diagram;
     Display* m_display;

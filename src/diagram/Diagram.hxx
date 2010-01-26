@@ -28,7 +28,7 @@ public:
     static void update_shape_connectiors(Shape* shape);
     static void update_shape_connectiors_internal(Shape* shape, std::vector<Shape*>& moved_shapes);
 
-    void destroy();
+    void reset();
     
     void save (Sml::Object* object) const;
     void load (Sml::Object* object);    

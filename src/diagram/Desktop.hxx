@@ -5,6 +5,9 @@
 #include <gtkmm/ruler.h>
 #include <gtkmm/table.h>
 #include <gtkmm/scrollbar.h>
+#include <gtkmm/box.h>
+#include <gtkmm/uimanager.h>
+#include <gtkmm/menu.h>
 
 #include "Display.hxx"
 #include "Diagram.hxx"
@@ -19,11 +22,23 @@ public:
     // Gtk::Windows interfaces
     virtual bool on_event(GdkEvent* event);
 private:
-    void init_layout();
+    void on_new_file();
+    void on_open_file();
+    void on_save_file();
+    void on_quit_program();
+
+    void initialize_menus();
+    void initialize_layout();
+
+    Gtk::Widget* create_menubar();
     
     Diagram m_diagram;          // diagram must be constructed before display
     Display m_display;
 
+    Glib::RefPtr<Gtk::ActionGroup> m_action_group;
+    Glib::RefPtr<Gtk::UIManager>   m_ui_manager;
+    
+    Gtk::VBox  m_vbox;
     Gtk::Table m_table;
     Gtk::HRuler m_hruler;
     Gtk::VRuler m_vruler;

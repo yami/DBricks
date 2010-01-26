@@ -16,11 +16,6 @@
 
 #include <algorithm>
 #include <functional>
-#include <fstream>
-
-
-#include "SML.hxx"
-#include "ecl.hxx"
 
 namespace DBricks {
 
@@ -32,9 +27,7 @@ ModifyContext::initialize()
     s_menu
         .append(new MenuItem("Group",        "Group",         new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::group_shapes)))
         .append(new MenuItem("StackForward", "Stack Forward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_forward)))
-        .append(new MenuItem("StackBackward", "Stack Backward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_backward)))
-        .append(new MenuItem("Save", "Save to file", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::save)))
-        .append(new MenuItem("Load", "Load from file", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::load)));
+        .append(new MenuItem("StackBackward", "Stack Backward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_backward)));
 }
 
 // TODO: add near-selection
@@ -200,30 +193,6 @@ ModifyContext::find_closest_connector(const std::vector<Shape*>& shapes, const P
 }
 
 void
-ModifyContext::save()
-{
-    DLOG(DIAGRAM, DEBUG, "save...\n");
-
-    Sml::Object* diagram_object = new Sml::Object();
-    m_diagram->save(diagram_object);
-
-    std::ofstream ofile("save.txt");
-    EclSml::EclSerializer s(ofile);
-    s.save_object(diagram_object);
-}
-
-void
-ModifyContext::load()
-{
-    DLOG(DIAGRAM, DEBUG, "load...\n");
-
-    this->destroy();
-    m_diagram->destroy();
-    Sml::Object* diagram_object = EclSml::load("save.txt");
-    m_diagram->load(diagram_object);
-}
-
-void
 ModifyContext::group_shapes()
 {
     DLOG(DIAGRAM, DEBUG, "grouping...\n");
@@ -261,9 +230,12 @@ ModifyContext::stack_forward()
 }
 
 void
-ModifyContext::destroy()
+ModifyContext::reset()
 {
     m_selected_shapes.clear();
+    m_selected_handle = 0;
+    bit_zero(m_state);
+    m_display->set_cursor();
 }
 
 }

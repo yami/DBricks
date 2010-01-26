@@ -53,7 +53,7 @@ Diagram::load(Sml::Object* object)
 }
 
 void
-Diagram::destroy()
+Diagram::reset()
 {
     util::delete_entries(m_shapes.begin(), m_shapes.end());
     m_shapes.clear();
