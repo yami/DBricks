@@ -60,13 +60,14 @@ public:
     void popup(EventContext* context, Shape* shape, GdkEventButton* event);
 
     void reset();
+
+    void set_context(EventContext* context);
 private:
     void draw(GdkEventExpose* event=NULL);
     void draw_select(Cairo::RefPtr<Cairo::Context> ctx);
     
-    std::vector<EventContext*> m_contexts;
-    size_t                     m_current_context;
-
+    EventContext* m_context;
+    
     enum SelectState {
         Select_None,
         Select_Selecting,

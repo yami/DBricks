@@ -9,12 +9,10 @@ class Object;
 
 namespace DBricks {
 
-class Archiver;
-
 class EllipseShape: public BoxShape {
 public:
     EllipseShape() {}
-    
+    EllipseShape(const Point& start, Handle*& handle);
     EllipseShape(double x, double y, double width, double height)
         :BoxShape(x, y, width, height)
     {

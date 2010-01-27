@@ -49,7 +49,7 @@ CustomShape::move_handle(Handle* handle, const Point& delta)
 
     Point corner_delta;
         
-    asprintf(&command, "./custom_gen.pl %s update %s %g %g", m_name.c_str(), handle->name().c_str(), delta.x, delta.y);
+    asprintf(&command, "./custom_gen.pl %s update %g %g", m_name.c_str(), delta.x, delta.y);
     Glib::spawn_command_line_sync(command, &out, &err, &status);
     free(command);
         
@@ -77,13 +77,13 @@ CustomShape::update_handle(const std::string& name, const Point& point)
     for (HandlesType::iterator iter=m_handles.begin();
          iter != m_handles.end();
          ++iter) {
-        if ((*iter)->name() == name) {
-            (*iter)->point(point);
-            return;
-        }
+        // if ((*iter)->name() == name) {
+        //     (*iter)->point(point);
+        //     return;
+        // }
     }
 
-    m_handles.push_back(new Handle(name, this, point));
+    //m_handles.push_back(new Handle(name, this, point));
 }
 
 void

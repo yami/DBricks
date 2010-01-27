@@ -26,10 +26,14 @@ private:
     void on_open_file();
     void on_save_file();
     void on_quit_program();
-
+    void on_create_shape(const char* shape_type);
+    void on_select_modify();
+    
     void initialize_menus();
     void initialize_layout();
 
+
+    
     Gtk::Widget* create_menubar();
     
     Diagram m_diagram;          // diagram must be constructed before display

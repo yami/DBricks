@@ -9,12 +9,12 @@ class Object;
 
 namespace DBricks {
 
-class Archiver;
+class Handle;
 
 class RectShape : public BoxShape {
 public:
     RectShape() {}
-    
+    RectShape(const Point& start, Handle*& handle);
     RectShape(double x, double y, double width, double height)
         :BoxShape(x, y, width, height)
     {

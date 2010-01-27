@@ -3,6 +3,11 @@
 
 namespace DBricks {
 
+RectShape::RectShape(const Point& start, Handle*& handle)
+    :BoxShape(start, handle)
+{
+}
+
 void
 RectShape::draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
 {
@@ -38,7 +43,7 @@ RectShape::load(Sml::Object* object)
     object->get_attribute_data("width", m_width);
     object->get_attribute_data("height", m_height);
 
-    initialize_handles();
+    initialize();
 }
 
 } // namespace DBricks

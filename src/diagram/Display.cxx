@@ -26,7 +26,7 @@
 namespace DBricks {
 
 Display::Display(Diagram* diagram)
-    :DiagramObserver(diagram), m_current_context(0), m_select_state(Select_None)
+    :DiagramObserver(diagram), m_context(new ModifyContext(diagram, this)), m_select_state(Select_None)
 {
     add_events(Gdk::EXPOSURE_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
@@ -37,37 +37,30 @@ Display::Display(Diagram* diagram)
     add_events(Gdk::ENTER_NOTIFY_MASK);
     add_events(Gdk::KEY_PRESS_MASK);
     add_events(Gdk::KEY_RELEASE_MASK);
-
-    m_contexts.push_back(new ModifyContext(diagram, this));
-    m_contexts.push_back(new CreateContext(diagram, this));
 }
 
 
 Display::~Display()
 {
-    util::delete_entries(m_contexts.begin(), m_contexts.end());
+    delete m_context;
+}
+
+void
+Display::set_context(EventContext* context)
+{
+    delete m_context;
+    m_context = context;
 }
 
 void
 Display::reset()
 {
-    for_each(m_contexts.begin(), m_contexts.end(), std::mem_fun(&EventContext::reset));
+    m_context->reset();
 }
 
 bool
 Display::on_event(GdkEvent* event)
 {
-    if (event->type == GDK_BUTTON_PRESS) {
-        GdkEventButton *e = (GdkEventButton*)event;
-
-        if (e->button == Middle_Button) {
-            m_current_context = (m_current_context + 1) % m_contexts.size();
-
-            DLOG(DIAGRAM, INFO, "context changed!\n");
-            return true;
-        }
-    }
-
     Point point;
     Shape* shape;
     
@@ -75,7 +68,7 @@ Display::on_event(GdkEvent* event)
         shape  = m_diagram->find_closest_shape(point);
     }
     
-    m_contexts[m_current_context]->on_event(shape, event);
+    m_context->on_event(shape, event);
 
     update();
     return false;

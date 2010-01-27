@@ -22,7 +22,7 @@ namespace DBricks {
 Menu ModifyContext::s_menu;
 
 void
-ModifyContext::initialize()
+ModifyContext::initialize_class()
 {
     s_menu
         .append(new MenuItem("Group",        "Group",         new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::group_shapes)))

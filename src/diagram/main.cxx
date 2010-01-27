@@ -19,8 +19,8 @@ int main(int argc, char** argv)
     Gtk::Main kit(argc, argv);
 
     // TODO: move to else where
-    DBricks::BoxShape::initialize();
-    DBricks::ModifyContext::initialize();
+    DBricks::BoxShape::initialize_class();
+    DBricks::ModifyContext::initialize_class();
     
     DBricks::Desktop desktop;
     desktop.show_all();

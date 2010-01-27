@@ -24,4 +24,23 @@ Shape* ShapeFactory::create_shape(const std::string& type)
     ASSERT_NOT_REACHED();
 }
 
+Shape* ShapeFactory::create_shape(const std::string& type, const Point& start, Handle*& handle)
+{
+    if (type == "Rectangle")
+        return new RectShape(start, handle);
+
+    if (type == "Ellipse")
+        return new EllipseShape(start, handle);
+
+    if (type == "Line")
+        return new LineShape(start, handle);
+
+    if (type == "Group")
+        return new GroupShape(start, handle);
+
+    ASSERT_NOT_REACHED();
+}
+
+
+
 } // namespace DBricks

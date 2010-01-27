@@ -3,6 +3,11 @@
 
 namespace DBricks {
 
+EllipseShape::EllipseShape(const Point& start, Handle*& handle)
+    :BoxShape(start, handle)
+{
+}
+
 void
 EllipseShape::draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
 {
@@ -44,7 +49,7 @@ EllipseShape::load(Sml::Object* object)
     object->get_attribute_data("width", m_width);
     object->get_attribute_data("height", m_height);
 
-    initialize_handles();
+    initialize();
 }
 
 

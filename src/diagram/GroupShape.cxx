@@ -75,7 +75,7 @@ GroupShape::load(Sml::Object* object)
     }
 
     initialize();
-    initialize_handles();
+    BoxShape::initialize();
 }
 
 void

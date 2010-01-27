@@ -17,6 +17,10 @@ public:
     }
 
     GroupShape() {}
+    GroupShape(const Point& start, Handle*& handle)
+        :BoxShape(start, handle)
+    {
+    }
     
     virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const;
     virtual void move(const Point& delta)

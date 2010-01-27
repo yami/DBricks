@@ -20,7 +20,7 @@ public:
     {
     }
 
-    static void initialize();
+    static void initialize_class();
     
     virtual Menu* menu(const Point& point) const
     {

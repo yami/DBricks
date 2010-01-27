@@ -10,104 +10,107 @@ namespace DBricks {
 Menu BoxShape::s_menu;
 
 void
-BoxShape::initialize()
+BoxShape::initialize_class()
 {
     s_menu
         .append(new MenuItem("Aspect", "Fixed Aspect", new ShapeMenuAction<BoxShape, BoxShape::MenuActionMethodType>(&BoxShape::set_fixed_aspect)))
         .append(new MenuItem("Square", "Square",       new ShapeMenuAction<BoxShape, BoxShape::MenuActionMethodType>(&BoxShape::set_square)));    
 }
 
+BoxShape::BoxShape(const Point& start, Handle*& handle)
+    :Shape(start.x, start.y), m_x(m_corner.x), m_y(m_corner.y), m_width(40), m_height(40)
+{
+    handle = &m_sehandle;
+    initialize();
+}
+
 BoxShape::BoxShape(const Rect& rect)
     :Shape(rect.x1(), rect.y1()), m_x(m_corner.x), m_y(m_corner.y),
-     m_width(rect.width()), m_height(rect.height()),
-
-     m_lconnector(this, Point(m_x                 , m_y + rect.height()/2)),
-     m_rconnector(this, Point(m_x + rect.width()  , m_y + rect.height()/2)),
-     m_tconnector(this, Point(m_x + rect.width()/2, m_y)),
-     m_bconnector(this, Point(m_x + rect.width()/2, m_y + rect.height())),
-     
-     m_lhandle("left",   this, &m_lconnector, Point(m_x                 , m_y + rect.height()/2)),
-     m_rhandle("right",  this, &m_rconnector, Point(m_x + rect.width()  , m_y + rect.height()/2)),
-     m_thandle("top",    this, &m_tconnector, Point(m_x + rect.width()/2, m_y)),
-     m_bhandle("bottom", this, &m_bconnector, Point(m_x + rect.width()/2, m_y + rect.height()))
+     m_width(rect.width()), m_height(rect.height())
 {
-    m_handles.push_back(&m_lhandle);
-    m_handles.push_back(&m_rhandle);
-    m_handles.push_back(&m_thandle);
-    m_handles.push_back(&m_bhandle);
-    
-    m_connectors.push_back(&m_lconnector);
-    m_connectors.push_back(&m_rconnector);
-    m_connectors.push_back(&m_tconnector);
-    m_connectors.push_back(&m_bconnector);
+    initialize();
 }
 
 BoxShape::BoxShape(double x, double y, double width, double height)
     :Shape(x, y), m_x(m_corner.x), m_y(m_corner.y),
-     m_width(width), m_height(height),
-
-     m_lconnector(this, Point(m_x          , m_y + height/2)),
-     m_rconnector(this, Point(m_x + width  , m_y + height/2)),
-     m_tconnector(this, Point(m_x + width/2, m_y)),
-     m_bconnector(this, Point(m_x + width/2, m_y + height)),
-     
-     m_lhandle("left",   this, &m_lconnector, Point(m_x          , m_y + height/2)),
-     m_rhandle("right",  this, &m_rconnector, Point(m_x + width  , m_y + height/2)),
-     m_thandle("top",    this, &m_tconnector, Point(m_x + width/2, m_y)),
-     m_bhandle("bottom", this, &m_bconnector, Point(m_x + width/2, m_y + height))
+     m_width(width), m_height(height)
 {
-    m_handles.push_back(&m_lhandle);
-    m_handles.push_back(&m_rhandle);
-    m_handles.push_back(&m_thandle);
-    m_handles.push_back(&m_bhandle);
-
-    m_connectors.push_back(&m_lconnector);
-    m_connectors.push_back(&m_rconnector);
-    m_connectors.push_back(&m_tconnector);
-    m_connectors.push_back(&m_bconnector);    
+    initialize();
 }
 
 
 BoxShape::BoxShape()
- :m_x(m_corner.x), m_y(m_corner.y)
+    :m_x(m_corner.x), m_y(m_corner.y)
 {
-    m_handles.push_back(&m_lhandle);
-    m_handles.push_back(&m_rhandle);
-    m_handles.push_back(&m_thandle);
-    m_handles.push_back(&m_bhandle);
-
-    m_connectors.push_back(&m_lconnector);
-    m_connectors.push_back(&m_rconnector);
-    m_connectors.push_back(&m_tconnector);
-    m_connectors.push_back(&m_bconnector);
 }
 
 void
 BoxShape::update_handles()
 {
+    m_lconnector.point(Point(m_x            , m_y + m_height/2));
+    m_rconnector.point(Point(m_x + m_width  , m_y + m_height/2));
+    m_tconnector.point(Point(m_x + m_width/2, m_y));
+    m_bconnector.point(Point(m_x + m_width/2, m_y + m_height));
+
+    m_nwconnector.point(Point(m_x,           m_y));
+    m_neconnector.point(Point(m_x + m_width, m_y));
+    m_seconnector.point(Point(m_x + m_width, m_y + m_height));
+    m_swconnector.point(Point(m_x,           m_y + m_height));    
+
+    
     m_lhandle.point(Point(m_x            , m_y + m_height/2));
     m_rhandle.point(Point(m_x + m_width  , m_y + m_height/2));
     m_thandle.point(Point(m_x + m_width/2, m_y));
     m_bhandle.point(Point(m_x + m_width/2, m_y + m_height));
 
-    m_lconnector.point(Point(m_x            , m_y + m_height/2));
-    m_rconnector.point(Point(m_x + m_width  , m_y + m_height/2));
-    m_tconnector.point(Point(m_x + m_width/2, m_y));
-    m_bconnector.point(Point(m_x + m_width/2, m_y + m_height));
+    m_nwhandle.point(Point(m_x,           m_y));
+    m_nehandle.point(Point(m_x + m_width, m_y));
+    m_sehandle.point(Point(m_x + m_width, m_y + m_height));
+    m_swhandle.point(Point(m_x,           m_y + m_height));
 }
 
 void
-BoxShape::initialize_handles()
+BoxShape::initialize()
 {
     m_lconnector.initialize(this, Point(m_x            , m_y + m_height/2));
     m_rconnector.initialize(this, Point(m_x + m_width  , m_y + m_height/2));
     m_tconnector.initialize(this, Point(m_x + m_width/2, m_y));
     m_bconnector.initialize(this, Point(m_x + m_width/2, m_y + m_height));
-     
-    m_lhandle.initialize("left",   this, &m_lconnector, Point(m_x            , m_y + m_height/2));
-    m_rhandle.initialize("right",  this, &m_rconnector, Point(m_x + m_width  , m_y + m_height/2));
-    m_thandle.initialize("top",    this, &m_tconnector, Point(m_x + m_width/2, m_y));
-    m_bhandle.initialize("bottom", this, &m_bconnector, Point(m_x + m_width/2, m_y + m_height));
+
+    m_nwconnector.initialize(this, Point(m_x,           m_y));
+    m_neconnector.initialize(this, Point(m_x + m_width, m_y));
+    m_seconnector.initialize(this, Point(m_x + m_width, m_y + m_height));
+    m_swconnector.initialize(this, Point(m_x,           m_y + m_height));
+
+    
+    m_lhandle.initialize(this, &m_lconnector, Point(m_x            , m_y + m_height/2));
+    m_rhandle.initialize(this, &m_rconnector, Point(m_x + m_width  , m_y + m_height/2));
+    m_thandle.initialize(this, &m_tconnector, Point(m_x + m_width/2, m_y));
+    m_bhandle.initialize(this, &m_bconnector, Point(m_x + m_width/2, m_y + m_height));
+
+    m_nwhandle.initialize(this, &m_nwconnector, Point(m_x,           m_y));
+    m_nehandle.initialize(this, &m_neconnector, Point(m_x + m_width, m_y));
+    m_sehandle.initialize(this, &m_seconnector, Point(m_x + m_width, m_y + m_height));
+    m_swhandle.initialize(this, &m_swconnector, Point(m_x,           m_y + m_height));    
+
+
+    m_handles.push_back(&m_thandle);
+    m_handles.push_back(&m_nehandle);
+    m_handles.push_back(&m_rhandle);
+    m_handles.push_back(&m_sehandle);
+    m_handles.push_back(&m_bhandle);
+    m_handles.push_back(&m_swhandle);
+    m_handles.push_back(&m_lhandle);
+    m_handles.push_back(&m_nwhandle);
+    
+    m_connectors.push_back(&m_tconnector);
+    m_connectors.push_back(&m_neconnector);
+    m_connectors.push_back(&m_rconnector);
+    m_connectors.push_back(&m_seconnector);
+    m_connectors.push_back(&m_bconnector);
+    m_connectors.push_back(&m_swconnector);
+    m_connectors.push_back(&m_lconnector);
+    m_connectors.push_back(&m_nwconnector);
 }
 
 void
@@ -123,6 +126,24 @@ BoxShape::move_handle(Handle* handle, const Point& delta)
         m_height -= delta.y;
     } else if (handle == &m_bhandle) {
         m_height += delta.y;
+    } else if (handle == &m_nwhandle) {
+        m_x      += delta.x;
+        m_width  -= delta.x;
+        m_y      += delta.y;
+        m_height -= delta.y;
+    } else if (handle == &m_nehandle) {
+        m_x      -= delta.x;
+        m_width  += delta.x;
+        m_y      -= delta.y;
+        m_height += delta.y;
+    } else if (handle == &m_sehandle) {
+        m_width  += delta.x;
+        m_height += delta.y;        
+    } else if (handle == &m_swhandle) {
+        m_x      += delta.x;
+        m_width  -= delta.x;
+        m_y      += delta.y;
+        m_height += delta.y;        
     } else {
         ASSERT_NOT_REACHED();
     }
@@ -143,6 +164,24 @@ BoxShape::move_connector(Connector* connector, const Point& delta)
         m_height -= delta.y;
     } else if (connector == &m_bconnector) {
         m_height += delta.y;
+    } else if (connector == &m_nwconnector) {
+        m_x      += delta.x;
+        m_width  -= delta.x;
+        m_y      += delta.y;
+        m_height -= delta.y;
+    } else if (connector == &m_neconnector) {
+        m_x      -= delta.x;
+        m_width  += delta.x;
+        m_y      -= delta.y;
+        m_height += delta.y;
+    } else if (connector == &m_seconnector) {
+        m_width  += delta.x;
+        m_height += delta.y;        
+    } else if (connector == &m_swconnector) {
+        m_x      += delta.x;
+        m_width  -= delta.x;
+        m_y      += delta.y;
+        m_height += delta.y;        
     } else {
         ASSERT_NOT_REACHED();
     }

@@ -6,9 +6,12 @@
 
 namespace DBricks {
 
+class Handle;
+
 class LineShape: public Shape {
 public:
     LineShape();
+    LineShape(const Point& start, Handle*& handle);
     LineShape(const Point& from, const Point& to);
     
     // Shape interfaces
@@ -24,6 +27,8 @@ public:
     virtual void save (Sml::Object* object) const;
     virtual void load (Sml::Object* object);
 private:
+    void initialize(const Point& from, const Point& to);
+    
     Connector m_fconnector;
     Connector m_tconnector;
     

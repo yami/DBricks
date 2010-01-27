@@ -8,15 +8,34 @@
 
 namespace DBricks {
 
-LineShape::LineShape(const Point& from, const Point& to)
-    :Shape(Break_Connections),
-     
-     m_fconnector(this, from, Connector::Active),
-     m_tconnector(this, to, Connector::Active),
-    
-     m_fhandle("from", this, &m_fconnector, from),
-     m_thandle("to",   this, &m_tconnector, to)
+LineShape::LineShape(const Point& start, Handle*& handle)
+    :Shape(Break_Connections)
 {
+    // TODO: better default value ...
+    initialize(start, Point(start.x+5.0, start.y+5.0));
+    handle = &m_fhandle;
+}
+
+LineShape::LineShape(const Point& from, const Point& to)
+    :Shape(Break_Connections)
+{
+    initialize(from, to);
+}
+
+LineShape::LineShape()
+    :Shape(Break_Connections)
+{
+}
+
+void
+LineShape::initialize(const Point& from, const Point& to)
+{
+    m_fconnector.initialize(this, from, Connector::Active);
+    m_tconnector.initialize(this, to,   Connector::Active);
+
+    m_fhandle.initialize(this, &m_fconnector, from);
+    m_thandle.initialize(this, &m_tconnector, to);
+
     m_corner.x = std::min(from.x, to.x);
     m_corner.y = std::min(from.y, to.y);
 
@@ -24,16 +43,7 @@ LineShape::LineShape(const Point& from, const Point& to)
     m_handles.push_back(&m_thandle);
 
     m_connectors.push_back(&m_fconnector);
-    m_connectors.push_back(&m_tconnector);
-}
-
-LineShape::LineShape()
-{
-    m_handles.push_back(&m_fhandle);
-    m_handles.push_back(&m_thandle);
-
-    m_connectors.push_back(&m_fconnector);
-    m_connectors.push_back(&m_tconnector);
+    m_connectors.push_back(&m_tconnector);    
 }
 
 void
@@ -149,6 +159,8 @@ LineShape::save(Sml::Object* object) const
     object->add_attribute_data("ty", m_thandle.point().y);
 }
 
+
+
 void
 LineShape::load(Sml::Object* object)
 {
@@ -160,14 +172,7 @@ LineShape::load(Sml::Object* object)
     object->get_attribute_data("tx", to.x);
     object->get_attribute_data("ty", to.y);
     
-    m_fconnector.initialize(this, from, Connector::Active);
-    m_tconnector.initialize(this, to,   Connector::Active);
-
-    m_fhandle.initialize("from", this, &m_fconnector, from);
-    m_thandle.initialize("to",   this, &m_tconnector, to);
-
-    m_corner.x = std::min(from.x, to.x);
-    m_corner.y = std::min(from.y, to.y);
+    initialize(from, to);
 }
 
 

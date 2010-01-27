@@ -4,51 +4,48 @@
 
 #include "defines.hxx"
 #include "Diagram.hxx"
-#include "CustomShape.hxx"
-#include "RectShape.hxx"
-#include "EllipseShape.hxx"
-#include "LineShape.hxx"
+#include "ShapeFactory.hxx"
+#include "gtkutil.hxx"
+#include "Handle.hxx"
+#include "Shape.hxx"
 
 namespace DBricks {
 
 bool
 CreateContext::on_button_press_event(Shape* shape, GdkEventButton* e)
 {
-    static int max_shapes = 3;
-    static int s = 0;
-    
     if (e->button == Left_Button) {
-        switch ((s++)%max_shapes) {
-            case 0:
-                DLOG(SHAPE, INFO, "CreateContext:: add rect shape\n");
-                m_diagram->add_shape(new RectShape(10, 20, 40, 40));
-                break;
-            case 1:
-                DLOG(SHAPE, INFO, "CreateContext:: add elli shape\n");
-                m_diagram->add_shape(new EllipseShape(20, 40, 50, 50));
-                break;
-            case 2:
-                DLOG(SHAPE, INFO, "CreateContext:: add line shape\n");
-                m_diagram->add_shape(new LineShape(Point(20, 40), Point(50, 50)));
-                break;
-        }
+        m_state = CC_Dragging;
+        m_shape = ShapeFactory::create_shape(m_shape_type, point_of_event(e), m_handle);
+        m_shape->show_handles();
+        m_diagram->add_shape(m_shape);
     }
+    
     return false;
+}
 
+bool
+CreateContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
+{
+    Point point = point_of_event(e);
+    if (m_state == CC_Dragging) {
+        Diagram::move_handle(m_shape, m_handle, point - m_handle->point());
+    }
 
-    // o.k. we do not use this testing right now.
-    if (0) {
-        bool pass_down = false;
+    return false;
+}
 
-        if (e->button == Left_Button) {
-            DLOG(DIAGRAM, DEBUG, "CreateContext: add shape seq.\n");
-            m_diagram->add_shape(new CustomShape("seq"));
-        } else {
-            DLOG(DIAGRAM, DEBUG, "CreateContext: buttons other than Left_Button are not implemented yet!\n");
-        }
+bool
+CreateContext::on_button_release_event(Shape* shape, GdkEventButton* e)
+{
+    if (m_state == CC_Dragging) {
+        m_shape->hide_handles();
+        m_shape  = NULL;
+        m_handle = NULL;
+        m_state  = CC_None;
+    }
 
-        return pass_down;
-    }    
+    return false;
 }
 
 } // namespace DBricks

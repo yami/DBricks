@@ -8,6 +8,9 @@
 
 #include "SML.hxx"
 #include "ecl.hxx"
+#include "ShapeFactory.hxx"
+#include "CreateContext.hxx"
+#include "ModifyContext.hxx"
 
 #include "gtkmm/filechooserdialog.h"
 
@@ -108,6 +111,18 @@ Desktop::on_quit_program()
 }
 
 void
+Desktop::on_create_shape(const char* shape_type)
+{
+    m_display.set_context(new CreateContext(&m_diagram, &m_display, shape_type));
+}
+
+void
+Desktop::on_select_modify()
+{
+    m_display.set_context(new ModifyContext(&m_diagram, &m_display));
+}
+
+void
 Desktop::initialize_menus()
 {
     m_action_group->add(
@@ -125,6 +140,25 @@ Desktop::initialize_menus()
         Gtk::Action::create("FileQuitStandard", Gtk::Stock::QUIT, "_Quit", "Quit the program"),
         sigc::mem_fun(*this, &Desktop::on_quit_program));
 
+    m_action_group->add(
+        Gtk::Action::create("CreateMenu", "Create"));
+    m_action_group->add(
+        Gtk::Action::create("CreateRectangle", "Rectangle"),
+        sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "Rectangle"));
+    m_action_group->add(
+        Gtk::Action::create("CreateEllipse", "Ellipse"),
+        sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "Ellipse"));
+    m_action_group->add(
+        Gtk::Action::create("CreateLine", "Line"),
+        sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "Line"));
+
+    m_action_group->add(
+        Gtk::Action::create("ToolsMenu", "Tools"));
+    m_action_group->add(
+        Gtk::Action::create("ModifyTool", "Modify"),
+        sigc::mem_fun(*this, &Desktop::on_select_modify));
+    
+    
     m_ui_manager->insert_action_group(m_action_group);
     Glib::ustring ui_info =
         "<ui>"
@@ -134,6 +168,14 @@ Desktop::initialize_menus()
         "      <menuitem action='FileNewStandard' />"
         "      <menuitem action='FileSaveStandard' />"
         "      <menuitem action='FileQuitStandard' />"
+        "    </menu>"
+        "    <menu action='CreateMenu'>"
+        "      <menuitem action='CreateRectangle' />"
+        "      <menuitem action='CreateEllipse' />"
+        "      <menuitem action='CreateLine' />"
+        "    </menu>"
+        "    <menu action='ToolsMenu'>"
+        "      <menuitem action='ModifyTool' />"
         "    </menu>"
         "  </menubar>"
         "</ui>";

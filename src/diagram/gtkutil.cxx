@@ -1,17 +1,15 @@
 #include "gtkutil.hxx"
+#include <util/assert.hxx>
 #include <geom/Point.hxx>
 
 namespace DBricks {
 
 template<class EventT>
-static bool
-event_point(GdkEvent* event, Point* point)
+static Point
+event_point(GdkEvent* event)
 {
     EventT* e = reinterpret_cast<EventT*>(event);
-    point->x = e->x;
-    point->y = e->y;
-
-    return true;
+    return Point(e->x, e->y);
 }
 
 
@@ -21,16 +19,19 @@ bool point_of_event(GdkEvent* event, Point* point)
         event->type == GDK_2BUTTON_PRESS |
         event->type == GDK_3BUTTON_PRESS |
         event->type == GDK_BUTTON_RELEASE) {
-        return event_point<GdkEventButton>(event, point);
+        *point = event_point<GdkEventButton>(event);
+        return true;
     }
 
     if (event->type == GDK_MOTION_NOTIFY) {
-        return event_point<GdkEventMotion>(event, point);
+        *point = event_point<GdkEventMotion>(event);
+        return true;
     }
 
     if (event->type == GDK_ENTER_NOTIFY |
         event->type == GDK_LEAVE_NOTIFY) {
-        return event_point<GdkEventCrossing>(event, point);
+        *point = event_point<GdkEventCrossing>(event);
+        return true;
     }
 
     return false;

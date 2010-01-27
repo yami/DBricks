@@ -17,13 +17,13 @@ class Handle {
 public:
     Handle() {}
     
-    Handle(const std::string& name, Shape* shape, const Point& point)
-        :m_name(name), m_shape(shape), m_connector(0), m_point(point)
+    Handle(Shape* shape, const Point& point)
+        :m_shape(shape), m_connector(0), m_point(point)
     {
     }
 
-    Handle(const std::string& name, Shape* shape, Connector* connector, const Point& point)
-        :m_name(name), m_shape(shape), m_connector(connector), m_point(point)
+    Handle(Shape* shape, Connector* connector, const Point& point)
+        :m_shape(shape), m_connector(connector), m_point(point)
     {
         ASSERT(m_connector);
     }
@@ -32,18 +32,12 @@ public:
     {
     }
 
-    void initialize(const std::string& name, Shape* shape, Connector* connector, const Point& point)
+    void initialize(Shape* shape, Connector* connector, const Point& point)
     {
-        m_name      = name;
         m_shape     = shape;
         m_connector = connector;
         m_point     = point;
-    }
-    
-    const std::string& name() const
-    {
-        return m_name;
-    }
+    }    
 
     Connector* connector() const
     {
@@ -68,7 +62,6 @@ public:
     void draw(Cairo::RefPtr<Cairo::Context> ctx) const;
     
 private:
-    std::string m_name;
     Shape*      m_shape;
     Connector*  m_connector;
     Point       m_point;

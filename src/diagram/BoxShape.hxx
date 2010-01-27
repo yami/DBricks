@@ -12,10 +12,11 @@ public:
     typedef void (BoxShape::*MenuActionMethodType) ();
 
     BoxShape();
+    BoxShape(const Point& start, Handle*& handle);
     BoxShape(double x, double y, double width, double height);
     BoxShape(const Rect& rect);
     
-    static void initialize();
+    static void initialize_class();
     
     virtual void move_handle(Handle* handle, const Point& delta);
     virtual void move_connector(Connector* connector, const Point& delta);
@@ -29,7 +30,7 @@ public:
     void set_square();
 protected:
     void update_handles();
-    void initialize_handles();
+    void initialize();
     
     static Menu s_menu;
     
@@ -42,11 +43,20 @@ protected:
     Connector  m_rconnector;
     Connector  m_tconnector;
     Connector  m_bconnector;
+    Connector  m_nwconnector;
+    Connector  m_neconnector;
+    Connector  m_seconnector;
+    Connector  m_swconnector;
+
     
     Handle  m_lhandle;
     Handle  m_rhandle;
     Handle  m_thandle;
     Handle  m_bhandle;
+    Handle  m_nwhandle;
+    Handle  m_nehandle;
+    Handle  m_sehandle;
+    Handle  m_swhandle;
 };
 
 
