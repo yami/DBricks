@@ -4,6 +4,8 @@
 #include <list>
 #include <vector>
 
+#include "Selection.hxx"
+
 namespace Sml {
 class Object;
 }
@@ -47,15 +49,22 @@ public:
     Connector* find_closest_connector(const std::vector<Shape*>& shapes, const Point& point) const;
     
     const ShapesType& shapes() const;
-
+    
     void notify_observers() const;
 
     void attach_observer(DiagramObserver* observer);
 
     void detach_observer(DiagramObserver* observer);
+
+    Selection& selection()
+    {
+        return m_selection;
+    }
+    
 private:
-    ShapesType m_shapes;
+    ShapesType    m_shapes;
     ObserversType m_observers;
+    Selection     m_selection;
 };
 
 } // namespace DBricks

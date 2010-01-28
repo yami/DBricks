@@ -41,22 +41,21 @@ ModifyContext::pick_current_shape(Shape* shape, const Point& point)
 {
     const bool changed = true;
 
-    if (util::in_container(m_selected_shapes, shape)) {
+    Selection& selection = m_diagram->selection();
+    if (selection.is_selected(shape)) {
         return !changed;
     }
-
-    std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::hide_handles));
+    
     if (shape) {
-        m_selected_shapes.clear();            
-        m_selected_shapes.push_back(shape);
+        selection.unselect();
+        selection.select(shape);
     } else {
         // near-selection works for single selection only. below is non-near-selection condidtion
-        if (m_selected_shapes.size() != 1 || !m_diagram->find_closest_handle(m_selected_shapes[0], point)) {
-            m_selected_shapes.clear();
+        if (selection.size() != 1 || !m_diagram->find_closest_handle(selection[0], point)) {
+            selection.unselect();
         }
     }
     
-    std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::show_handles));
     return changed;
 }
 
@@ -65,12 +64,15 @@ ModifyContext::on_button_press_event(Shape* shape, GdkEventButton* e)
 {
     bool pass_down = false;
     Point point(e->x, e->y);
+
+    Selection& selection = m_diagram->selection();
     
     if (e->button == Left_Button) {
         pick_current_shape(shape, point);
 
-        if (!m_selected_shapes.empty()) {
-            m_selected_handle = m_diagram->find_closest_handle(m_selected_shapes[0], point);
+        if (!selection.empty()) {
+            m_selected_handle = selection.size() > 1 ? NULL : m_diagram->find_closest_handle(selection[0], point);
+
             if (m_selected_handle) {
                 bit_set(m_state, HandleMoving);
             } else {
@@ -85,10 +87,8 @@ ModifyContext::on_button_press_event(Shape* shape, GdkEventButton* e)
         m_mpoint.y = e->y;
         m_opoint   = m_mpoint;
     } else if (e->button == Right_Button) {
-        if (!m_selected_shapes.empty()) {
-            DLOG(DIAGRAM, DEBUG, "Test Menu...\n");
-
-            m_display->popup(this, m_selected_shapes[0], e);
+        if (!selection.empty()) {
+            m_display->popup(this, selection[0], e);
         }
     }
 
@@ -99,12 +99,13 @@ bool
 ModifyContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
 {
     bool pass_down = false;
-        
     Point point(e->x, e->y);
 
+    Selection& selection = m_diagram->selection();
+    
     if (bit_is_set(m_state, Dragging)) {
         m_display->set_cursor(Gdk::FLEUR);
-        Diagram::move_shapes(m_selected_shapes, point - m_mpoint);
+        Diagram::move_shapes(selection.shapes(), point - m_mpoint);
     } else if (bit_is_set(m_state, Selecting)) {
         m_display->selecting(m_opoint, m_mpoint, point);
     } else if (bit_is_set(m_state, HandleMoving)) {
@@ -114,9 +115,9 @@ ModifyContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
         } else {
             m_display->set_cursor(Gdk::X_CURSOR);
         }
-        Diagram::move_handle(m_selected_shapes[0], m_selected_handle, point - m_mpoint);
+        Diagram::move_handle(selection[0], m_selected_handle, point - m_mpoint);
     } else {
-        if (!m_selected_shapes.empty() && m_diagram->find_closest_handle(m_selected_shapes[0], point)) {
+        if (selection.size() == 1 && m_diagram->find_closest_handle(selection[0], point)) {
             m_display->set_cursor(Gdk::X_CURSOR);
         } else {
             m_display->set_cursor();
@@ -133,25 +134,17 @@ ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
 {
     Point point(e->x, e->y);
 
+    Selection& selection = m_diagram->selection();
+    
     if (bit_is_set(m_state, Selecting)) {
         m_display->selected(m_opoint, point);
 
-        std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::hide_handles));
-        m_selected_shapes.clear();
-        
-        for(Diagram::ShapesType::const_iterator iter = m_diagram->shapes().begin();
-            iter != m_diagram->shapes().end();
-            ++iter) {
-            if ((*iter)->in(Rect(m_opoint, point))) {
-                m_selected_shapes.push_back(*iter);
-            }
-        }
-
-        std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::show_handles));        
+        selection.unselect();
+        selection.select(Rect(m_opoint, point), m_diagram->shapes().begin(), m_diagram->shapes().end());
     } else if (bit_is_set(m_state, HandleMoving)) {
-        assert(!m_selected_shapes.empty());
-        Connector* connector1 = this->find_closest_connector(m_selected_shapes, point);
-        Connector* connector2 = m_diagram->find_closest_connector(m_selected_shapes, point);
+        assert(selection.size() == 1);
+        Connector* connector1 = this->find_closest_connector(selection.shapes(), point);
+        Connector* connector2 = m_diagram->find_closest_connector(selection.shapes(), point);
 
         if (connector1 && connector2) {
             Connector::build_connections(connector1, connector2);
@@ -197,18 +190,17 @@ ModifyContext::group_shapes()
 {
     DLOG(DIAGRAM, DEBUG, "grouping...\n");
 
-    GroupShape* group = new GroupShape(m_selected_shapes.begin(), m_selected_shapes.end());
+    Selection& selection = m_diagram->selection();
+    GroupShape* group = new GroupShape(selection.shapes().begin(), selection.shapes().end());
     m_diagram->add_shape(group);
-    for (std::vector<Shape*>::iterator iter = m_selected_shapes.begin();
-         iter != m_selected_shapes.end();
+    for (std::vector<Shape*>::iterator iter = selection.shapes().begin();
+         iter != selection.shapes().end();
          ++iter) {
         m_diagram->del_shape(*iter);
     }
-
-    std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::hide_handles));
-    m_selected_shapes.clear();
-    m_selected_shapes.push_back(group);
-    std::for_each(m_selected_shapes.begin(), m_selected_shapes.end(), std::mem_fun(&Shape::show_handles));    
+    
+    selection.unselect();
+    selection.select(group);
 }
 
 void
@@ -216,8 +208,10 @@ ModifyContext::stack_backward()
 {
     DLOG(DIAGRAM, DEBUG, "stacking backward...\n");
 
-    if (!m_selected_shapes.empty())
-        m_diagram->stack_backward(m_selected_shapes[0]);
+    Selection& selection = m_diagram->selection();
+    
+    if (selection.size() == 1)
+        m_diagram->stack_backward(selection[0]);
 }
 
 void
@@ -225,14 +219,15 @@ ModifyContext::stack_forward()
 {
     DLOG(DIAGRAM, DEBUG, "stacking forward...\n");
 
-    if (!m_selected_shapes.empty())
-        m_diagram->stack_forward(m_selected_shapes[0]);
+    Selection& selection = m_diagram->selection();
+    
+    if (selection.size() == 1)
+        m_diagram->stack_forward(selection[0]);
 }
 
 void
 ModifyContext::reset()
 {
-    m_selected_shapes.clear();
     m_selected_handle = 0;
     bit_zero(m_state);
     m_display->set_cursor();

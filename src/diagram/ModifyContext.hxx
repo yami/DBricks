@@ -48,12 +48,10 @@ private:
 
     static Menu s_menu;
     
-    Point   m_mpoint;
-    Point   m_opoint;
-    unsigned int   m_state;
-
-    std::vector<Shape*> m_selected_shapes;
-    Handle* m_selected_handle;
+    Point        m_mpoint;
+    Point        m_opoint;
+    unsigned int m_state;
+    Handle*      m_selected_handle;
 };
 
 }
