@@ -53,7 +53,7 @@ Desktop::on_save_file()
 {
     DLOG(DIAGRAM, DEBUG, "on save file...\n");
 
-    Gtk::FileChooserDialog dialog("Save to a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
+    Gtk::FileChooserDialog dialog("Save to a file", Gtk::FILE_CHOOSER_ACTION_SAVE);
     dialog.set_transient_for(*this);
     dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
     dialog.add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_OK);
