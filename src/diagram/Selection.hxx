@@ -30,6 +30,15 @@ public:
                 select(*iter);
         }
     }
+
+    template<class ForwardIterT>
+    void select(ForwardIterT begin, ForwardIterT end)
+    {
+        for (ForwardIterT iter = begin; iter != end; ++iter) {
+            select(*iter);
+        }
+    }
+    
     
     bool is_selected(Shape* shape) const
     {

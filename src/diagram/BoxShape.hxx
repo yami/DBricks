@@ -25,7 +25,7 @@ public:
     virtual bool in(const Rect& rect) const;
     virtual Rect bb() const;
     virtual Menu* menu(const Point& point) const;
-
+    
     void set_fixed_aspect();
     void set_square();
 protected:

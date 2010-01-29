@@ -36,6 +36,18 @@ public:
     virtual Rect bb() const;
     virtual void save(Sml::Object* object) const;
     virtual void load(Sml::Object* object);
+
+    virtual GroupShape* clone() const
+    {
+        std::vector<Shape*> shapes;
+        for (std::vector<Shape*>::const_iterator iter = m_shapes.begin();
+             iter != m_shapes.end();
+             ++iter) {
+            shapes.push_back((*iter)->clone());
+        }
+        
+        return new GroupShape(shapes.begin(), shapes.end());
+    }    
 private:
     void initialize();
     

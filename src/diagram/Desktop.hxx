@@ -11,7 +11,7 @@
 
 #include "Display.hxx"
 #include "Diagram.hxx"
-
+#include "Clipboard.hxx"
 
 namespace DBricks {
 
@@ -28,6 +28,8 @@ private:
     void on_quit_program();
     void on_create_shape(const char* shape_type);
     void on_select_modify();
+    void on_edit_copy();
+    void on_edit_paste();
     
     void initialize_menus();
     void initialize_layout();
@@ -36,9 +38,10 @@ private:
     
     Gtk::Widget* create_menubar();
     
-    Diagram m_diagram;          // diagram must be constructed before display
-    Display m_display;
-
+    Diagram        m_diagram;   // diagram must be constructed before display
+    Display        m_display;
+    ShapeClipboard m_clipbard;
+    
     Glib::RefPtr<Gtk::ActionGroup> m_action_group;
     Glib::RefPtr<Gtk::UIManager>   m_ui_manager;
     

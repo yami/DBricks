@@ -11,7 +11,7 @@
 #include "ShapeFactory.hxx"
 #include "CreateContext.hxx"
 #include "ModifyContext.hxx"
-
+#include "Clipboard.hxx"
 #include "gtkmm/filechooserdialog.h"
 
 namespace DBricks {
@@ -123,6 +123,43 @@ Desktop::on_select_modify()
 }
 
 void
+Desktop::on_edit_copy()
+{
+    Selection& selection = m_diagram.selection();
+
+    if (selection.empty()) {
+        DLOG(DIAGRAM, DEBUG, "on_edit_copy: selection is empty!\n");
+        return;
+    }
+    
+    m_clipbard.put_clip(selection.shapes().begin(), selection.shapes().end());
+}
+
+void
+Desktop::on_edit_paste()
+{
+    if (m_clipbard.empty()) {
+        DLOG(DIAGRAM, DEBUG, "on_edit_paste: clipboard is empty!\n");
+        return;
+    }
+    
+    Selection& selection = m_diagram.selection();
+
+    selection.unselect();
+    ShapeList* shapes = m_clipbard.get_clip();
+
+    for (ShapeList::iterator iter = shapes->begin(); iter != shapes->end(); ++iter)
+        m_diagram.add_shape(*iter);
+    
+    selection.select(shapes->begin(), shapes->end());
+    Diagram::move_shapes(*shapes, Point(10, 10));
+    
+    delete shapes;
+    
+    m_diagram.notify_observers();
+}
+
+void
 Desktop::initialize_menus()
 {
     m_action_group->add(
@@ -157,6 +194,16 @@ Desktop::initialize_menus()
     m_action_group->add(
         Gtk::Action::create("ModifyTool", "Modify"),
         sigc::mem_fun(*this, &Desktop::on_select_modify));
+
+
+    m_action_group->add(
+        Gtk::Action::create("EditMenu", "Edit"));
+    m_action_group->add(
+        Gtk::Action::create("EditCopy", "Copy"),
+        sigc::mem_fun(*this, &Desktop::on_edit_copy));
+    m_action_group->add(
+        Gtk::Action::create("EditPaste", "Paste"),
+        sigc::mem_fun(*this, &Desktop::on_edit_paste));
     
     
     m_ui_manager->insert_action_group(m_action_group);
@@ -176,6 +223,10 @@ Desktop::initialize_menus()
         "    </menu>"
         "    <menu action='ToolsMenu'>"
         "      <menuitem action='ModifyTool' />"
+        "    </menu>"
+        "    <menu action='EditMenu'>"
+        "      <menuitem action='EditCopy' />"
+        "      <menuitem action='EditPaste' />"
         "    </menu>"
         "  </menubar>"
         "</ui>";

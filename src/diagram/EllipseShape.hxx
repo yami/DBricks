@@ -19,7 +19,12 @@ public:
     }
 
     virtual void save (Sml::Object* object) const;
-    virtual void load (Sml::Object* object);    
+    virtual void load (Sml::Object* object);
+
+    virtual EllipseShape* clone() const
+    {
+        return new EllipseShape(m_x, m_y, m_width, m_height);
+    }
 private:    
     virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const;
 };

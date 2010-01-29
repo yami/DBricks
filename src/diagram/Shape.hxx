@@ -83,6 +83,12 @@ public:
     {
         return 0;
     }
+
+    virtual Shape* clone() const
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     
     HandlesType& handles()
     {

@@ -26,6 +26,11 @@ public:
 
     virtual void save (Sml::Object* object) const;
     virtual void load (Sml::Object* object);
+
+    virtual LineShape* clone() const
+    {
+        return new LineShape(m_fhandle.point(), m_thandle.point());
+    }
 private:
     void initialize(const Point& from, const Point& to);
     
