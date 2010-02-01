@@ -9,7 +9,7 @@
 #include <geom/computation.hxx>
 #include <util/stl.hxx>
 #include <algorithm>
-
+#include <logging/logging.hxx>
 
 #include "ShapeFactory.hxx"
 

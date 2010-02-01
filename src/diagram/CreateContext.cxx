@@ -8,6 +8,8 @@
 #include "gtkutil.hxx"
 #include "Handle.hxx"
 #include "Shape.hxx"
+#include "BuiltinChanges.hxx"
+
 
 namespace DBricks {
 
@@ -39,6 +41,8 @@ bool
 CreateContext::on_button_release_event(Shape* shape, GdkEventButton* e)
 {
     if (m_state == CC_Dragging) {
+        m_diagram->history().append(new ShapeCreateChange(m_diagram, m_shape));
+        
         m_shape->hide_handles();
         m_shape  = NULL;
         m_handle = NULL;

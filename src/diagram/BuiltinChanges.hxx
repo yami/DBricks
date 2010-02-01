@@ -60,6 +60,28 @@ private:
 };
 
 
+class ShapeCreateChange: public Change {
+public:
+    ShapeCreateChange(Diagram* diagram, Shape* shape)
+        :m_diagram(diagram), m_shape(shape)
+    {
+    }
+
+    virtual void apply()
+    {
+        m_diagram->add_shape(m_shape);
+    }
+
+    virtual void revert()
+    {
+        m_diagram->del_shape(m_shape);
+    }
+
+private:
+    Diagram* m_diagram;
+    Shape*   m_shape;
+};
+
 
 } // namespace DBricks
 
