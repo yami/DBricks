@@ -12,6 +12,8 @@
 #include "CreateContext.hxx"
 #include "ModifyContext.hxx"
 #include "Clipboard.hxx"
+#include "Change.hxx"
+
 #include "gtkmm/filechooserdialog.h"
 
 namespace DBricks {
@@ -160,6 +162,25 @@ Desktop::on_edit_paste()
 }
 
 void
+Desktop::on_edit_undo()
+{
+    History& history = m_diagram.history();
+
+    if (!history.empty()) {
+        DLOG(DIAGRAM, DEBUG, "on edit undo: undo it\n");
+    } else {
+        DLOG(DIAGRAM, DEBUG, "on edit undo: history is empty\n");
+        return;
+    }
+    
+    Change* change = history.remove_change();
+    change->revert();
+    delete change;
+    
+    m_diagram.notify_observers();
+}
+
+void
 Desktop::initialize_menus()
 {
     m_action_group->add(
@@ -204,6 +225,9 @@ Desktop::initialize_menus()
     m_action_group->add(
         Gtk::Action::create("EditPaste", "Paste"),
         sigc::mem_fun(*this, &Desktop::on_edit_paste));
+    m_action_group->add(
+        Gtk::Action::create("EditUndo", "Undo"),
+        sigc::mem_fun(*this, &Desktop::on_edit_undo));
     
     
     m_ui_manager->insert_action_group(m_action_group);
@@ -227,6 +251,7 @@ Desktop::initialize_menus()
         "    <menu action='EditMenu'>"
         "      <menuitem action='EditCopy' />"
         "      <menuitem action='EditPaste' />"
+        "      <menuitem action='EditUndo' />"
         "    </menu>"
         "  </menubar>"
         "</ui>";

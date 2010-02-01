@@ -10,6 +10,7 @@
 #include "Display.hxx"
 #include "GroupShape.hxx"
 #include "Menu.hxx"
+#include "BuiltinChanges.hxx"
 
 #include <util/stl.hxx>
 #include <util/bit.hxx>
@@ -135,8 +136,11 @@ ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
     Point point(e->x, e->y);
 
     Selection& selection = m_diagram->selection();
+    History&   history   = m_diagram->history();
     
-    if (bit_is_set(m_state, Selecting)) {
+    if (bit_is_set(m_state, Dragging)) {
+        history.append(new ShapeMoveChange(m_diagram, selection.shapes(), m_opoint, point));
+    } else if (bit_is_set(m_state, Selecting)) {
         m_display->selected(m_opoint, point);
 
         selection.unselect();
@@ -151,6 +155,7 @@ ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
         }
 
         std::for_each(m_diagram->shapes().begin(), m_diagram->shapes().end(), std::mem_fun(&Shape::hide_connectors));
+        history.append(new HandleMoveChange(m_diagram, m_selected_handle, m_opoint, point));
         DLOG(DIAGRAM, DEBUG, "on_button_release: c1=%p, c2=%p\n", connector1, connector2);
     }
 

@@ -30,11 +30,11 @@ private:
     void on_select_modify();
     void on_edit_copy();
     void on_edit_paste();
+    void on_edit_undo();
     
     void initialize_menus();
     void initialize_layout();
-
-
+    
     
     Gtk::Widget* create_menubar();
     

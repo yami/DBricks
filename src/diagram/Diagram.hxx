@@ -5,6 +5,8 @@
 #include <vector>
 
 #include "Selection.hxx"
+#include "History.hxx"
+
 
 namespace Sml {
 class Object;
@@ -60,11 +62,17 @@ public:
     {
         return m_selection;
     }
+
+    History& history()
+    {
+        return m_history;
+    }
     
 private:
     ShapesType    m_shapes;
     ObserversType m_observers;
     Selection     m_selection;
+    History       m_history;
 };
 
 } // namespace DBricks

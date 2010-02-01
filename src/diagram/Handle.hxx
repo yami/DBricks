@@ -60,7 +60,11 @@ public:
     }
 
     void draw(Cairo::RefPtr<Cairo::Context> ctx) const;
-    
+
+    Shape* shape() const
+    {
+        return m_shape;
+    }
 private:
     Shape*      m_shape;
     Connector*  m_connector;
