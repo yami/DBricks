@@ -8,20 +8,32 @@
 #include <gtkmm/treemodel.h>
 //#include <gtkmm/treemodelcolumn.h>
 #include <gtkmm/checkbutton.h>
-
+#include <gtkmm/liststore.h>
 
 namespace DBricks {
 
-class IntProperty : public Property {
+template<class NumberT>
+class NumberProperty : public Property {
 public:
-    IntProperty(const std::string& id, int& value, float lower, float upper, float step = 1)
-        :Property(id), m_value(value), m_lower(lower), m_upper(upper), m_step(step)
+    NumberProperty(const std::string& id, NumberT& value, float lower, float upper, float step = 1)
+        :Property(id), m_value(value), m_adjustment(m_value, lower, upper, step), m_spin_button(m_adjustment, 1.0, 0)
     {
     }
 
-    virtual Gtk::Widget* to_widget(const std::string& text);x
+    virtual Gtk::Widget* widget(const std::string& text)
+    {
+        return &m_spin_button;
+    }
 
-    virtual void on_apply();
+    virtual void save_to_value()
+    {
+        m_value = static_cast<NumberT>(m_spin_button.get_value());
+    }
+
+    virtual void load_to_widget()
+    {
+        m_spin_button.set_value(m_value);
+    }
 
     virtual bool is_labeled() const
     {
@@ -29,7 +41,7 @@ public:
     }
 
 private:
-    int& m_value;
+    NumberT& m_value;
     
     Gtk::Adjustment m_adjustment;
     Gtk::SpinButton m_spin_button;
@@ -48,19 +60,27 @@ public:
         delete m_check_button;
     }
     
-    virtual Gtk::Widget* to_widget(const std::string& text)
+    virtual Gtk::Widget* widget(const std::string& text)
     {
         if (!m_check_button)
             m_check_button =  new Gtk::CheckButton(text);
+        
         return m_check_button;
     }
 
-    virtual void on_apply()
+    virtual void save_to_value()
     {
         if (m_check_button)
             m_value = m_check_button->get_active();
     }
 
+    virtual void load_to_widget()
+    {
+        if (m_check_button) {
+            m_check_button->set_active(m_value);
+        }
+    }
+    
     virtual bool is_labeled() const
     {
         return false;
@@ -92,14 +112,14 @@ public:
     EnumProperty(const std::string& id, EnumT& value,
                  const std::vector<EnumT>& enum_values, const std::vector<std::string>& enum_strings);
     
-    virtual Gtk::Widget* to_widget(const std::string& text)
+    virtual Gtk::Widget* widget(const std::string& text)
     {
         return &m_combo_box;
     }
 
-    virtual void on_apply()
+    virtual void save_to_value()
     {
-        Gtk::TreeModel::iterator iter = m_combo_box->get_active();
+        Gtk::TreeModel::iterator iter = m_combo_box.get_active();
 
         if (iter) {
             Gtk::TreeModel::Row row = *iter;                
@@ -107,6 +127,11 @@ public:
         }
     }
 
+    virtual void load_to_widget()
+    {
+        m_combo_box.set_active(m_value);
+    }
+    
     virtual bool is_labeled() const
     {
         return true;
@@ -137,8 +162,8 @@ EnumProperty<EnumT>::EnumProperty(const std::string& id, EnumT& value,
         row[m_columns.m_enum_string] = enum_strings[i];
     }
 
-    m_combo_box->pack_start(m_columns.m_enum_string);
-    m_combo_box->set_active(0);
+    m_combo_box.pack_start(m_columns.m_enum_string);
+    m_combo_box.set_active(0);
 }
 
 

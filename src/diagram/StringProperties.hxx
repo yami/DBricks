@@ -14,16 +14,19 @@ public:
     {
     }
 
-    virtual Gtk::Widget* to_widget(const std::string& text)
+    virtual Gtk::Widget* widget(const std::string& text)
     {
-        m_entry = new Gtk::Entry(m_value);
-        return m_entry;
+        return &m_entry;
     }
 
-    virtual void on_apply()
+    virtual void save_to_value()
     {
-        if (m_entry)
-            m_value = m_entry->get_text();
+        m_value = m_entry->get_text();
+    }
+
+    virtual void load_to_widget()
+    {
+        m_entry.set_text(m_value);
     }
 
     virtual bool is_labeled() const
@@ -32,7 +35,7 @@ public:
     }
 
 private:
-    Gtk::Entry*  m_entry;
+    Gtk::Entry   m_entry;
     std::string& m_value;
 };
 

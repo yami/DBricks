@@ -31,6 +31,9 @@ public:
     {
         return new LineShape(m_fhandle.point(), m_thandle.point());
     }
+
+    virtual Gtk::Widget* property_widget();
+    virtual void         property_apply();    
 private:
     void initialize(const Point& from, const Point& to);
     
@@ -39,6 +42,10 @@ private:
     
     Handle m_fhandle;
     Handle m_thandle;
+
+    // temp hack
+    Point  m_from;
+    Point  m_to;
 };
 
 } // namespace DBricks

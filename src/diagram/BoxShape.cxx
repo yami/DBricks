@@ -1,6 +1,9 @@
 #include "BoxShape.hxx"
 
 #include "Menu.hxx"
+#include "PropertyMap.hxx"
+#include "PropertyDescriptor.hxx"
+#include "IntProperties.hxx"
 
 #include <util/assert.hxx>
 #include <logging/logging.hxx>
@@ -233,6 +236,36 @@ void
 BoxShape::set_square()
 {
     DLOG(DIAGRAM, DEBUG, "set_square is called\n");
+}
+
+void
+BoxShape::property_apply()
+{
+    initialize();
+}
+
+static const char* property_layout =
+    "'(table :rows 2 :cols 2"
+    "    (property \"X\" x)         (property \"Y\" y)"
+    "    (property \"Width\" width) (property \"Height\" height)"
+    ")";
+
+
+Gtk::Widget*
+BoxShape::property_widget()
+{
+    if (!m_property_descriptor) {
+        m_property_map = new PropertyMap(this);
+
+        m_property_map->add(new NumberProperty<double>("X", m_x, 0, 400));
+        m_property_map->add(new NumberProperty<double>("Y", m_y, 0, 400));
+        m_property_map->add(new NumberProperty<double>("WIDTH", m_width, 0, 200));
+        m_property_map->add(new NumberProperty<double>("HEIGHT", m_height, 0, 200));
+
+        m_property_descriptor = new PropertyDescriptor(*m_property_map, property_layout);
+    }
+
+    return m_property_descriptor->to_widget();
 }
 
 } // namespace DBricks

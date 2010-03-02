@@ -11,6 +11,8 @@
 
 #include "Handle.hxx"
 #include "Connector.hxx"
+#include "IWithProperties.hxx"
+
 
 namespace Sml {
 class Object;
@@ -20,10 +22,11 @@ class Object;
 namespace DBricks {
 
 class Connector;
-
 class Menu;
+class PropertyMap;
+class PropertyDescriptor;
 
-class Shape {
+class Shape : public IWithProperties {
 public:
     typedef std::vector<Handle*>    HandlesType;
     typedef std::vector<Connector*> ConnectorsType;
@@ -32,12 +35,16 @@ public:
     static const FlagsType Break_Connections = 0x1;
     
     Shape(FlagsType flags=0)
-        :m_flags(flags), m_corner(0, 0), m_show_handles(false), m_show_connectors(false)
+        :m_flags(flags), m_corner(0, 0),
+         m_show_handles(false), m_show_connectors(false),
+         m_property_map(0), m_property_descriptor(0)
     {
     }
 
     Shape(double x, double y, FlagsType flags=0)
-        :m_flags(flags), m_corner(x, y), m_show_handles(false), m_show_connectors(false)
+        :m_flags(flags), m_corner(x, y),
+         m_show_handles(false), m_show_connectors(false),
+         m_property_map(0), m_property_descriptor(0)
     {
     }
     
@@ -132,6 +139,9 @@ public:
 
     virtual void save (Sml::Object* object) const = 0;
     virtual void load (Sml::Object* object) = 0;
+
+    virtual Gtk::Widget* property_widget() = 0;
+    virtual void         property_apply() = 0;
     
 private:
     virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const = 0;
@@ -144,6 +154,9 @@ protected:
     Point m_corner;
     bool  m_show_handles;
     bool  m_show_connectors;
+
+    PropertyMap*        m_property_map;
+    PropertyDescriptor* m_property_descriptor;
 };
 
 } // namespace DBricks

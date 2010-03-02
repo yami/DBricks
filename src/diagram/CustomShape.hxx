@@ -42,6 +42,15 @@ public:
 
     virtual void save (Sml::Object* object) const {}
     virtual void load (Sml::Object* object) {}
+
+    virtual Gtk::Widget* property_widget()
+    {
+        return 0;
+    }
+    
+    virtual void         property_apply()
+    {
+    }
 private:
     virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const;
     

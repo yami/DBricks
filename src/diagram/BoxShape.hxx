@@ -28,6 +28,9 @@ public:
     
     void set_fixed_aspect();
     void set_square();
+
+    virtual Gtk::Widget* property_widget();
+    virtual void         property_apply();
 protected:
     void update_handles();
     void initialize();

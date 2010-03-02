@@ -26,9 +26,10 @@ void
 ModifyContext::initialize_class()
 {
     s_menu
-        .append(new MenuItem("Group",        "Group",         new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::group_shapes)))
-        .append(new MenuItem("StackForward", "Stack Forward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_forward)))
-        .append(new MenuItem("StackBackward", "Stack Backward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_backward)));
+        .append(new MenuItem("Group",        "Group",           new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::group_shapes)))
+        .append(new MenuItem("StackForward", "Stack Forward",   new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_forward)))
+        .append(new MenuItem("StackBackward", "Stack Backward", new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::stack_backward)))
+        .append(new MenuItem("Properties",    "Properties",     new ShapeMenuAction<ModifyContext, ModifyContext::MenuActionMethodType>(&ModifyContext::show_property)));
 }
 
 // TODO: add near-selection
@@ -228,6 +229,20 @@ ModifyContext::stack_forward()
     
     if (selection.size() == 1)
         m_diagram->stack_forward(selection[0]);
+}
+
+void
+ModifyContext::show_property()
+{
+    DLOG(DIAGRAM, DEBUG, "show property...\n");
+
+    Selection& selection = m_diagram->selection();
+    
+    Gtk::Widget* widget = selection[0]->property_widget();
+
+    if (widget) {
+        widget->show_all();
+    }
 }
 
 void

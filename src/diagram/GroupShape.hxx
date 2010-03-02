@@ -47,7 +47,16 @@ public:
         }
         
         return new GroupShape(shapes.begin(), shapes.end());
-    }    
+    }
+
+    virtual Gtk::Widget* property_widget()
+    {
+        return 0;
+    }
+    
+    virtual void         property_apply()
+    {
+    }
 private:
     void initialize();
     

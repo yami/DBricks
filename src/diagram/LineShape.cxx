@@ -2,6 +2,11 @@
 
 #include "SML.hxx"
 
+#include "PropertyMap.hxx"
+#include "PropertyDescriptor.hxx"
+#include "IntProperties.hxx"
+
+
 #include <geom/computation.hxx>
 #include <logging/logging.hxx>
 #include <algorithm>
@@ -173,6 +178,41 @@ LineShape::load(Sml::Object* object)
     object->get_attribute_data("ty", to.y);
     
     initialize(from, to);
+}
+
+void
+LineShape::property_apply()
+{
+    initialize(m_from, m_to);
+}
+
+
+
+static const char* property_layout =
+    "'(table :rows 2 :cols 2"
+    "    (property \"X1\" x1) (property \"Y1\" y1)"
+    "    (property \"X2\" x2) (property \"Y2\" y2)"
+    ")";
+
+
+Gtk::Widget*
+LineShape::property_widget()
+{
+    m_from = m_fhandle.point();
+    m_to   = m_thandle.point();
+    
+    if (!m_property_descriptor) {
+        m_property_map = new PropertyMap(this);
+
+        m_property_map->add(new NumberProperty<double>("X1", m_from.x, 0, 400));
+        m_property_map->add(new NumberProperty<double>("Y1", m_from.y, 0, 400));
+        m_property_map->add(new NumberProperty<double>("X2", m_to.x, 0, 400));
+        m_property_map->add(new NumberProperty<double>("Y2", m_to.y, 0, 400));
+
+        m_property_descriptor = new PropertyDescriptor(*m_property_map, property_layout);
+    }
+
+    return m_property_descriptor->to_widget();
 }
 
 

@@ -18,7 +18,8 @@ dbricks_SOURCES = main.cxx \
 	GroupShape.cxx \
 	ShapeFactory.cxx \
 	SML.cxx \
-	ecl.cxx
+	ecl.cxx \
+	PropertyDescriptor.cxx
 
 dbricks_CPPFLAGS = \
 	$(PANGOMM_CFLAGS) \
