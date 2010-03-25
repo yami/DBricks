@@ -65,6 +65,7 @@ public:
 private:
     void draw(GdkEventExpose* event=NULL);
     void draw_select(Cairo::RefPtr<Cairo::Context> ctx);
+    void draw_grid(Cairo::RefPtr<Cairo::Context> ctx, int width, int height);
     
     EventContext* m_context;
     

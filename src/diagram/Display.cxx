@@ -110,13 +110,7 @@ Display::draw(GdkEventExpose* event)
         ctx->set_source_rgba(1, 1, 1, 1);
         ctx->paint();
                 
-        ctx->set_source_rgba(0.337, 0.612, 0.117, 0.9);
-        ctx->select_font_face("Sans",
-                              Cairo::FONT_SLANT_NORMAL,
-                              Cairo::FONT_WEIGHT_NORMAL);
-        ctx->set_font_size(40.0);
-        ctx->move_to(10.0, 50.0);
-        ctx->show_text("Disziplin ist Macht.");
+        draw_grid(ctx, width, height);
 
         for (Diagram::ShapesType::const_iterator iter=m_diagram->shapes().begin();
              iter != m_diagram->shapes().end();
@@ -128,6 +122,33 @@ Display::draw(GdkEventExpose* event)
 
         window->end_paint();
     }
+}
+
+void
+Display::draw_grid(Cairo::RefPtr<Cairo::Context> ctx, int width, int height)
+{
+    int xstep = 20;
+    int ystep = 20;
+    
+    ctx->save();
+    
+    for (int x=xstep; x < width; x += xstep) {
+        ctx->move_to(x, 0);
+        ctx->line_to(x, height);
+    }
+
+    for (int y=ystep; y < height; y += ystep) {
+        ctx->move_to(0, y);
+        ctx->line_to(width, y);
+    }
+
+    //ctx->set_source_rgba(0.337, 0.612, 0.117, 0.9);
+    ctx->set_source_rgba(0, 0, 0, 0.8);
+    ctx->set_line_width(0.2);
+    
+    
+    ctx->stroke();
+    ctx->restore();
 }
 
 void
