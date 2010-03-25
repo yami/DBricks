@@ -34,6 +34,10 @@ public:
 protected:
     void update_handles();
     void initialize();
+
+    virtual void on_data_change()
+    {
+    }
     
     static Menu s_menu;
     

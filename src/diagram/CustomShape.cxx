@@ -62,7 +62,6 @@ CustomShape::move_handle(Handle* handle, const Point& delta)
         
     update_corner(corner_delta);
     read_handles();
-
 }
 
 void

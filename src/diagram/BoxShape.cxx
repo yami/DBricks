@@ -114,6 +114,8 @@ BoxShape::initialize()
     m_connectors.push_back(&m_swconnector);
     m_connectors.push_back(&m_lconnector);
     m_connectors.push_back(&m_nwconnector);
+
+    on_data_change();
 }
 
 void
@@ -150,8 +152,10 @@ BoxShape::move_handle(Handle* handle, const Point& delta)
     } else {
         ASSERT_NOT_REACHED();
     }
-
+    
     update_handles();
+
+    on_data_change();
 }
 
 void
@@ -188,6 +192,8 @@ BoxShape::move_connector(Connector* connector, const Point& delta)
     } else {
         ASSERT_NOT_REACHED();
     }
+
+    on_data_change();
 }
 
 void
@@ -195,6 +201,7 @@ BoxShape::move(const Point& delta)
 {
     m_corner += delta;
     update_handles();
+    on_data_change();
 }
 
 bool

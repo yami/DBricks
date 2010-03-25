@@ -19,7 +19,9 @@ dbricks_SOURCES = main.cxx \
 	ShapeFactory.cxx \
 	SML.cxx \
 	ecl.cxx \
-	PropertyDescriptor.cxx
+	PropertyDescriptor.cxx \
+	BoxedCustomShape.cxx \
+	TextTemplate.cxx
 
 dbricks_CPPFLAGS = \
 	$(PANGOMM_CFLAGS) \

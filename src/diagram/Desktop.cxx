@@ -209,6 +209,9 @@ Desktop::initialize_menus()
     m_action_group->add(
         Gtk::Action::create("CreateLine", "Line"),
         sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "Line"));
+    m_action_group->add(
+        Gtk::Action::create("CreateCustom", "Custom"),
+        sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "Custom"));
 
     m_action_group->add(
         Gtk::Action::create("ToolsMenu", "Tools"));
@@ -244,6 +247,7 @@ Desktop::initialize_menus()
         "      <menuitem action='CreateRectangle' />"
         "      <menuitem action='CreateEllipse' />"
         "      <menuitem action='CreateLine' />"
+        "      <menuitem action='CreateCustom' />"        
         "    </menu>"
         "    <menu action='ToolsMenu'>"
         "      <menuitem action='ModifyTool' />"

@@ -22,8 +22,26 @@ inline std::string
 to_stl_string(cl_object str)
 {
     assert(ecl_stringp(str));
-    return std::string(ecl_base_string_pointer_safe(str));
+    return std::string(ecl_base_string_pointer_safe(si_copy_to_simple_base_string(str)));
 }
 
+inline void
+load(const char* filename)
+{
+    cl_load(1, make_base_string_copy(filename));
+}
+
+
+inline cl_object
+string_to_object(const char* str)
+{
+    return c_string_to_object(str);
+}
+
+inline cl_object
+string_to_object(const std::string& str)
+{
+    return c_string_to_object(str.c_str());
+}
 
 } // namespace ecl
