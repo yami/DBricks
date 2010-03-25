@@ -137,17 +137,15 @@ BoxShape::move_handle(Handle* handle, const Point& delta)
         m_y      += delta.y;
         m_height -= delta.y;
     } else if (handle == &m_nehandle) {
-        m_x      -= delta.x;
         m_width  += delta.x;
-        m_y      -= delta.y;
-        m_height += delta.y;
+        m_y      += delta.y;
+        m_height -= delta.y;
     } else if (handle == &m_sehandle) {
         m_width  += delta.x;
         m_height += delta.y;        
     } else if (handle == &m_swhandle) {
         m_x      += delta.x;
         m_width  -= delta.x;
-        m_y      += delta.y;
         m_height += delta.y;        
     } else {
         ASSERT_NOT_REACHED();
