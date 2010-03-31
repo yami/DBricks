@@ -31,10 +31,11 @@ dbricks_CPPFLAGS = \
 	-I$(top_srcdir)/src \
 	`ecl-config --cflags`
 
-dbricks_LDFLAGS = 	`ecl-config --libs`
+dbricks_LDFLAGS = `ecl-config --libs`
 dbricks_LDADD = \
 	$(PANGOMM_LIBS) \
 	$(GTKMM_LIBS) \
 	$(RSVG_LIBS) \
 	$(CAIROMM_LIBS) \
-	$(top_srcdir)/src/logging/liblogging.a 
+	$(top_srcdir)/src/logging/liblogging.a \
+	$(top_srcdir)/src/ssexp/libssexp.a

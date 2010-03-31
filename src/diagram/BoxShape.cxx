@@ -250,7 +250,7 @@ BoxShape::property_apply()
 }
 
 static const char* property_layout =
-    "'(table :rows 2 :cols 2"
+    "(table :rows 2 :cols 2"
     "    (property \"X\" x)         (property \"Y\" y)"
     "    (property \"Width\" width) (property \"Height\" height)"
     ")";

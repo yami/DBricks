@@ -3,13 +3,13 @@
 #include "PropertyMap.hxx"
 #include "Property.hxx"
 
-
-#include <util/ecl.hxx>
 #include <util/assert.hxx>
-
+#include <ssexp/ssexp.h>
 
 #include <gtkmm/table.h>
 #include <gtkmm/label.h>
+
+using namespace ssexp;
 
 namespace {
 
@@ -28,48 +28,45 @@ struct LabeledWidget {
     Gtk::Widget* widget;
 };
 
-LabeledWidget ecl_evaluate_layout(cl_object list, const DBricks::PropertyMap& property_map)
+LabeledWidget sexp_evaluate_layout(sexp_t list, const DBricks::PropertyMap& property_map)
 {
-    cl_object container = XCAR(list);
+    sexp_t container = car(list);
     
-    std::string container_name = ecl::to_stl_string(cl_symbol_name(container));
+    std::string container_name = ci_to_string(symbol_name(container));
 
     if (container_name == "TABLE") {
-        cl_object rest = XCDR(list);
+        sexp_t rest = cdr(list);
 
-        cl_object dim = XCAR(rest); rest = XCDR(rest);
-        cl_object val = XCAR(rest); rest = XCDR(rest);
-        std::string dim_name  = ecl::to_stl_string(cl_symbol_name(dim));
-        int         val_value = fixint(val);
+        sexp_t dim = car(rest); rest = cdr(rest);
+        sexp_t val = car(rest); rest = cdr(rest);
+        std::string dim_name  = ci_to_string(symbol_name(dim));
+        int         val_value = ci_to_integer(val);
 
         int nrow, ncol;
 
-        assert(ecl_keywordp(dim));
-        
-        if (dim_name == "ROWS") {
+        if (dim_name == ":ROWS") {
             nrow = val_value;
-        } else if (dim_name == "COLS") {
+        } else if (dim_name == ":COLS") {
             ncol = val_value;
         }
 
-        dim = XCAR(rest); rest = XCDR(rest);
-        val = XCAR(rest); rest = XCDR(rest);
-        dim_name = ecl::to_stl_string(cl_symbol_name(dim));
-        val_value = fixint(val);
+        dim = car(rest); rest = cdr(rest);
+        val = car(rest); rest = cdr(rest);
 
-        assert(ecl_keywordp(dim));
-        
-        if (dim_name == "ROWS") {
+        dim_name  = ci_to_string(symbol_name(dim));
+        val_value = ci_to_integer(val);
+
+        if (dim_name == ":ROWS") {
             nrow = val_value;
-        } else if (dim_name == "COLS") {
+        } else if (dim_name == ":COLS") {
             ncol = val_value;
         }
 
         Gtk::Table* table = new Gtk::Table(nrow*2, ncol*2);
         for (int irow = 0; irow < nrow; ++irow) {
             for (int icol = 0; icol < ncol; ++icol) {
-                cl_object item = XCAR(rest); rest = XCDR(rest);
-                LabeledWidget labeledWidget = ecl_evaluate_layout(item, property_map);
+                sexp_t item = car(rest); rest = cdr(rest);
+                LabeledWidget labeledWidget = sexp_evaluate_layout(item, property_map);
 
                 Gtk::Label*  label = new Gtk::Label(labeledWidget.label);
                 Gtk::Widget* widget = labeledWidget.widget;
@@ -89,8 +86,8 @@ LabeledWidget ecl_evaluate_layout(cl_object list, const DBricks::PropertyMap& pr
 
         return LabeledWidget(table);
     } else if (container_name == "PROPERTY") {
-        std::string label = ecl::to_stl_string(XSECOND(list));
-        std::string id    = ecl::to_stl_string(cl_symbol_name(XTHIRD(list)));
+        std::string label = ci_to_string(second(list));
+        std::string id    = ci_to_string(symbol_name(third(list)));
 
         DBricks::Property* property = property_map.get(id);
 
@@ -155,8 +152,8 @@ PropertyDescriptor::to_widget()
 
 Gtk::Widget* PropertyDescriptor::evaluate_layout()
 {
-    cl_object layout = ecl::evaluate(m_property_layout.c_str());
-    return ecl_evaluate_layout(layout, m_property_map).widget;
+    sexp_t layout = read_from_string(m_property_layout.c_str());
+    return sexp_evaluate_layout(layout, m_property_map).widget;
 }
 
 

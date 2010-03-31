@@ -36,6 +36,7 @@ Makefile
 src/Makefile
 src/diagram/Makefile
 src/logging/Makefile
+src/ssexp/Makefile
 ])
 
 AC_OUTPUT

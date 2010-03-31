@@ -189,7 +189,7 @@ LineShape::property_apply()
 
 
 static const char* property_layout =
-    "'(table :rows 2 :cols 2"
+    "(table :rows 2 :cols 2"
     "    (property \"X1\" x1) (property \"Y1\" y1)"
     "    (property \"X2\" x2) (property \"Y2\" y2)"
     ")";
