@@ -136,7 +136,7 @@
 
 (defun fill-in-template (compiled-template &optional (name-values nil))
   (print (format nil "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz~%"))
-  (print compiled-template)
+  (print (format nil "~a~%" compiled-template))
   (let ((segments (segments compiled-template))
         (result ""))
     (mapcar #'(lambda (name-value)

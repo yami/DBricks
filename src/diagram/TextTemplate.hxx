@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <util/ecl.hxx>
+#include <util/assert.hxx>
 #include <logging/logging.hxx>
 
 #include <iostream>
@@ -13,17 +14,20 @@ using namespace std;
 namespace DBricks {
 
 class TextTemplate {
-public:
+public:    
     TextTemplate(const std::string& filename)
     {
         if (!loaded) {
-            DLOG(DIAGRAM, DEBUG, "load cl-text-template.lisp\n");
             ecl::load("cl-text-template.lisp");
             loaded = true;
         }
+        
+        m_compile_string = "(compile-template-from-file \"" + filename + "\")";
+    }
 
-        std::string compile_string = "(compile-template-from-file \"" + filename + "\")";
-        m_compiled_template = ecl::evaluate(compile_string.c_str());
+    ~TextTemplate()
+    {
+        ASSERT_NOT_REACHED();
     }
     
     void bind(const std::string& name, double value)
@@ -34,8 +38,9 @@ public:
     std::string fill_in()
     {
         cl_object bindings = ecl::evaluate(bind_string().c_str());
-        
-        return ecl::to_stl_string(fill_in_template(m_compiled_template, bindings));
+
+        cl_object compiled_template = ecl::evaluate(m_compile_string.c_str());
+        return ecl::to_stl_string(fill_in_template(compiled_template, bindings));
     }
 private:
     std::string bind_string()
@@ -62,7 +67,7 @@ private:
     static int  count;
     
     std::map<std::string, double> m_name_values;
-    cl_object m_compiled_template;
+    std::string m_compile_string;
 };
 
 } // namespace DBricks

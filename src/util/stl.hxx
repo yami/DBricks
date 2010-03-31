@@ -59,6 +59,13 @@ char* read_file(std::ifstream& ifile)
     return buffer;
 }
 
+inline
+char* read_file(const std::string& filename)
+{
+    std::ifstream input(filename.c_str());
+    return read_file(input);
+}
+
 } // namespace util
 
 #endif //STL_HXX
