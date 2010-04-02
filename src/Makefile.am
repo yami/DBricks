@@ -1,1 +1,1 @@
-SUBDIRS = logging ssexp diagram
+SUBDIRS = logging ssexp sml diagram

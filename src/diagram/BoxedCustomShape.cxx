@@ -1,5 +1,5 @@
 #include "BoxedCustomShape.hxx"
-#include "SML.hxx"
+#include <sml/Sml.hxx>
 
 #include <logging/logging.hxx>
 

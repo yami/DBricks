@@ -21,6 +21,11 @@
     const Object* CLASS::super() const { return super_name; }
 
 
+#define HARD_CAST(OBJ,TYPE) ({                                  \
+    TYPE##Object* __##OBJ = dynamic_cast<TYPE##Object*>(OBJ);   \
+    assert(__##OBJ);                                            \
+    __##OBJ; })
+
 namespace ssexp {
 
 struct Object {
@@ -149,6 +154,7 @@ void string_to_upper(char* s)
 SymbolObject::SymbolObject(const char* v)
 {
     value = strdup(v);
+    string_to_upper(value);
 }
 
 SymbolObject::~SymbolObject()
@@ -164,7 +170,6 @@ void SymbolObject::princ(FILE* output) const
 StringObject::StringObject(const char* v)
 {
     value = strdup(v);
-    string_to_upper(value);
 }
 
 StringObject::~StringObject()
@@ -228,20 +233,23 @@ Object* symbol_name(Object* object)
  */
 const char* ci_to_string(Object* object)
 {
-    StringObject* string = dynamic_cast<StringObject*>(object);
-    assert(string);
-
-    return string->value;
+    return HARD_CAST(object, String)->value;
 }
 
 int ci_to_integer(Object* object)
 {
-    IntegerObject* integer = dynamic_cast<IntegerObject*>(object);
-    assert(integer);
-
-    return integer->value;
+    return HARD_CAST(object, Integer)->value;
 }
 
+const char* ci_symbol_name(Object* object)
+{
+    return HARD_CAST(object, Symbol)->value;
+}
+
+double ci_to_double(Object* object)
+{
+    return HARD_CAST(object, Real)->value;
+}
 
 void StringObject::princ(FILE* output) const
 {

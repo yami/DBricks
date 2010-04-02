@@ -66,6 +66,25 @@ char* read_file(const std::string& filename)
     return read_file(input);
 }
 
+inline
+std::streampos stream_size(std::istream& stream)
+{
+    std::streampos curr = stream.tellg();
+    std::streampos size = stream.seekg(0, std::ios::end).tellg();
+    stream.seekg(curr, std::ios::beg);
+
+    return size;
+}
+
+inline
+char* read_stream(std::istream& stream)
+{
+    std::streampos size = stream_size(stream);
+    char* buffer = new char[(size_t)size+1];
+    stream.read(buffer, size);
+    return buffer;
+}
+
 } // namespace util
 
 #endif //STL_HXX

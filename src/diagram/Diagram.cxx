@@ -13,7 +13,7 @@
 
 #include "ShapeFactory.hxx"
 
-#include "SML.hxx"
+#include <sml/Sml.hxx>
 
 namespace DBricks {
 

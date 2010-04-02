@@ -1,5 +1,5 @@
 #include "RectShape.hxx"
-#include "SML.hxx"
+#include <sml/Sml.hxx>
 
 namespace DBricks {
 

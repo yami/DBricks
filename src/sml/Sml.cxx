@@ -1,4 +1,4 @@
-#include "SML.hxx"
+#include "Sml.hxx"
 
 namespace Sml {
 

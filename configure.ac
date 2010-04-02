@@ -37,6 +37,7 @@ src/Makefile
 src/diagram/Makefile
 src/logging/Makefile
 src/ssexp/Makefile
+src/sml/Makefile
 ])
 
 AC_OUTPUT

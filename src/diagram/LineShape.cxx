@@ -1,6 +1,6 @@
 #include "LineShape.hxx"
 
-#include "SML.hxx"
+#include <sml/Sml.hxx>
 
 #include "PropertyMap.hxx"
 #include "PropertyDescriptor.hxx"

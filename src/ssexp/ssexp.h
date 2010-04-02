@@ -37,6 +37,8 @@ sexp_t symbol_name(sexp_t object);
  */
 const char* ci_to_string(sexp_t object);
 int         ci_to_integer(sexp_t object);
+const char* ci_symbol_name(sexp_t object);
+double ci_to_double(sexp_t object);
 
 } // namespace ssexp
 

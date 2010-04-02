@@ -17,8 +17,8 @@ dbricks_SOURCES = main.cxx \
 	LineShape.cxx \
 	GroupShape.cxx \
 	ShapeFactory.cxx \
-	SML.cxx \
-	ecl.cxx \
+	SexpSaver.cxx \
+	SexpLoader.cxx \
 	PropertyDescriptor.cxx \
 	BoxedCustomShape.cxx \
 	TextTemplate.cxx
@@ -38,4 +38,5 @@ dbricks_LDADD = \
 	$(RSVG_LIBS) \
 	$(CAIROMM_LIBS) \
 	$(top_srcdir)/src/logging/liblogging.a \
-	$(top_srcdir)/src/ssexp/libssexp.a
+	$(top_srcdir)/src/ssexp/libssexp.a \
+	$(top_srcdir)/src/sml/libsml.a

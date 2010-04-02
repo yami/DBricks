@@ -1,13 +1,15 @@
 #include "Desktop.hxx"
 
 #include <logging/logging.hxx>
+#include <sml/Sml.hxx>
 
 #include <gtkmm/stock.h>
 
 #include <fstream>
 
-#include "SML.hxx"
-#include "ecl.hxx"
+
+#include "SexpSaver.hxx"
+#include "SexpLoader.hxx"
 #include "ShapeFactory.hxx"
 #include "CreateContext.hxx"
 #include "ModifyContext.hxx"
@@ -69,9 +71,7 @@ Desktop::on_save_file()
             Sml::Object* diagram_object = new Sml::Object();
             m_diagram.save(diagram_object);
 
-            std::ofstream ofile(filename.c_str());
-            EclSml::EclSerializer s(ofile);
-            s.save_object(diagram_object);    
+            sml_to_sexp_file(filename.c_str(), diagram_object);
         }
         default:
             DLOG(DIAGRAM, DEBUG, "save to a file exited...\n");
@@ -96,7 +96,7 @@ Desktop::on_open_file()
             m_diagram.reset();
             m_display.reset();
             
-            Sml::Object* diagram_object = EclSml::load(filename.c_str());
+            Sml::Object* diagram_object = sexp_file_to_sml(filename.c_str());
             m_diagram.load(diagram_object);
                 
             break;

@@ -255,5 +255,3 @@ Sml::Object* load(const char* file)
 
 
 } // namespace EclSml
-
-

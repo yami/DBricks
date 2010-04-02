@@ -1,7 +1,7 @@
 #include "GroupShape.hxx"
 #include <algorithm>
 
-#include "SML.hxx"
+#include <sml/Sml.hxx>
 
 #include "ShapeFactory.hxx"
 
