@@ -26,7 +26,7 @@ public:
         return new EllipseShape(m_x, m_y, m_width, m_height);
     }
 private:    
-    virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const;
+    virtual void draw_shape(IRenderer* renderer) const;
 };
 
 

@@ -1,18 +1,17 @@
 #include "Handle.hxx"
 #include "Shape.hxx"
+#include "IRenderer.hxx"
 
 namespace DBricks {
 
 void
-Handle::draw(Cairo::RefPtr<Cairo::Context> ctx) const
+Handle::draw(IRenderer* renderer) const
 {
-    const double hw = 4;
-    ctx->save();
-    ctx->set_source_rgba(0.337, 0.612, 0.117, 0.9);
-    ctx->rectangle(m_point.x-hw, m_point.y-hw, hw*2, hw*2);
-    ctx->stroke();
-    ctx->fill();               // fill with color
-    ctx->restore();
+    double hw = 2.0;
+    
+    renderer->save();
+    renderer->line_color(Green);
+    renderer->draw_rectangle(Point(m_point.x-hw, m_point.y-hw), Point(m_point.x+hw, m_point.y+hw));
 }
 
 } // namespace DBricks

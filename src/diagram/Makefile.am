@@ -2,7 +2,6 @@ bin_PROGRAMS = dbricks
 
 dbricks_SOURCES = main.cxx \
 	Diagram.cxx \
-	CustomShape.cxx \
 	ModifyContext.cxx \
 	CreateContext.cxx \
 	DispatchContext.cxx \
@@ -21,7 +20,9 @@ dbricks_SOURCES = main.cxx \
 	SexpLoader.cxx \
 	PropertyDescriptor.cxx \
 	BoxedCustomShape.cxx \
-	TextTemplate.cxx
+	TextTemplate.cxx \
+	CairoRenderer.cxx \
+	Color.cxx
 
 dbricks_CPPFLAGS = \
 	$(PANGOMM_CFLAGS) \

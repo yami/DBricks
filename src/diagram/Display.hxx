@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <gtkmm/drawingarea.h>
-#include <cairomm/context.h>
 #include <gdkmm/cursor.h>
 
 #include <geom/Point.hxx>
@@ -24,6 +23,7 @@ class Shape;
 class Handle;
 class EventContext;
 class Menu;
+class IRenderer;
 
 class Display : public Gtk::DrawingArea, public DiagramObserver {
 public:
@@ -64,8 +64,8 @@ public:
     void set_context(EventContext* context);
 private:
     void draw(GdkEventExpose* event=NULL);
-    void draw_select(Cairo::RefPtr<Cairo::Context> ctx);
-    void draw_grid(Cairo::RefPtr<Cairo::Context> ctx, int width, int height);
+    void draw_select();
+    void draw_grid(int width, int height);
     
     EventContext* m_context;
     
@@ -79,6 +79,8 @@ private:
     Point m_select_origin;
     Point m_select_last;
     Point m_select_current;
+
+    IRenderer* m_renderer;
 };
 
 } // namespace DBricks

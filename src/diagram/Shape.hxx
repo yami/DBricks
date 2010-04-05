@@ -25,6 +25,7 @@ class Connector;
 class Menu;
 class PropertyMap;
 class PropertyDescriptor;
+class IRenderer;
 
 class Shape : public IWithProperties {
 public:
@@ -52,15 +53,15 @@ public:
     {
     }
 
-    void draw (Cairo::RefPtr<Cairo::Context> ctx) const
+    void draw (IRenderer* renderer) const
     {
-        draw_shape(ctx);
+        draw_shape(renderer);
 
         if (m_show_handles) {
             for (HandlesType::const_iterator iter = m_handles.begin();
                  iter != m_handles.end();
                  ++iter) {
-                (*iter)->draw(ctx);
+                (*iter)->draw(renderer);
             }
         }
 
@@ -68,7 +69,7 @@ public:
             for (ConnectorsType::const_iterator iter = m_connectors.begin();
                  iter != m_connectors.end();
                  ++iter) {
-                (*iter)->draw(ctx);
+                (*iter)->draw(renderer);
             }
         }
     }
@@ -144,7 +145,7 @@ public:
     virtual void         property_apply() = 0;
     
 private:
-    virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const = 0;
+    virtual void draw_shape(IRenderer* renderer) const = 0;
 protected:
     HandlesType m_handles;
     ConnectorsType m_connectors;

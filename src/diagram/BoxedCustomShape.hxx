@@ -2,6 +2,7 @@
 #define BOXEDCUSTOMSHAPE_HXX
 
 #include "BoxShape.hxx"
+#include "IRenderer.hxx"
 
 #include "TextTemplate.hxx"
 
@@ -26,7 +27,7 @@ public:
         return new BoxedCustomShape(m_x, m_y, m_width, m_height);
     }
 private:
-    virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const;
+    virtual void draw_shape(IRenderer* renderer) const;
     virtual void on_data_change();
 
     std::string m_shape_string;

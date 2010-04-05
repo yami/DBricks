@@ -4,24 +4,22 @@
 #include <sml/Sml.hxx>
 
 #include "ShapeFactory.hxx"
+#include "IRenderer.hxx"
 
 namespace DBricks {
 
 void
-GroupShape::draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
+GroupShape::draw_shape(IRenderer* renderer) const
 {
     for (std::vector<Shape*>::const_iterator iter = m_shapes.begin();
          iter != m_shapes.end();
          ++iter) {
-        (*iter)->draw(ctx);
+        (*iter)->draw(renderer);
     }
     
     if (m_show_handles || m_show_connectors) {
         Rect rect = bb();
-        ctx->save();
-        ctx->rectangle(rect.x1(), rect.y1(), rect.width(), rect.height());
-        ctx->stroke();
-        ctx->restore();
+        renderer->draw_rectangle(Point(rect.x1(), rect.y1()), Point(rect.x2(), rect.y2()));
     }
 }
 

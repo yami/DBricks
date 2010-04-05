@@ -5,7 +5,7 @@
 #include "PropertyMap.hxx"
 #include "PropertyDescriptor.hxx"
 #include "IntProperties.hxx"
-
+#include "IRenderer.hxx"
 
 #include <geom/computation.hxx>
 #include <logging/logging.hxx>
@@ -48,20 +48,13 @@ LineShape::initialize(const Point& from, const Point& to)
     m_handles.push_back(&m_thandle);
 
     m_connectors.push_back(&m_fconnector);
-    m_connectors.push_back(&m_tconnector);    
+    m_connectors.push_back(&m_tconnector);
 }
 
 void
-LineShape::draw_shape (Cairo::RefPtr<Cairo::Context> ctx) const
+LineShape::draw_shape (IRenderer* renderer) const
 {
-    Point from(m_fhandle.point());
-    Point to(m_thandle.point());
-    
-    ctx->save();
-    ctx->move_to(from.x, from.y);
-    ctx->line_to(to.x, to.y);
-    ctx->stroke();
-    ctx->restore();
+    renderer->draw_line(m_fhandle.point(), m_thandle.point());
 }
 
 void

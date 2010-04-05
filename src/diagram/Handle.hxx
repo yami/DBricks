@@ -12,6 +12,7 @@ namespace DBricks {
 
 class Shape;
 class Connector;
+class IRenderer;
 
 class Handle {
 public:
@@ -59,7 +60,7 @@ public:
         return std::fabs(m_point.x - point.x) + std::fabs(m_point.y - point.y);
     }
 
-    void draw(Cairo::RefPtr<Cairo::Context> ctx) const;
+    void draw(IRenderer* renderer) const;
 
     Shape* shape() const
     {

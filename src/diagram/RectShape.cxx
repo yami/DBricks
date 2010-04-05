@@ -1,5 +1,6 @@
 #include "RectShape.hxx"
 #include <sml/Sml.hxx>
+#include "IRenderer.hxx"
 
 namespace DBricks {
 
@@ -9,18 +10,9 @@ RectShape::RectShape(const Point& start, Handle*& handle)
 }
 
 void
-RectShape::draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
+RectShape::draw_shape(IRenderer* renderer) const
 {
-    ctx->save();
-    ctx->rectangle(m_x, m_y, m_width, m_height);
-
-    ctx->set_source_rgba(1, 1, 1, 1); // set to white
-    ctx->fill_preserve();
-
-    ctx->set_source_rgba(0.117, 0.337, 0.612, 1); // set to blue
-    ctx->stroke();
-    
-    ctx->restore();
+    renderer->draw_rectangle(Point(m_x, m_y), Point(m_x+m_width, m_y+m_height));
 }
 
 void

@@ -12,6 +12,7 @@
 namespace DBricks {
 
 class Shape;
+class IRenderer;
 
 // A connects to B, B connects to C, then A connects to C.
 class Connector {
@@ -92,7 +93,7 @@ public:
         return m_shape;
     }
 
-    void draw(Cairo::RefPtr<Cairo::Context> ctx) const;
+    void draw(IRenderer* renderer) const;
 
     bool is_active() const
     {

@@ -31,7 +31,6 @@ CreateContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
 {
     Point point = point_of_event(e);
     if (m_state == CC_Dragging) {
-        DLOG(DIAGRAM, DEBUG, "CreateContext::on_motion_notify_event x=%g, y=%g\n", point.x, point.y);
         Diagram::move_handle(m_shape, m_handle, point - m_handle->point());
     }
 

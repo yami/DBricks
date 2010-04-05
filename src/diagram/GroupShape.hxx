@@ -22,7 +22,7 @@ public:
     {
     }
     
-    virtual void draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const;
+    virtual void draw_shape(IRenderer* renderer) const;
     virtual void move(const Point& delta)
     {
         BoxShape::move(delta);

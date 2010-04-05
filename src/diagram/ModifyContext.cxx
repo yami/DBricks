@@ -157,7 +157,6 @@ ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
 
         std::for_each(m_diagram->shapes().begin(), m_diagram->shapes().end(), std::mem_fun(&Shape::hide_connectors));
         history.append(new HandleMoveChange(m_diagram, m_selected_handle, m_opoint, point));
-        DLOG(DIAGRAM, DEBUG, "on_button_release: c1=%p, c2=%p\n", connector1, connector2);
     }
 
     bit_zero(m_state);
@@ -194,8 +193,6 @@ ModifyContext::find_closest_connector(const std::vector<Shape*>& shapes, const P
 void
 ModifyContext::group_shapes()
 {
-    DLOG(DIAGRAM, DEBUG, "grouping...\n");
-
     Selection& selection = m_diagram->selection();
     GroupShape* group = new GroupShape(selection.shapes().begin(), selection.shapes().end());
     m_diagram->add_shape(group);
@@ -212,8 +209,6 @@ ModifyContext::group_shapes()
 void
 ModifyContext::stack_backward()
 {
-    DLOG(DIAGRAM, DEBUG, "stacking backward...\n");
-
     Selection& selection = m_diagram->selection();
     
     if (selection.size() == 1)
@@ -223,8 +218,6 @@ ModifyContext::stack_backward()
 void
 ModifyContext::stack_forward()
 {
-    DLOG(DIAGRAM, DEBUG, "stacking forward...\n");
-
     Selection& selection = m_diagram->selection();
     
     if (selection.size() == 1)
@@ -234,8 +227,6 @@ ModifyContext::stack_forward()
 void
 ModifyContext::show_property()
 {
-    DLOG(DIAGRAM, DEBUG, "show property...\n");
-
     Selection& selection = m_diagram->selection();
     
     Gtk::Widget* widget = selection[0]->property_widget();

@@ -15,7 +15,7 @@ public:
     LineShape(const Point& from, const Point& to);
     
     // Shape interfaces
-    virtual void draw_shape (Cairo::RefPtr<Cairo::Context> ctx) const;
+    virtual void draw_shape (IRenderer* renderer) const;
     virtual void move_handle(Handle* handle, const Point& delta);
     virtual void move_connector(Connector* connector, const Point& delta);
     virtual void move(const Point& delta);

@@ -31,16 +31,8 @@ BoxedCustomShape::BoxedCustomShape()
 }
 
 void
-BoxedCustomShape::draw_shape(Cairo::RefPtr<Cairo::Context> ctx) const
+BoxedCustomShape::draw_shape(IRenderer* renderer) const
 {
-    GError* gerror;    
-    RsvgHandle* handle = rsvg_handle_new_from_data((const guint8*)m_shape_string.c_str(), strlen(m_shape_string.c_str()), &gerror);
-    
-    ctx->save();
-    ctx->translate(m_corner.x, m_corner.y);
-    rsvg_handle_render_cairo(handle, ctx->cobj());
-    rsvg_handle_free(handle);
-    ctx->restore();
 }
 
 void

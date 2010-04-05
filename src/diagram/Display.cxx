@@ -23,10 +23,13 @@
 #include "CreateContext.hxx"
 
 
+#include "CairoRenderer.hxx"
+
 namespace DBricks {
 
 Display::Display(Diagram* diagram)
-    :DiagramObserver(diagram), m_context(new ModifyContext(diagram, this)), m_select_state(Select_None)
+    :DiagramObserver(diagram), m_context(new ModifyContext(diagram, this)), m_select_state(Select_None),
+     m_renderer(0)
 {
     add_events(Gdk::EXPOSURE_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
@@ -88,87 +91,81 @@ Display::draw(GdkEventExpose* event)
     Glib::RefPtr<Gdk::Window> window = get_window();
             
     if (window) {
+        // better way?
+        if (!m_renderer)
+            m_renderer = new CairoRenderer(get_window());
+            //m_renderer = new CairoRenderer(get_window()->create_cairo_context());
+        
+        
         Gtk::Allocation allocation = get_allocation();
 
         const int width = allocation.get_width();
         const int height = allocation.get_height();
 
-        // XXX: use my own double buffering?
-        // double buffering
-
         Gdk::Rectangle rect(0, 0, width, height);
         window->begin_paint_rect(rect);
                 
-        Cairo::RefPtr<Cairo::Context> ctx = window->create_cairo_context();
-                
-        if (event) {
-            ctx->rectangle(event->area.x, event->area.y,
-                           event->area.width, event->area.height);
-            ctx->clip();
-        }
+        // if (event) {
+        //     ctx->rectangle(event->area.x, event->area.y,
+        //                    event->area.width, event->area.height);
+        //     ctx->clip();
+        // }
 
-        ctx->set_source_rgba(1, 1, 1, 1);
-        ctx->paint();
-                
-        draw_grid(ctx, width, height);
+        m_renderer->begin_render(Rect(0, 0, width, height));
+        m_renderer->draw_background(Rect(0, 0, width, height));
+        
+        draw_grid(width, height);
 
         for (Diagram::ShapesType::const_iterator iter=m_diagram->shapes().begin();
              iter != m_diagram->shapes().end();
              ++iter) {
-            (*iter)->draw(ctx);
+            (*iter)->draw(m_renderer);
         }
 
-        draw_select(ctx);
+        draw_select();
 
+        m_renderer->end_render();
+        
         window->end_paint();
     }
 }
 
 void
-Display::draw_grid(Cairo::RefPtr<Cairo::Context> ctx, int width, int height)
+Display::draw_grid(int width, int height)
 {
-    int xstep = 20;
-    int ystep = 20;
-    
-    ctx->save();
+    const int xstep = 20;
+    const int ystep = 20;
+
+    m_renderer->save();
+
+    //m_renderer->line_color(Color(0.337, 0.612, 0.117));
+    m_renderer->line_width(0.2);
     
     for (int x=xstep; x < width; x += xstep) {
-        ctx->move_to(x, 0);
-        ctx->line_to(x, height);
+        m_renderer->draw_line(Point(x, 0), Point(x, height));
     }
 
     for (int y=ystep; y < height; y += ystep) {
-        ctx->move_to(0, y);
-        ctx->line_to(width, y);
+        m_renderer->draw_line(Point(0, y), Point(width, y));
     }
 
-    //ctx->set_source_rgba(0.337, 0.612, 0.117, 0.9);
-    ctx->set_source_rgba(0, 0, 0, 0.8);
-    ctx->set_line_width(0.2);
-    
-    
-    ctx->stroke();
-    ctx->restore();
+    m_renderer->restore();
 }
 
 void
-Display::draw_select(Cairo::RefPtr<Cairo::Context> ctx)
+Display::draw_select()
 {
     switch (m_select_state) {
         case Select_None:
             break;
         case Select_Selecting:
         {
-            std::vector<double> d;
             Rect rect(m_select_origin, m_select_current);
-            d.push_back(4);
-            d.push_back(1);
-            
-            ctx->save();
-            ctx->rectangle(rect.x1(), rect.y1(), rect.width(), rect.height());
-            ctx->set_dash(d, 0);
-            ctx->stroke();
-            ctx->restore();
+
+            m_renderer->save();
+            m_renderer->line_style(LS_Dash);
+            m_renderer->draw_rectangle(Point(rect.x1(), rect.y1()), Point(rect.x2(), rect.y2()));
+            m_renderer->restore();
             break;
         }
         case Select_Selected:
