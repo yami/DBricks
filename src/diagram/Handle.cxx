@@ -12,6 +12,7 @@ Handle::draw(IRenderer* renderer) const
     renderer->save();
     renderer->line_color(Green);
     renderer->draw_rectangle(Point(m_point.x-hw, m_point.y-hw), Point(m_point.x+hw, m_point.y+hw));
+    renderer->restore();
 }
 
 } // namespace DBricks

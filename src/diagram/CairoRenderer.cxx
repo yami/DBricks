@@ -46,7 +46,7 @@ CairoRenderer::CairoRenderer(Glib::RefPtr<Gdk::Window> window)
     :m_window(window)
 {
     m_line_spec.color = Black;
-    m_line_spec.width = 0.025;
+    m_line_spec.width = 1.0;
     m_line_spec.style = LS_Solid;
     m_background      = White;
 }
@@ -176,7 +176,6 @@ LineStyle CairoRenderer::line_style__(LineStyle style)
 
 void CairoRenderer::draw_background(const Rect& update)
 {
-    DLOG(DIAGRAM, DEBUG, "draw_background\n");
     m_ctx->set_source_rgba(RGB_P(m_background), 1);
     m_ctx->rectangle(update.x1(), update.y1(), update.width(), update.height());
     m_ctx->fill();
