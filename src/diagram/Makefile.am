@@ -19,8 +19,6 @@ dbricks_SOURCES = main.cxx \
 	SexpSaver.cxx \
 	SexpLoader.cxx \
 	PropertyDescriptor.cxx \
-	BoxedCustomShape.cxx \
-	TextTemplate.cxx \
 	CairoRenderer.cxx \
 	Color.cxx
 
@@ -29,10 +27,9 @@ dbricks_CPPFLAGS = \
 	$(GTKMM_CFLAGS) \
 	$(RSVG_CFLAGS) \
 	$(CAIROMM_CFLAGS) \
-	-I$(top_srcdir)/src \
-	`ecl-config --cflags`
+	-I$(top_srcdir)/src
 
-dbricks_LDFLAGS = `ecl-config --libs`
+dbricks_LDFLAGS =
 dbricks_LDADD = \
 	$(PANGOMM_LIBS) \
 	$(GTKMM_LIBS) \

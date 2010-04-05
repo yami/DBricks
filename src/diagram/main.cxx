@@ -7,9 +7,6 @@
 #include "ModifyContext.hxx"
 
 
-#include <ecl/ecl.h>
-#include "ecl.hxx"
-
 int main(int argc, char** argv)
 {
     DLOG_SET_LEVEL(DEBUG);
@@ -24,6 +21,4 @@ int main(int argc, char** argv)
     desktop.show_all();
 
     Gtk::Main::run(desktop);
-    
-    cl_shutdown();
 }

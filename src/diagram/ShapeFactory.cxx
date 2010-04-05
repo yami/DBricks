@@ -4,7 +4,6 @@
 #include "LineShape.hxx"
 #include "RectShape.hxx"
 #include "GroupShape.hxx"
-#include "BoxedCustomShape.hxx"
 
 
 namespace DBricks {
@@ -40,9 +39,6 @@ Shape* ShapeFactory::create_shape(const std::string& type, const Point& start, H
     if (type == "Group")
         return new GroupShape(start, handle);
 
-    if (type == "Custom")
-        return new BoxedCustomShape(start, handle);
-    
     ASSERT_NOT_REACHED();
 }
 
