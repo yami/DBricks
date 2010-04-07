@@ -1,6 +1,7 @@
 #ifndef SHAPE_HXX
 #define SHAPE_HXX
 
+#include <map>
 #include <vector>
 #include <cmath>
 #include <geom/Point.hxx>
@@ -159,6 +160,92 @@ protected:
     PropertyMap*        m_property_map;
     PropertyDescriptor* m_property_descriptor;
 };
+
+class ShapeTypeCollection;
+
+class ShapeType {
+public:
+    ShapeType(const std::string& name);
+
+    const std::string& name() const;
+    const std::string& short_name() const;
+    
+    void join(ShapeTypeCollection* c);
+    
+    virtual Shape* create(const Point& start, Handle*& handle) = 0;
+    virtual Shape* create() = 0;
+
+private:
+    std::string          m_name;
+    std::string          m_short_name;
+    ShapeTypeCollection* m_collection;
+};
+
+
+#define DEFINE_SHAPE_TYPE(SHAPE, EXTERN, NAME)              \
+    static ShapeTypeGeneric<SHAPE> EXTERN##_Object(NAME);   \
+    ShapeType* EXTERN = &EXTERN##_Object                    \
+        
+
+template<class ShapeT>
+class ShapeTypeGeneric : public ShapeType {
+public:
+    ShapeTypeGeneric(const std::string& name)
+        :ShapeType(name)
+    {
+    }
+
+    virtual ShapeT* create(const Point& start, Handle*& handle)
+    {
+        return new ShapeT(start, handle);
+    }
+
+    virtual ShapeT* create()
+    {
+        return new ShapeT();
+    }
+};
+
+class ShapeTypeCollection {
+public:
+    typedef std::vector<ShapeType*> ShapeTypesType;
+    
+    ShapeTypeCollection(const std::string& name)
+        :m_name(name)
+    {
+    }
+    
+    const std::string& name() const
+    {
+        return m_name;
+    }
+    
+    void add(ShapeType* shape_type);
+
+    ShapeTypesType& shape_types()
+    {
+        return m_shape_types;
+    }
+    
+private:
+    std::string    m_name;
+    ShapeTypesType m_shape_types;
+};
+
+
+class ShapeTypeInventory {
+public:
+    typedef std::vector<ShapeTypeCollection*> CollectionsType;
+    typedef std::map<std::string, ShapeType*> ShapeTypeMapType;
+    
+    void add_collection(ShapeTypeCollection* collection);
+    ShapeType* shape_type(const std::string& name) const;
+private:
+    CollectionsType   m_collections;
+    ShapeTypeMapType  m_shape_type_map;
+};
+
+ShapeType* lookup_shape_type(const std::string& name);
 
 } // namespace DBricks
 

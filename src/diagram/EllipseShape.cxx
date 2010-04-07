@@ -4,6 +4,8 @@
 
 namespace DBricks {
 
+DEFINE_SHAPE_TYPE(EllipseShape, Ellipse_Shape_Type, "ellipse");
+
 EllipseShape::EllipseShape(const Point& start, Handle*& handle)
     :BoxShape(start, handle)
 {

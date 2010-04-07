@@ -20,7 +20,9 @@ dbricks_SOURCES = main.cxx \
 	SexpLoader.cxx \
 	PropertyDescriptor.cxx \
 	CairoRenderer.cxx \
-	Color.cxx
+	Color.cxx \
+	inventory.cxx \
+	Shape.cxx
 
 dbricks_CPPFLAGS = \
 	$(PANGOMM_CFLAGS) \

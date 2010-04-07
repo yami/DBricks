@@ -63,6 +63,7 @@ private:
     std::vector<Shape*> m_shapes;
 };
 
+
 } // namespace DBricks
 
 #endif // GROUPSHAPE_HXX

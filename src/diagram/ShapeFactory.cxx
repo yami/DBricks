@@ -10,38 +10,12 @@ namespace DBricks {
 
 Shape* ShapeFactory::create_shape(const std::string& type)
 {
-    if (type == "Rectangle")
-        return new RectShape();
-
-    if (type == "Ellipse")
-        return new EllipseShape();
-
-    if (type == "Line")
-        return new LineShape();
-
-    if (type == "Group")
-        return new GroupShape();
-
-    ASSERT_NOT_REACHED();
+    return lookup_shape_type(type)->create();
 }
 
 Shape* ShapeFactory::create_shape(const std::string& type, const Point& start, Handle*& handle)
 {
-    if (type == "Rectangle")
-        return new RectShape(start, handle);
-
-    if (type == "Ellipse")
-        return new EllipseShape(start, handle);
-
-    if (type == "Line")
-        return new LineShape(start, handle);
-
-    if (type == "Group")
-        return new GroupShape(start, handle);
-
-    ASSERT_NOT_REACHED();
+    return lookup_shape_type(type)->create(start, handle);
 }
-
-
 
 } // namespace DBricks

@@ -6,6 +6,9 @@
 #include "BoxShape.hxx"
 #include "ModifyContext.hxx"
 
+namespace DBricks {
+extern void inventory_init();
+}
 
 int main(int argc, char** argv)
 {
@@ -16,6 +19,8 @@ int main(int argc, char** argv)
     // TODO: move to else where
     DBricks::BoxShape::initialize_class();
     DBricks::ModifyContext::initialize_class();
+
+    DBricks::inventory_init();
     
     DBricks::Desktop desktop;
     desktop.show_all();

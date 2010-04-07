@@ -30,6 +30,25 @@ private:
 };
 
 
+class EllipseShapeType : public ShapeType {
+public:
+    virtual const char* name() const
+    {
+        return "/standard/ellipse";
+    }
+
+    virtual EllipseShape* create(const Point& start, Handle*& handle)
+    {
+        return new EllipseShape(start, handle);
+    }
+
+    virtual EllipseShape* create()
+    {
+        return new EllipseShape();
+    }    
+};
+
+
 } // namespace DBricks
 
 #endif // ELLIPSESHAPE_HXX

@@ -5,34 +5,6 @@
 
 namespace DBricks {
 
-
-// to implement save/restore we have several alternatives
-//   1. serialize instances to raw memory via memcpy
-//   2. implement a common interface for save/restore-able classes
-//   3. use Change and ChangeSet
-//   4. serialize instance data member into raw memory
-//
-// 4th is most straigthforward one, perhaps I should use it.
-// Something like following
-//   1. save_stack: std::stack<Modify> m_save_stack;
-//   2. modification representation
-//      struct Modify {
-//        long type;
-//        union {
-//          long tiny;
-//          long length;
-//        };
-//        char data[];
-//      }
-//
-//   'type':
-//   1. lowest bit:
-//      0 -> tiny data: data is stored in 'tiny'
-//      1 -> long data: data is stored in 'data', length is 'length'
-//   2. other bits:
-//      the type of modification, such as Modify_BackGroundColor etc.
-
-
 // CairoRenderer::CairoRenderer(Cairo::RefPtr<Cairo::Context> ctx)
 //     :m_ctx(ctx)
 // {

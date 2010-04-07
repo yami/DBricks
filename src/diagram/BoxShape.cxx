@@ -17,7 +17,7 @@ BoxShape::initialize_class()
 {
     s_menu
         .append(new MenuItem("Aspect", "Fixed Aspect", new ShapeMenuAction<BoxShape, BoxShape::MenuActionMethodType>(&BoxShape::set_fixed_aspect)))
-        .append(new MenuItem("Square", "Square",       new ShapeMenuAction<BoxShape, BoxShape::MenuActionMethodType>(&BoxShape::set_square)));    
+        .append(new MenuItem("Square", "Square",       new ShapeMenuAction<BoxShape, BoxShape::MenuActionMethodType>(&BoxShape::set_square)));
 }
 
 BoxShape::BoxShape(const Point& start, Handle*& handle)

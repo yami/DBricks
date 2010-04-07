@@ -4,6 +4,8 @@
 
 namespace DBricks {
 
+DEFINE_SHAPE_TYPE(RectShape, Rect_Shape_Type, "rectangle");
+
 RectShape::RectShape(const Point& start, Handle*& handle)
     :BoxShape(start, handle)
 {

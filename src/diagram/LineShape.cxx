@@ -13,6 +13,8 @@
 
 namespace DBricks {
 
+DEFINE_SHAPE_TYPE(LineShape, Line_Shape_Type, "line");
+
 LineShape::LineShape(const Point& start, Handle*& handle)
     :Shape(Break_Connections)
 {
