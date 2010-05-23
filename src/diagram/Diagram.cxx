@@ -111,30 +111,13 @@ Diagram::find_closest_handle(Shape* shape, const Point& point) const
 }
 
 
+
 Connector*
 Diagram::find_closest_connector(const std::vector<Shape*>& shapes, const Point& point) const
 {
-    double min_dist = 10;
-    Connector* closest = 0;
-    
-    for (ShapesType::const_iterator siter = m_shapes.begin();
-         siter != m_shapes.end();
-         ++siter) {
-        if (util::in_container(shapes, *siter))
-            continue;
-
-        for (Shape::ConnectorsType::const_iterator citer = (*siter)->connectors().begin();
-             citer != (*siter)->connectors().end();
-             ++citer) {
-            if ((*citer)->distance(point) < min_dist) {
-                closest = *citer;
-                min_dist = (*citer)->distance(point);
-            }
-        }
-    }
-
-    return closest;
+    return iterate_noselected_connectors(shapes, point, NoopAction(), NoopAction());
 }
+
 
 const Diagram::ShapesType&
 Diagram::shapes() const

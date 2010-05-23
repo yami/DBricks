@@ -29,24 +29,35 @@ public:
     virtual double line_width(double width);
     virtual Color line_color(const Color& color);
     virtual LineStyle line_style(LineStyle style);
+
+    virtual double fill_alpha(double alpha);
+    virtual Color fill_color(const Color& color);
     
     virtual void draw_background(const Rect& update);
         
     virtual void draw_line(const Point& from, const Point& to);
-    virtual void draw_rectangle(const Point& top_left, const Point& bottom_right);
-    virtual void draw_ellipse(const Point& center, double width, double height);
-
+    virtual void draw_rectangle(const Point& top_left, const Point& bottom_right, FillAction fill = Fill_None);
+    virtual void draw_ellipse(const Point& center, double width, double height, FillAction fill = Fill_None);
+    
 private:
     Color background__(const Color& color);
     double line_width__(double width);
     Color line_color__(const Color& color);
     LineStyle line_style__(LineStyle style);
+
+    double fill_alpha__(double alpha);
+    Color fill_color__(const Color& color);
+    
+    void rectangle__(int fill, const Point& top_left, const Point& bottom_right);
+    void ellipse__(int fill, const Point& center, double width, double height);
     
     enum ModificationType {
         MT_LineColor,
         MT_LineWidth,
         MT_LineStyle,
         MT_BackgroundColor,
+        MT_FillColor,
+        MT_FillAlpha,
     };
     
     class RendererModification {
@@ -59,6 +70,7 @@ private:
             
             switch (type) {
                 case MT_LineWidth:
+                case MT_FillAlpha:
                 {
                     double* value = (double *)data;
                     *value = *(double *)d;
@@ -66,6 +78,7 @@ private:
                 }
                 case MT_LineColor:
                 case MT_BackgroundColor:
+                case MT_FillColor:
                 {
                     Color* value = (Color *)data;
                     *value = *(Color *)d;
@@ -90,9 +103,13 @@ private:
             switch (t) {
                 case MT_LineColor:
                 case MT_BackgroundColor:
+                case MT_FillColor:
                     return sizeof(Color);  break;
+                    
                 case MT_LineWidth:
+                case MT_FillAlpha:
                     return sizeof(double); break;
+                    
                 case MT_LineStyle:
                     return sizeof(LineStyle); break;
             }
@@ -110,6 +127,7 @@ private:
     Glib::RefPtr<Gdk::Window>     m_window;
     Cairo::RefPtr<Cairo::Context> m_ctx;
     LineSpec                      m_line_spec;
+    FillSpec                      m_fill_spec;
     Color                         m_background;
 
     std::stack<std::vector<RendererModification*> > m_save_stack;

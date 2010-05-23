@@ -14,7 +14,7 @@ EllipseShape::EllipseShape(const Point& start, Handle*& handle)
 void
 EllipseShape::draw_shape(IRenderer* renderer) const
 {
-    renderer->draw_ellipse(Point(m_x+m_width/2, m_y+m_height/2), m_width, m_height);
+    renderer->draw_ellipse(Point(m_x+m_width/2, m_y+m_height/2), m_width, m_height, Fill_Fill);
 }
 
 void

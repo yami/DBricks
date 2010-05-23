@@ -18,6 +18,11 @@ struct LineSpec {
     LineStyle style;
 };
 
+struct FillSpec {
+    Color  color;
+    double alpha;
+};
+
 } // namespace DBricks
 
 

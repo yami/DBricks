@@ -68,12 +68,70 @@ public:
         return m_history;
     }
     
+    struct NoopAction {
+        void operator () (Connector* c)
+        {
+        }
+    };
+
+    template<class CloseActionT, class RemoteActionT>
+    Connector* iterate_noselected_connectors(const std::vector<Shape*>& shapes, const Point& point,
+                                             CloseActionT close_action, RemoteActionT remote_action) const;
+
 private:
+    
     ShapesType    m_shapes;
     ObserversType m_observers;
     Selection     m_selection;
     History       m_history;
 };
+
+template<class CloseActionT, class RemoteActionT>
+Connector* Diagram::iterate_noselected_connectors(const std::vector<Shape*>& shapes, const Point& point,
+                                                  CloseActionT close_action, RemoteActionT remote_action) const
+{
+    const double near_dist = 15;
+    double       min_dist  = near_dist;
+    Connector*   closest   = 0;
+
+    std::vector<Connector*> near_connectors;
+    near_connectors.reserve(5);
+    
+    for (ShapesType::const_iterator siter = m_shapes.begin();
+         siter != m_shapes.end();
+         ++siter) {
+        if (util::in_container(shapes, *siter))
+            continue;
+
+        for (Shape::ConnectorsType::const_iterator citer = (*siter)->connectors().begin();
+             citer != (*siter)->connectors().end();
+             ++citer) {
+            double dist = (*citer)->distance(point);
+
+            if (dist < near_dist) {
+                near_connectors.push_back(*citer);
+            } else {
+                remote_action(*citer);
+            }
+            
+            if (dist < min_dist) {
+                closest = *citer;
+                min_dist = (*citer)->distance(point);
+            }
+        }
+    }
+
+    for (std::vector<Connector*>::iterator niter = near_connectors.begin();
+         niter != near_connectors.end();
+         ++niter) {
+        if (*niter != closest)
+            remote_action(*niter);
+    }
+
+    close_action(closest);
+    
+    return closest;
+}
 
 } // namespace DBricks
 

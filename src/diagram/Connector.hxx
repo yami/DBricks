@@ -23,10 +23,15 @@ public:
         Active,
     };
 
+    enum DrawMode {
+        Normal,
+        Highlight,
+    };
+    
     Connector() {}
     
     Connector(Shape* shape, const Point& point, ConnectorKind kind = Passive)
-        :m_shape(shape), m_point(point), m_last_point(point), m_kind(kind)
+        :m_shape(shape), m_point(point), m_last_point(point), m_kind(kind), m_mode(Normal)
     {
     }
 
@@ -40,12 +45,7 @@ public:
     
     typedef std::vector<Connector*> ConnectorsType;
     
-    static void build_connections(Connector* a, Connector* b)
-    {
-        a->connect_to(b);
-        b->connect_to(a);
-    }
-
+    static void build_connections(Connector* a, Connector* b);
     static void break_connections(Connector* c);
     
     void connect_to(Connector* c)
@@ -99,13 +99,29 @@ public:
     {
         return m_kind == Active;
     }
+
+    bool is_connected() const
+    {
+        return !m_connectors.empty();
+    }
+
+    void highlight(bool h)
+    {
+        m_mode = h ? Highlight : Normal;
+    }
 private:
+    void draw_normal(IRenderer* renderer) const;
+    void draw_connected(IRenderer* renderer) const;
+    void draw_highlighted(IRenderer* renderer) const;
+    
     Shape*         m_shape;
     ConnectorsType m_connectors;
     Point          m_point;
     Point          m_last_point;
     ConnectorKind  m_kind;
+    DrawMode       m_mode;
 };
+
 
 } // namespace DBricks
 

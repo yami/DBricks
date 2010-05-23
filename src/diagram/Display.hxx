@@ -62,6 +62,12 @@ public:
     void reset();
 
     void set_context(EventContext* context);
+
+    void set_highlight_closest_connector()
+    {
+        m_highlight_closest_connector = true;
+    }
+    
 private:
     void draw(GdkEventExpose* event=NULL);
     void draw_select();
@@ -81,6 +87,9 @@ private:
     Point m_select_current;
 
     IRenderer* m_renderer;
+
+    bool m_highlight_closest_connector;
+    GdkEvent*  m_event;
 };
 
 } // namespace DBricks

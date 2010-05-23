@@ -38,15 +38,13 @@ public:
     
     Shape(FlagsType flags=0)
         :m_flags(flags), m_corner(0, 0),
-         m_show_handles(false), m_show_connectors(false),
-         m_property_map(0), m_property_descriptor(0)
+         m_show_handles(false), m_property_map(0), m_property_descriptor(0)
     {
     }
 
     Shape(double x, double y, FlagsType flags=0)
         :m_flags(flags), m_corner(x, y),
-         m_show_handles(false), m_show_connectors(false),
-         m_property_map(0), m_property_descriptor(0)
+         m_show_handles(false), m_property_map(0), m_property_descriptor(0)
     {
     }
     
@@ -66,12 +64,10 @@ public:
             }
         }
 
-        if (m_show_connectors) {
-            for (ConnectorsType::const_iterator iter = m_connectors.begin();
-                 iter != m_connectors.end();
-                 ++iter) {
-                (*iter)->draw(renderer);
-            }
+        for (ConnectorsType::const_iterator iter = m_connectors.begin();
+             iter != m_connectors.end();
+             ++iter) {
+            (*iter)->draw(renderer);
         }
     }
 
@@ -129,16 +125,6 @@ public:
         m_show_handles = false;
     }
 
-    void show_connectors()
-    {
-        m_show_connectors = true;
-    }
-
-    void hide_connectors()
-    {
-        m_show_connectors = false;
-    }
-
     virtual void save (Sml::Object* object) const = 0;
     virtual void load (Sml::Object* object) = 0;
 
@@ -155,7 +141,6 @@ protected:
     
     Point m_corner;
     bool  m_show_handles;
-    bool  m_show_connectors;
 
     PropertyMap*        m_property_map;
     PropertyDescriptor* m_property_descriptor;
@@ -182,9 +167,9 @@ private:
 };
 
 
-#define DEFINE_SHAPE_TYPE(SHAPE, EXTERN, NAME)              \
-    static ShapeTypeGeneric<SHAPE> EXTERN##_Object(NAME);   \
-    ShapeType* EXTERN = &EXTERN##_Object                    \
+#define DEFINE_SHAPE_TYPE(SHAPE, EXTERN, NAME)                  \
+    static ShapeTypeGeneric<SHAPE> EXTERN##_Object(NAME);       \
+    ShapeType* EXTERN = &EXTERN##_Object                        \
         
 
 template<class ShapeT>

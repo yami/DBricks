@@ -10,8 +10,9 @@ Handle::draw(IRenderer* renderer) const
     double hw = 2.0;
     
     renderer->save();
+    renderer->fill_color(Blue);
     renderer->line_color(Green);
-    renderer->draw_rectangle(Point(m_point.x-hw, m_point.y-hw), Point(m_point.x+hw, m_point.y+hw));
+    renderer->draw_rectangle(Point(m_point.x-hw, m_point.y-hw), Point(m_point.x+hw, m_point.y+hw), Fill_Fill);
     renderer->restore();
 }
 

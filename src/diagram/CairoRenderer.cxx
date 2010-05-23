@@ -20,6 +20,10 @@ CairoRenderer::CairoRenderer(Glib::RefPtr<Gdk::Window> window)
     m_line_spec.color = Black;
     m_line_spec.width = 1.0;
     m_line_spec.style = LS_Solid;
+
+    m_fill_spec.color = White;
+    m_fill_spec.alpha = 1;
+    
     m_background      = White;
 }
 
@@ -48,6 +52,12 @@ void CairoRenderer::restore()
                 break;
             case MT_BackgroundColor:
                 background__(*((Color *)m[i]->data));
+                break;
+            case MT_FillColor:
+                fill_color__(*((Color *)m[i]->data));
+                break;
+            case MT_FillAlpha:
+                fill_alpha__(*((double *)m[i]->data));
                 break;
         }
 
@@ -146,6 +156,32 @@ LineStyle CairoRenderer::line_style__(LineStyle style)
     return old_style;
 }
 
+Color CairoRenderer::fill_color(const Color& color)
+{
+    save_to_stack(MT_FillColor, &m_fill_spec.color);
+    return fill_color__(color);
+}
+
+Color CairoRenderer::fill_color__(const Color& color)
+{
+    Color old_color = m_fill_spec.color;
+    m_fill_spec.color = color;
+    return old_color;
+}
+
+double CairoRenderer::fill_alpha(double alpha)
+{
+    save_to_stack(MT_FillAlpha, &m_fill_spec.alpha);
+    return fill_alpha__(alpha);
+}
+
+double CairoRenderer::fill_alpha__(double alpha)
+{
+    double old_alpha = m_fill_spec.alpha;
+    m_fill_spec.alpha = alpha;
+    return old_alpha;
+}
+
 void CairoRenderer::draw_background(const Rect& update)
 {
     m_ctx->set_source_rgba(RGB_P(m_background), 1);
@@ -162,26 +198,36 @@ void CairoRenderer::draw_line(const Point& from, const Point& to)
     m_ctx->stroke();
 }
 
-void CairoRenderer::draw_rectangle(const Point& top_left, const Point& bottom_right)
+void CairoRenderer::draw_rectangle(const Point& top_left, const Point& bottom_right, FillAction fill)
 {
-    m_ctx->set_source_rgba(RGB_P(m_line_spec.color), 1);
     m_ctx->rectangle(top_left.x, top_left.y, bottom_right.x - top_left.x, bottom_right.y - top_left.y);
+
+    if (fill == Fill_Fill) {
+        m_ctx->set_source_rgba(RGB_P(m_fill_spec.color), m_fill_spec.alpha);
+        m_ctx->fill_preserve();
+    }
+    
+    m_ctx->set_source_rgba(RGB_P(m_line_spec.color), 1);
     m_ctx->stroke();
 }
 
-void CairoRenderer::draw_ellipse(const Point& center, double width, double height)
+void CairoRenderer::draw_ellipse(const Point& center, double width, double height, FillAction fill)
 {
-    m_ctx->set_source_rgba(RGB_P(m_line_spec.color), 1);
-    
     m_ctx->save();
-
+    
     m_ctx->translate(center.x, center.y);
     m_ctx->scale(width/2, height/2);
     m_ctx->arc(0, 0, 1, 0, 2*M_PI);
     
+   if (fill == Fill_Fill) {
+       m_ctx->set_source_rgba(RGB_P(m_fill_spec.color), m_fill_spec.alpha);
+       m_ctx->fill_preserve();
+   }
+    
     m_ctx->restore();
 
-    m_ctx->stroke();
+    m_ctx->set_source_rgba(RGB_P(m_line_spec.color), 1);
+    m_ctx->stroke();    
 }
 
 } // namespace DBricks

@@ -29,7 +29,7 @@ namespace DBricks {
 
 Display::Display(Diagram* diagram)
     :DiagramObserver(diagram), m_context(new ModifyContext(diagram, this)), m_select_state(Select_None),
-     m_renderer(0)
+     m_renderer(0), m_highlight_closest_connector(false), m_event(NULL)
 {
     add_events(Gdk::EXPOSURE_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
@@ -66,6 +66,8 @@ Display::on_event(GdkEvent* event)
 {
     Point point;
     Shape* shape;
+
+    m_event = event;
     
     if (point_of_event(event, &point)) {
         shape  = m_diagram->find_closest_shape(point);
@@ -116,14 +118,35 @@ Display::draw(GdkEventExpose* event)
         
         draw_grid(width, height);
 
+
+        Connector* closest = 0;
+        
+        if (m_highlight_closest_connector && m_event) {
+            Point point;
+
+            if (point_of_event(m_event, &point)) {
+                Selection& selection = m_diagram->selection();
+                closest = m_diagram->find_closest_connector(selection.shapes(), point);
+
+                if (closest)
+                    closest->highlight(true);
+            }
+            m_highlight_closest_connector = false;
+        }
+        
+        
         for (Diagram::ShapesType::const_iterator iter=m_diagram->shapes().begin();
              iter != m_diagram->shapes().end();
              ++iter) {
             (*iter)->draw(m_renderer);
         }
 
+        if (closest)
+            closest->highlight(false);
+        
         draw_select();
-
+        
+        
         m_renderer->end_render();
         
         window->end_paint();
@@ -261,5 +284,7 @@ Display::popup(EventContext* context, Shape* shape, GdkEventButton* event)
     Gtk::Menu* popup = dynamic_cast<Gtk::Menu*>(uimgr->get_widget("/ShapeMenu"));
     popup->popup(event->button, event->time);
 }
+
+
 
 } // namespace DBricks

@@ -113,7 +113,9 @@ ModifyContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
     } else if (bit_is_set(m_state, HandleMoving)) {
         if (m_selected_handle->connector() && m_selected_handle->connector()->is_active()) {
             m_display->set_cursor(Gdk::BLANK_CURSOR);
-            std::for_each(m_diagram->shapes().begin(), m_diagram->shapes().end(), std::mem_fun(&Shape::show_connectors));
+
+            m_display->set_highlight_closest_connector();
+
         } else {
             m_display->set_cursor(Gdk::X_CURSOR);
         }
@@ -152,10 +154,10 @@ ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
         Connector* connector2 = m_diagram->find_closest_connector(selection.shapes(), point);
 
         if (connector1 && connector2) {
+            connector1->point(connector2->point());
             Connector::build_connections(connector1, connector2);
         }
-
-        std::for_each(m_diagram->shapes().begin(), m_diagram->shapes().end(), std::mem_fun(&Shape::hide_connectors));
+        
         history.append(new HandleMoveChange(m_diagram, m_selected_handle, m_opoint, point));
     }
 

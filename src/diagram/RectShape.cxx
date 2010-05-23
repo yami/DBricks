@@ -14,7 +14,7 @@ RectShape::RectShape(const Point& start, Handle*& handle)
 void
 RectShape::draw_shape(IRenderer* renderer) const
 {
-    renderer->draw_rectangle(Point(m_x, m_y), Point(m_x+m_width, m_y+m_height));
+    renderer->draw_rectangle(Point(m_x, m_y), Point(m_x+m_width, m_y+m_height), Fill_Fill);
 }
 
 void

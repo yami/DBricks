@@ -17,7 +17,7 @@ GroupShape::draw_shape(IRenderer* renderer) const
         (*iter)->draw(renderer);
     }
     
-    if (m_show_handles || m_show_connectors) {
+    if (m_show_handles) {
         Rect rect = bb();
         renderer->draw_rectangle(Point(rect.x1(), rect.y1()), Point(rect.x2(), rect.y2()));
     }
