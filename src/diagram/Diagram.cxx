@@ -31,6 +31,8 @@ Diagram::save(Sml::Object* object) const
         ++iter) {
         Sml::Object* shape_object = new Sml::Object();
         shape_list->add_value(new Sml::Value(shape_object));
+        shape_object->add_attribute_data(":id",   (int)(*iter));
+        shape_object->add_attribute_data(":type", (*iter)->type()->name());
         (*iter)->save(shape_object);
     }
 }
@@ -45,7 +47,7 @@ Diagram::load(Sml::Object* object)
         iter != shape_list->values().end();
         ++iter) {
         Sml::Object* shape_object  = (*iter)->get_object();
-        std::string  shape_type    = shape_object->get_attribute_string("type");
+        std::string  shape_type    = shape_object->get_attribute_string(":type");
         Shape* shape = ShapeFactory::create_shape(shape_type);
         shape->load(shape_object);
         add_shape(shape);
@@ -171,8 +173,12 @@ Diagram::update_shape_connectiors_internal(Shape* shape, std::vector<Shape*>& mo
                  iter != (*citer)->connectors().end();
                  ++iter) {
                 Shape* connected_shape = (*iter)->shape();
-                if (connected_shape && !util::in_container(moved_shapes, connected_shape)) {
-                    connected_shape->move_connector(*iter, delta);
+                if (connected_shape && (*iter)->is_active() && !util::in_container(moved_shapes, connected_shape)) {
+                    Handle* h = connected_shape->handle((*iter)->point());
+
+                    if (!h)
+                        continue;
+                    connected_shape->move_handle(h, delta);
                     moved_shapes.push_back(connected_shape);
                     update_shape_connectiors_internal(connected_shape, moved_shapes);
                 }

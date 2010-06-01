@@ -248,7 +248,31 @@ const char* ci_symbol_name(Object* object)
 
 double ci_to_double(Object* object)
 {
-    return HARD_CAST(object, Real)->value;
+    IntegerObject* integer = dynamic_cast<IntegerObject*>(object);
+    
+    if (integer)
+        return HARD_CAST(object, Integer)->value;
+    else
+        return HARD_CAST(object, Real)->value;
+}
+
+int ci_length(sexp_t list)
+{
+    int n = 0;
+    for (sexp_t rest = list; rest != Nil; rest = cdr(rest))
+        n++;
+    return n;
+}
+
+sexp_t ci_nth(sexp_t list, size_t n)
+{
+    int i = 0;
+    for (sexp_t rest = list; rest != Nil; rest = cdr(rest), i++) {
+        if (i == n)
+            return car(rest);
+    }
+
+    return Nil;
 }
 
 void StringObject::princ(FILE* output) const

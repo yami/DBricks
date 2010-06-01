@@ -29,6 +29,11 @@ public:
     };
     
     Connector() {}
+
+    Connector(Shape* shape, ConnectorKind kind = Passive)
+        :m_shape(shape), m_kind(kind), m_mode(Normal)
+    {
+    }
     
     Connector(Shape* shape, const Point& point, ConnectorKind kind = Passive)
         :m_shape(shape), m_point(point), m_last_point(point), m_kind(kind), m_mode(Normal)
@@ -63,6 +68,11 @@ public:
     ConnectorsType& connectors()
     {
         return m_connectors;
+    }
+
+    Connector* connector(size_t i) const
+    {
+        return m_connectors[i];
     }
 
     const Point& point() const
@@ -108,6 +118,19 @@ public:
     void highlight(bool h)
     {
         m_mode = h ? Highlight : Normal;
+    }
+
+    Connector* clone(Shape* shape) const
+    {
+        Connector* new_connector = new Connector();
+
+        new_connector->m_shape = shape;
+        new_connector->m_point = m_point;
+        new_connector->m_point = m_last_point;
+        new_connector->m_kind  = m_kind;
+        new_connector->m_mode  = m_mode;
+
+        return new_connector;
     }
 private:
     void draw_normal(IRenderer* renderer) const;

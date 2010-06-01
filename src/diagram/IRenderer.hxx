@@ -2,6 +2,8 @@
 #include "LineSpec.hxx"
 #include <geom/Point.hxx>
 #include <geom/Rect.hxx>
+#include <vector>
+
 
 namespace DBricks {
 
@@ -31,6 +33,7 @@ public:
     virtual void draw_line(const Point& from, const Point& to) = 0;
     virtual void draw_rectangle(const Point& top_left, const Point& bottom_right, FillAction fill = Fill_None) = 0;
     virtual void draw_ellipse(const Point& center, double width, double height, FillAction fill = Fill_None) = 0;
+    virtual void draw_polygon(const std::vector<Point>& points, FillAction fill = Fill_None) = 0;
 };
 
 } // namespace DBricks

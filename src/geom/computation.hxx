@@ -29,6 +29,12 @@ point_point_distance(const Point& a, const Point& b)
 }
 
 inline double
+point_point_manhattan(const Point& a, const Point& b)
+{
+    return fabs(a.x-b.x) + fabs(a.y-b.y);
+}
+
+inline double
 point_origin_distance(const Point& a)
 {
     return sqrt(a.x*a.x + a.y*a.y);

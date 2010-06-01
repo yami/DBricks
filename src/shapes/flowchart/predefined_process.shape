@@ -1,0 +1,28 @@
+(shape
+ (name "predefined_process")
+ (description "Predefined Process")
+ (connectors
+  (0   0)
+  (2.5 0)
+  (5   0)
+  (7.5 0)
+  (10  0)
+  (0   2.5)
+  (0   5)
+  (0   7.5)
+  (0   10)
+  (10  2.5)
+  (10  5)
+  (10  7.5)
+  (10  10)
+  (2.5 10)
+  (5   10)
+  (7.5 10)
+  (5   5))
+
+  (width  10)
+  (height 10)
+ (draw
+  (rectangle (0 0) 10 10)
+  (line (1 0) (1 10))
+  (line (9 0) (9 10))))

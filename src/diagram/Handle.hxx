@@ -17,6 +17,11 @@ class IRenderer;
 class Handle {
 public:
     Handle() {}
+
+    Handle(Shape* shape)
+        :m_shape(shape), m_connector(0)
+    {
+    }
     
     Handle(Shape* shape, const Point& point)
         :m_shape(shape), m_connector(0), m_point(point)
@@ -38,7 +43,7 @@ public:
         m_shape     = shape;
         m_connector = connector;
         m_point     = point;
-    }    
+    }
 
     Connector* connector() const
     {
@@ -65,6 +70,16 @@ public:
     Shape* shape() const
     {
         return m_shape;
+    }
+
+    Handle* clone(Shape* shape) const
+    {
+        Handle* new_handle = new Handle();
+
+        new_handle->m_shape = shape;
+        new_handle->m_point = m_point;
+
+        return new_handle;
     }
 private:
     Shape*      m_shape;

@@ -41,4 +41,9 @@ EllipseShape::load(Sml::Object* object)
 }
 
 
+ShapeType* EllipseShape::type() const
+{
+    return Ellipse_Shape_Type;
+}
+
 } // namespace DBricks

@@ -16,12 +16,6 @@ public:
         update_handles();
     }
 
-    GroupShape() {}
-    GroupShape(const Point& start, Handle*& handle)
-        :BoxShape(start, handle)
-    {
-    }
-    
     virtual void draw_shape(IRenderer* renderer) const;
     virtual void move(const Point& delta)
     {
@@ -54,9 +48,11 @@ public:
         return 0;
     }
     
-    virtual void         property_apply()
+    virtual void property_apply()
     {
     }
+
+    virtual ShapeType* type() const;
 private:
     void initialize();
     

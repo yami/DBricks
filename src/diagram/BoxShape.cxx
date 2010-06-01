@@ -157,44 +157,6 @@ BoxShape::move_handle(Handle* handle, const Point& delta)
 }
 
 void
-BoxShape::move_connector(Connector* connector, const Point& delta)
-{
-    if (connector == &m_lconnector) {
-        m_x     += delta.x;
-        m_width -= delta.x;
-    } else if (connector == &m_rconnector) {
-        m_width += delta.x;
-    } else if (connector == &m_tconnector) {
-        m_y      += delta.y;
-        m_height -= delta.y;
-    } else if (connector == &m_bconnector) {
-        m_height += delta.y;
-    } else if (connector == &m_nwconnector) {
-        m_x      += delta.x;
-        m_width  -= delta.x;
-        m_y      += delta.y;
-        m_height -= delta.y;
-    } else if (connector == &m_neconnector) {
-        m_x      -= delta.x;
-        m_width  += delta.x;
-        m_y      -= delta.y;
-        m_height += delta.y;
-    } else if (connector == &m_seconnector) {
-        m_width  += delta.x;
-        m_height += delta.y;        
-    } else if (connector == &m_swconnector) {
-        m_x      += delta.x;
-        m_width  -= delta.x;
-        m_y      += delta.y;
-        m_height += delta.y;        
-    } else {
-        ASSERT_NOT_REACHED();
-    }
-
-    on_data_change();
-}
-
-void
 BoxShape::move(const Point& delta)
 {
     m_corner += delta;

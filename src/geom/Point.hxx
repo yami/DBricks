@@ -1,6 +1,8 @@
 #ifndef POINT_HXX
 #define POINT_HXX
 
+#include <cmath>
+
 namespace DBricks {
 
 struct Point {
@@ -13,6 +15,11 @@ struct Point {
     {
     }
 
+    Point(const Point& p)
+        :x(p.x), y(p.y)
+    {
+    }
+    
     Point operator + (const Point& p) const
     {
         return Point(x+p.x, y+p.y);
@@ -37,6 +44,11 @@ struct Point {
         y -= p.y;
 
         return *this;
+    }
+
+    bool operator == (const Point& p) const
+    {
+        return std::fabs(x - p.x) + std::fabs(y - p.y) < 0.001;
     }
     
     double x, y;

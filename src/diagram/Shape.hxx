@@ -8,7 +8,10 @@
 #include <geom/Rect.hxx>
 #include <cairomm/context.h>
 
+
 #include <util/bit.hxx>
+#include <util/assert.hxx>
+
 
 #include "Handle.hxx"
 #include "Connector.hxx"
@@ -27,6 +30,8 @@ class Menu;
 class PropertyMap;
 class PropertyDescriptor;
 class IRenderer;
+class ShapeType;
+
 
 class Shape : public IWithProperties {
 public:
@@ -56,6 +61,12 @@ public:
     {
         draw_shape(renderer);
 
+        for (ConnectorsType::const_iterator iter = m_connectors.begin();
+             iter != m_connectors.end();
+             ++iter) {
+            (*iter)->draw(renderer);
+        }        
+        
         if (m_show_handles) {
             for (HandlesType::const_iterator iter = m_handles.begin();
                  iter != m_handles.end();
@@ -63,16 +74,9 @@ public:
                 (*iter)->draw(renderer);
             }
         }
-
-        for (ConnectorsType::const_iterator iter = m_connectors.begin();
-             iter != m_connectors.end();
-             ++iter) {
-            (*iter)->draw(renderer);
-        }
     }
 
     virtual void move_handle(Handle* handle, const Point& delta) = 0;
-    virtual void move_connector(Connector* connector, const Point& delta) = 0;    
     virtual void move(const Point& delta) = 0;
 
     virtual double distance(const Point& point) const
@@ -89,11 +93,7 @@ public:
         return 0;
     }
 
-    virtual Shape* clone() const
-    {
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
+    virtual Shape* clone() const = 0;
     
     HandlesType& handles()
     {
@@ -103,6 +103,16 @@ public:
     ConnectorsType& connectors()
     {
         return m_connectors;
+    }
+
+    int connector_index(Connector* conn)
+    {
+        for (size_t i = 0; i<m_connectors.size(); ++i) {
+            if (m_connectors[i] == conn)
+                return i;
+        }
+        
+        return -1;
     }
 
     bool break_connections() const
@@ -125,15 +135,21 @@ public:
         m_show_handles = false;
     }
 
+    Handle* handle(const Point& point) const;
+
     virtual void save (Sml::Object* object) const = 0;
     virtual void load (Sml::Object* object) = 0;
 
     virtual Gtk::Widget* property_widget() = 0;
     virtual void         property_apply() = 0;
+
+    virtual ShapeType*   type() const = 0;
     
 private:
     virtual void draw_shape(IRenderer* renderer) const = 0;
 protected:
+    void init_copy(Shape* copy) const;
+    
     HandlesType m_handles;
     ConnectorsType m_connectors;
 
@@ -188,6 +204,28 @@ public:
     virtual ShapeT* create()
     {
         return new ShapeT();
+    }
+};
+
+
+template<class ShapeT>
+class ShapeTypeAbstract: public ShapeType {
+public:
+    ShapeTypeAbstract(const std::string& name)
+        :ShapeType(name)
+    {
+    }
+
+    virtual ShapeT* create(const Point& start, Handle*& handle)
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    virtual ShapeT* create()
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
     }
 };
 

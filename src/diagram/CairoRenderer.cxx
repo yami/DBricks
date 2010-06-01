@@ -230,4 +230,27 @@ void CairoRenderer::draw_ellipse(const Point& center, double width, double heigh
     m_ctx->stroke();    
 }
 
+void CairoRenderer::draw_polygon(const std::vector<Point>& points, FillAction fill)
+{
+    ASSERT(points.size() > 1);
+    
+    m_ctx->begin_new_path();
+    m_ctx->move_to(points[0].x, points[0].y);
+
+    for (size_t i = 1; i<points.size(); ++i) {
+        m_ctx->line_to(points[i].x, points[i].y);
+    }
+
+    m_ctx->line_to(points[0].x, points[0].y);
+    m_ctx->close_path();
+
+    if (fill == Fill_Fill) {
+        m_ctx->set_source_rgba(RGB_P(m_fill_spec.color), m_fill_spec.alpha);
+        m_ctx->fill_preserve();
+    }
+
+    m_ctx->set_source_rgba(RGB_P(m_line_spec.color), 1);
+    m_ctx->stroke();
+}
+
 } // namespace DBricks

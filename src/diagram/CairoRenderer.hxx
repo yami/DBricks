@@ -38,6 +38,7 @@ public:
     virtual void draw_line(const Point& from, const Point& to);
     virtual void draw_rectangle(const Point& top_left, const Point& bottom_right, FillAction fill = Fill_None);
     virtual void draw_ellipse(const Point& center, double width, double height, FillAction fill = Fill_None);
+    virtual void draw_polygon(const std::vector<Point>& points, FillAction fill = Fill_None);
     
 private:
     Color background__(const Color& color);

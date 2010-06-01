@@ -40,6 +40,9 @@ int         ci_to_integer(sexp_t object);
 const char* ci_symbol_name(sexp_t object);
 double ci_to_double(sexp_t object);
 
+int ci_length(sexp_t list);
+sexp_t ci_nth(sexp_t list, size_t n);
+
 } // namespace ssexp
 
 #endif // SSEXP_H

@@ -40,4 +40,9 @@ RectShape::load(Sml::Object* object)
     initialize();
 }
 
+ShapeType* RectShape::type() const
+{
+    return Rect_Shape_Type;
+}
+
 } // namespace DBricks

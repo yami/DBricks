@@ -11,6 +11,7 @@ dbricks_SOURCES = main.cxx \
 	RectShape.cxx \
 	EllipseShape.cxx \
 	BoxShape.cxx \
+	BoxedShape.cxx \
 	Handle.cxx \
 	Connector.cxx \
 	LineShape.cxx \

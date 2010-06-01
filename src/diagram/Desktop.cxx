@@ -211,6 +211,14 @@ Desktop::initialize_menus()
         sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/standard/line"));
 
     m_action_group->add(
+        Gtk::Action::create("CreatePredefinedProcess", "PredefinedProcess"),
+        sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/boxed/predefined_process"));
+    m_action_group->add(
+        Gtk::Action::create("CreateMerge", "Merge"),
+        sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/boxed/merge"));
+
+    
+    m_action_group->add(
         Gtk::Action::create("ToolsMenu", "Tools"));
     m_action_group->add(
         Gtk::Action::create("ModifyTool", "Modify"),
@@ -244,6 +252,8 @@ Desktop::initialize_menus()
         "      <menuitem action='CreateRectangle' />"
         "      <menuitem action='CreateEllipse' />"
         "      <menuitem action='CreateLine' />"
+        "      <menuitem action='CreatePredefinedProcess' />"
+        "      <menuitem action='CreateMerge' />"        
         "    </menu>"
         "    <menu action='ToolsMenu'>"
         "      <menuitem action='ModifyTool' />"

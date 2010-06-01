@@ -27,6 +27,8 @@ public:
     {
         return new RectShape(m_x, m_y, m_width, m_height);
     }
+
+    virtual ShapeType* type() const;
 private:
     virtual void draw_shape (IRenderer* renderer) const;
 };

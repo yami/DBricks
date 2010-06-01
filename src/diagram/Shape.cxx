@@ -1,8 +1,44 @@
 #include "Shape.hxx"
 
+#include <logging/logging.hxx>
+
 namespace DBricks {
 
 ShapeTypeInventory theInventory;
+
+
+void
+Shape::init_copy(Shape* copy) const
+{
+    copy->m_flags = m_flags;
+
+    for (HandlesType::const_iterator iter = m_handles.begin();
+         iter != m_handles.end();
+         ++iter) {
+        copy->m_handles.push_back((*iter)->clone(copy));
+    }
+
+    for (ConnectorsType::const_iterator iter = m_connectors.begin();
+         iter != m_connectors.end();
+         ++iter) {
+        copy->m_connectors.push_back((*iter)->clone(copy));
+    }    
+}
+
+
+Handle* Shape::handle(const Point& point) const
+{
+    for (HandlesType::const_iterator iter = m_handles.begin();
+         iter != m_handles.end();
+         ++iter) {
+
+        DLOG(DIAGRAM, DEBUG, "handle={%g, %g}, point={%g, %g}\n", (*iter)->point().x, (*iter)->point().y, point.x, point.y);
+        if ((*iter)->point() == point)
+            return *iter;
+    }
+
+    return 0;
+}
 
 ShapeType::ShapeType(const std::string& name)
     :m_name(name), m_short_name(name), m_collection(0)

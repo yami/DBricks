@@ -154,6 +154,11 @@ ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
         Connector* connector2 = m_diagram->find_closest_connector(selection.shapes(), point);
 
         if (connector1 && connector2) {
+            // TODO: FIXME. this is a dirty hack.
+            Handle* h1 = connector1->shape()->handle(connector1->point());
+            if (h1)
+                h1->point(connector2->point());
+            
             connector1->point(connector2->point());
             Connector::build_connections(connector1, connector2);
         }

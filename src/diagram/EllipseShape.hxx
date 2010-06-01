@@ -25,27 +25,10 @@ public:
     {
         return new EllipseShape(m_x, m_y, m_width, m_height);
     }
+
+    virtual ShapeType* type() const;
 private:    
     virtual void draw_shape(IRenderer* renderer) const;
-};
-
-
-class EllipseShapeType : public ShapeType {
-public:
-    virtual const char* name() const
-    {
-        return "/standard/ellipse";
-    }
-
-    virtual EllipseShape* create(const Point& start, Handle*& handle)
-    {
-        return new EllipseShape(start, handle);
-    }
-
-    virtual EllipseShape* create()
-    {
-        return new EllipseShape();
-    }    
 };
 
 

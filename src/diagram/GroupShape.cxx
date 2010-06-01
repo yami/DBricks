@@ -8,6 +8,10 @@
 
 namespace DBricks {
 
+ShapeTypeAbstract<GroupShape>  Group_Shape_Type_Object("group");
+ShapeTypeAbstract<GroupShape>* Group_Shape_Type = &Group_Shape_Type_Object;
+
+
 void
 GroupShape::draw_shape(IRenderer* renderer) const
 {
@@ -42,9 +46,6 @@ GroupShape::bb() const
 void
 GroupShape::save(Sml::Object* object) const
 {
-    object->add_attribute_data("name", "Group");
-    object->add_attribute_data("type", "Group");
-
     Sml::List* list = new Sml::List();
     object->add_attribute_data("items", list);
 
@@ -53,6 +54,8 @@ GroupShape::save(Sml::Object* object) const
         ++iter) {
         Sml::Object* shape_object = new Sml::Object();
         list->add_value(new Sml::Value(shape_object));
+        shape_object->add_attribute_data(":id",   (int)(*iter));
+        shape_object->add_attribute_data(":type", (*iter)->type()->name());
         (*iter)->save(shape_object);
     }
 }
@@ -66,7 +69,7 @@ GroupShape::load(Sml::Object* object)
          iter != list->values().end();
          ++iter) {
         Sml::Object* shape_object = (*iter)->get_object();
-        std::string  shape_type   = shape_object->get_attribute_string("type");
+        std::string  shape_type   = shape_object->get_attribute_string(":type");
         Shape* shape  = ShapeFactory::create_shape(shape_type);
         shape->load(shape_object);
         m_shapes.push_back(shape);
@@ -99,6 +102,11 @@ GroupShape::initialize()
     m_y = y1;
     m_width  = x2 - x1;
     m_height = y2 - y1;    
+}
+
+ShapeType* GroupShape::type() const
+{
+    return Group_Shape_Type;
 }
 
 } // namespace DBricks

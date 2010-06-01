@@ -81,27 +81,6 @@ LineShape::move_handle(Handle* handle, const Point& delta)
 }
 
 void
-LineShape::move_connector(Connector* connector, const Point& delta)
-{
-    if (connector == &m_fconnector) {
-        m_fconnector.point(m_fconnector.point()+delta);
-    } else if (connector == &m_tconnector) {
-        m_tconnector.point(m_tconnector.point()+delta);
-    } else {
-        ASSERT_NOT_REACHED();
-    }
-
-    Point from(m_fconnector.point());
-    Point to(m_tconnector.point());
-
-    m_corner.x = std::min(from.x, to.x);
-    m_corner.y = std::min(from.y, to.y);
-
-    m_fhandle.point(from);
-    m_thandle.point(to);
-}
-
-void
 LineShape::move(const Point& delta)
 {
     m_corner += delta;
@@ -150,13 +129,33 @@ LineShape::bb() const
 void
 LineShape::save(Sml::Object* object) const
 {
-    object->add_attribute_data("name", "Line");
-    object->add_attribute_data("type", "Line");
-    
     object->add_attribute_data("fx", m_fhandle.point().x);
     object->add_attribute_data("fy", m_fhandle.point().y);
     object->add_attribute_data("tx", m_thandle.point().x);
     object->add_attribute_data("ty", m_thandle.point().y);
+
+    Sml::List* connectors_list = new Sml::List();
+
+    size_t iconn = 0;
+    for (ConnectorsType::const_iterator iter = m_connectors.begin();
+         iter != m_connectors.end();
+         ++iter, ++iconn) {
+        Sml::Object* connector_object = new Sml::Object();
+
+        Connector* to_connector = (*iter)->connector(0);
+        Shape*     to_shape     = to_connector->shape();
+        int        to_index     = to_shape->connector_index(to_connector);
+
+        ASSERT(to_index >= 0);
+        
+        connector_object->add_attribute_data("handle", (int)iconn);
+        connector_object->add_attribute_data("to_shape", (int)to_shape);
+        connector_object->add_attribute_data("to_connector", to_index);
+
+        connectors_list->add_value(new Sml::Value(connector_object));
+    }
+
+    object->add_attribute_data(":connectors", connectors_list);
 }
 
 
@@ -210,5 +209,9 @@ LineShape::property_widget()
     return m_property_descriptor->to_widget();
 }
 
+ShapeType* LineShape::type() const
+{
+    return Line_Shape_Type;
+}
 
 } // namespace DBricks
