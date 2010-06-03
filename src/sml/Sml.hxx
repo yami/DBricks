@@ -30,6 +30,7 @@ enum DataType {
     DT_String,
     DT_Object,
     DT_List,
+    DT_Pointer,
 };
 
 std::string data_type_to_string(DataType vtype);
@@ -70,6 +71,10 @@ inline DataType data_type_enum(List* v)
     return DT_List;
 }
 
+inline DataType data_type_enum(void* v)
+{
+    return DT_Pointer;
+}
 
 
 class Value {
@@ -102,7 +107,8 @@ public:
     DEFINE_SML_VALUE_ACCESSOR(double , double)
     DEFINE_SML_VALUE_ACCESSOR(Object*, object)
     DEFINE_SML_VALUE_ACCESSOR(List*  , list)
-
+    DEFINE_SML_VALUE_ACCESSOR(void*  , pointer);
+    
     void get(std::string& string_value)
     {
         string_value = std::string(m_string);
@@ -138,6 +144,7 @@ private:
         char*       m_string;
         Object*     m_object;
         List*       m_list;
+        void*       m_pointer;
     };
 };
 
@@ -188,6 +195,7 @@ public:
     DEFINE_SML_ATTR_ACCESSOR(Object*     , object)
     DEFINE_SML_ATTR_ACCESSOR(List*       , list)
     DEFINE_SML_ATTR_ACCESSOR(std::string , string)
+    DEFINE_SML_ATTR_ACCESSOR(void*       , pointer)
 
 private:
     std::string m_name;
@@ -226,7 +234,7 @@ public:
     DEFINE_SML_OBJECT_ACCESSOR(Object*     , object)
     DEFINE_SML_OBJECT_ACCESSOR(List*       , list)
     DEFINE_SML_OBJECT_ACCESSOR(std::string , string)
-
+    DEFINE_SML_OBJECT_ACCESSOR(void*       , pointer);
     
     void add_attribute_value(const std::string& name, Value* value)
     {

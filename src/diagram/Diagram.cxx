@@ -31,8 +31,10 @@ Diagram::save(Sml::Object* object) const
         ++iter) {
         Sml::Object* shape_object = new Sml::Object();
         shape_list->add_value(new Sml::Value(shape_object));
-        shape_object->add_attribute_data(":id",   (int)(*iter));
-        shape_object->add_attribute_data(":type", (*iter)->type()->name());
+
+        shape_object->add_attribute_data(":id",   (void*)(*iter));
+        shape_object->add_attribute_data(":type", (*iter)->type()->name());        
+        
         (*iter)->save(shape_object);
     }
 }
@@ -48,6 +50,7 @@ Diagram::load(Sml::Object* object)
         ++iter) {
         Sml::Object* shape_object  = (*iter)->get_object();
         std::string  shape_type    = shape_object->get_attribute_string(":type");
+        void*        shape_id      = shape_object->get_attribute_pointer(":id");
         Shape* shape = ShapeFactory::create_shape(shape_type);
         shape->load(shape_object);
         add_shape(shape);

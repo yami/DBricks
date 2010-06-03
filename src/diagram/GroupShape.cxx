@@ -54,7 +54,7 @@ GroupShape::save(Sml::Object* object) const
         ++iter) {
         Sml::Object* shape_object = new Sml::Object();
         list->add_value(new Sml::Value(shape_object));
-        shape_object->add_attribute_data(":id",   (int)(*iter));
+        shape_object->add_attribute_data(":id",   (void*)(*iter));
         shape_object->add_attribute_data(":type", (*iter)->type()->name());
         (*iter)->save(shape_object);
     }
