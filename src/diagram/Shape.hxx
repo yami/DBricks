@@ -31,7 +31,7 @@ class PropertyMap;
 class PropertyDescriptor;
 class IRenderer;
 class ShapeType;
-
+class DiagramArchiver;
 
 class Shape : public IWithProperties {
 public:
@@ -105,6 +105,11 @@ public:
         return m_connectors;
     }
 
+    Connector* connector(size_t i) const
+    {
+        return m_connectors[i];
+    }
+    
     int connector_index(Connector* conn)
     {
         for (size_t i = 0; i<m_connectors.size(); ++i) {
@@ -137,8 +142,8 @@ public:
 
     Handle* handle(const Point& point) const;
 
-    virtual void save (Sml::Object* object) const = 0;
-    virtual void load (Sml::Object* object) = 0;
+    virtual void save (DiagramArchiver* ar) const = 0;
+    virtual void load (DiagramArchiver* ar) = 0;
 
     virtual Gtk::Widget* property_widget() = 0;
     virtual void         property_apply() = 0;

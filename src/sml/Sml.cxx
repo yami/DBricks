@@ -1,4 +1,5 @@
 #include "Sml.hxx"
+#include <cassert>
 
 namespace Sml {
 
@@ -19,7 +20,11 @@ std::string data_type_to_string(DataType type)
             return "object";
         case DT_List:
             return "list";
+        case DT_Pointer:
+            return "pointer";
     }
+
+    assert(0);
 }
 
 DataType   string_to_data_type(const std::string& ctype)
@@ -42,6 +47,11 @@ DataType   string_to_data_type(const std::string& ctype)
     if (ctype == "list")
         return DT_List;
 
+    if (ctype == "pointer")
+        return DT_Pointer;
+
+    assert(0);
+    
     return DT_Unknown;
 }
 

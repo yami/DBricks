@@ -1,6 +1,7 @@
 #include "RectShape.hxx"
 #include <sml/Sml.hxx>
 #include "IRenderer.hxx"
+#include "DiagramArchiver.hxx"
 
 namespace DBricks {
 
@@ -18,8 +19,10 @@ RectShape::draw_shape(IRenderer* renderer) const
 }
 
 void
-RectShape::save(Sml::Object* object) const
+RectShape::save(DiagramArchiver* ar) const
 {
+    Sml::Object* object = ar->object();
+    
     object->add_attribute_data("name", "Rectangle");
     object->add_attribute_data("type", "Rectangle");
 
@@ -30,8 +33,10 @@ RectShape::save(Sml::Object* object) const
 }
 
 void
-RectShape::load(Sml::Object* object)
+RectShape::load(DiagramArchiver* ar)
 {
+    Sml::Object* object = ar->object();
+    
     object->get_attribute_data("x", m_x);
     object->get_attribute_data("y", m_y);
     object->get_attribute_data("width", m_width);

@@ -20,8 +20,8 @@ public:
     {
     }
 
-    virtual void save (Sml::Object* object) const;
-    virtual void load (Sml::Object* object);
+    virtual void save (DiagramArchiver* ar) const;
+    virtual void load (DiagramArchiver* ar);
 
     virtual RectShape* clone() const
     {

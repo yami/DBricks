@@ -7,7 +7,6 @@
 #include "Selection.hxx"
 #include "History.hxx"
 
-
 namespace Sml {
 class Object;
 }
@@ -19,7 +18,7 @@ class DiagramObserver;
 class Handle;
 class Point;
 class Connector;
-class Archiver;
+class DiagramArchiver;
 
 class Diagram
 {
@@ -34,8 +33,8 @@ public:
 
     void reset();
     
-    void save (Sml::Object* object) const;
-    void load (Sml::Object* object);    
+    void save (DiagramArchiver* ar) const;
+    void load (DiagramArchiver* ar);    
 
     void stack_forward(Shape* shape);
     void stack_backward(Shape* shape);

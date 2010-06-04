@@ -54,6 +54,11 @@ Sml::Value* sexp_to_value(sexp_t value)
         return new Sml::Value(sml_value);
     }
 
+    if (string_equal(type, "pointer")) {
+        void* sml_value = (void *)ci_to_integer(v);
+        return new Sml::Value(sml_value);
+    }
+    
     ASSERT_NOT_REACHED();
 
     return 0;

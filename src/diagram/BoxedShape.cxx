@@ -10,7 +10,7 @@
 #include "PropertyMap.hxx"
 #include "PropertyDescriptor.hxx"
 #include "IntProperties.hxx"
-
+#include "DiagramArchiver.hxx"
 
 using namespace ssexp;
 using util::string_iequal;
@@ -282,8 +282,10 @@ BoxedShape::bb() const
 
 
 void
-BoxedShape::save(Sml::Object* object) const
+BoxedShape::save(DiagramArchiver* ar) const
 {
+    Sml::Object* object = ar->object();
+    
     object->add_attribute_data("x", m_x);
     object->add_attribute_data("y", m_y);
     object->add_attribute_data("width", m_width);
@@ -291,13 +293,15 @@ BoxedShape::save(Sml::Object* object) const
 }
 
 void
-BoxedShape::load(Sml::Object* object)
+BoxedShape::load(DiagramArchiver* ar)
 {
+    Sml::Object* object = ar->object();
+    
     object->get_attribute_data("x", m_x);
     object->get_attribute_data("y", m_y);
     object->get_attribute_data("width", m_width);
     object->get_attribute_data("height", m_height);
-
+    
     initialize();
     update_data();
 }

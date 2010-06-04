@@ -1,5 +1,6 @@
 #include "SexpSaver.hxx"
 
+#include <util/assert.hxx>
 #include <sml/Sml.hxx>
 #include <fstream>
 
@@ -48,6 +49,11 @@ void SexpSaver::save_value(Sml::Value* value)
             dec_indent();
             m_stream<<indent()<<")\n";
             break;
+        case Sml::DT_Pointer:
+            m_stream<<value->get_pointer()<<")\n";
+            break;
+        default:
+            ASSERT_NOT_REACHED();
     }
 }
 

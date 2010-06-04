@@ -28,8 +28,8 @@ public:
     }
 
     virtual Rect bb() const;
-    virtual void save(Sml::Object* object) const;
-    virtual void load(Sml::Object* object);
+    virtual void save(DiagramArchiver* ar) const;
+    virtual void load(DiagramArchiver* ar);
 
     virtual GroupShape* clone() const
     {

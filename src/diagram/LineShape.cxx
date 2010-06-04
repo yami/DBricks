@@ -11,6 +11,8 @@
 #include <logging/logging.hxx>
 #include <algorithm>
 
+#include "DiagramArchiver.hxx"
+
 namespace DBricks {
 
 DEFINE_SHAPE_TYPE(LineShape, Line_Shape_Type, "line");
@@ -127,8 +129,10 @@ LineShape::bb() const
 }
 
 void
-LineShape::save(Sml::Object* object) const
+LineShape::save(DiagramArchiver* ar) const
 {
+    Sml::Object* object = ar->object();
+    
     object->add_attribute_data("fx", m_fhandle.point().x);
     object->add_attribute_data("fy", m_fhandle.point().y);
     object->add_attribute_data("tx", m_thandle.point().x);
@@ -140,6 +144,9 @@ LineShape::save(Sml::Object* object) const
     for (ConnectorsType::const_iterator iter = m_connectors.begin();
          iter != m_connectors.end();
          ++iter, ++iconn) {
+        if (!(*iter)->is_connected())
+            continue;
+        
         Sml::Object* connector_object = new Sml::Object();
 
         Connector* to_connector = (*iter)->connector(0);
@@ -149,7 +156,7 @@ LineShape::save(Sml::Object* object) const
         ASSERT(to_index >= 0);
         
         connector_object->add_attribute_data("handle", (int)iconn);
-        connector_object->add_attribute_data("to_shape", (int)to_shape);
+        connector_object->add_attribute_data("to_shape", (void *)to_shape);
         connector_object->add_attribute_data("to_connector", to_index);
 
         connectors_list->add_value(new Sml::Value(connector_object));
@@ -161,15 +168,38 @@ LineShape::save(Sml::Object* object) const
 
 
 void
-LineShape::load(Sml::Object* object)
+LineShape::load(DiagramArchiver* ar)
 {
+    Sml::Object* object = ar->object();
     Point from;
     Point to;
 
+    void* id;
+    object->get_attribute_data(":id", id);
+    
     object->get_attribute_data("fx", from.x);
     object->get_attribute_data("fy", from.y);
     object->get_attribute_data("tx", to.x);
     object->get_attribute_data("ty", to.y);
+
+    Sml::List* connectors_list;
+    object->get_attribute_data(":connectors", connectors_list);
+
+    for (Sml::List::ValuesType::const_iterator iter = connectors_list->values().begin();
+         iter != connectors_list->values().end();
+         ++iter) {
+        int   ihandle;
+        void* to_shape;
+        int   to_index;
+
+        Sml::Object* connector_object = (*iter)->get_object();
+        
+        connector_object->get_attribute_data("handle", ihandle);
+        connector_object->get_attribute_data("to_shape", to_shape);
+        connector_object->get_attribute_data("to_connector", to_index);
+
+        ar->add_connection(id, ihandle, to_shape, to_index);
+    }
     
     initialize(from, to);
 }

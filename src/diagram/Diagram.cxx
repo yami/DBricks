@@ -3,7 +3,7 @@
 #include "Shape.hxx"
 #include "Handle.hxx"
 #include "Connector.hxx"
-
+#include "DiagramArchiver.hxx"
 
 #include <geom/Point.hxx>
 #include <geom/computation.hxx>
@@ -18,9 +18,10 @@
 namespace DBricks {
 
 void
-Diagram::save(Sml::Object* object) const
+Diagram::save(DiagramArchiver* ar) const
 {
-    Sml::List* shape_list = new Sml::List();
+    Sml::Object* object     = ar->object();
+    Sml::List*   shape_list = new Sml::List();
     
     object->add_attribute_data("name"  , "Diagram");
     object->add_attribute_data("type"  , "Diagram");
@@ -32,29 +33,27 @@ Diagram::save(Sml::Object* object) const
         Sml::Object* shape_object = new Sml::Object();
         shape_list->add_value(new Sml::Value(shape_object));
 
-        shape_object->add_attribute_data(":id",   (void*)(*iter));
-        shape_object->add_attribute_data(":type", (*iter)->type()->name());        
-        
-        (*iter)->save(shape_object);
+        ar->save_shape(shape_object, *iter);
     }
 }
 
 
 void
-Diagram::load(Sml::Object* object)
+Diagram::load(DiagramArchiver* ar)
 {
-    Sml::List* shape_list;
+    Sml::Object* object = ar->object();
+    Sml::List*   shape_list;
+    
     object->get_attribute_data("shapes", shape_list);
+    
     for(Sml::List::ValuesType::const_iterator iter = shape_list->values().begin();
         iter != shape_list->values().end();
         ++iter) {
-        Sml::Object* shape_object  = (*iter)->get_object();
-        std::string  shape_type    = shape_object->get_attribute_string(":type");
-        void*        shape_id      = shape_object->get_attribute_pointer(":id");
-        Shape* shape = ShapeFactory::create_shape(shape_type);
-        shape->load(shape_object);
-        add_shape(shape);
+        Sml::Object* shape_object  = (*iter)->get_object();        
+        add_shape(ar->load_shape(shape_object));
     }
+
+    ar->build_connections();
 }
 
 void

@@ -15,6 +15,7 @@
 #include "ModifyContext.hxx"
 #include "Clipboard.hxx"
 #include "Change.hxx"
+#include "DiagramArchiver.hxx"
 
 #include "gtkmm/filechooserdialog.h"
 
@@ -67,9 +68,11 @@ Desktop::on_save_file()
         {
             Glib::ustring filename = dialog.get_filename().c_str();
             DLOG(DIAGRAM, DEBUG, "save file with name = %s\n", filename.c_str());
-            
+
+            DiagramArchiver ar;
             Sml::Object* diagram_object = new Sml::Object();
-            m_diagram.save(diagram_object);
+            ar.object(diagram_object);
+            m_diagram.save(&ar);
 
             sml_to_sexp_file(filename.c_str(), diagram_object);
         }
@@ -97,7 +100,9 @@ Desktop::on_open_file()
             m_display.reset();
             
             Sml::Object* diagram_object = sexp_file_to_sml(filename.c_str());
-            m_diagram.load(diagram_object);
+            DiagramArchiver ar;
+            ar.object(diagram_object);
+            m_diagram.load(&ar);
                 
             break;
         }

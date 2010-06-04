@@ -1,6 +1,8 @@
 #include "EllipseShape.hxx"
 #include <sml/Sml.hxx>
 #include "IRenderer.hxx"
+#include "DiagramArchiver.hxx"
+
 
 namespace DBricks {
 
@@ -18,8 +20,10 @@ EllipseShape::draw_shape(IRenderer* renderer) const
 }
 
 void
-EllipseShape::save(Sml::Object* object) const
+EllipseShape::save(DiagramArchiver* ar) const
 {
+    Sml::Object* object = ar->object();
+    
     object->add_attribute_data("name", "Ellipse");
     object->add_attribute_data("type", "Ellipse");
 
@@ -30,8 +34,10 @@ EllipseShape::save(Sml::Object* object) const
 }
 
 void
-EllipseShape::load(Sml::Object* object)
+EllipseShape::load(DiagramArchiver* ar)
 {
+    Sml::Object* object = ar->object();
+    
     object->get_attribute_data("x", m_x);
     object->get_attribute_data("y", m_y);
     object->get_attribute_data("width", m_width);

@@ -5,6 +5,7 @@
 
 #include "ShapeFactory.hxx"
 #include "IRenderer.hxx"
+#include "DiagramArchiver.hxx"
 
 namespace DBricks {
 
@@ -44,8 +45,10 @@ GroupShape::bb() const
 }
 
 void
-GroupShape::save(Sml::Object* object) const
+GroupShape::save(DiagramArchiver* ar) const
 {
+    Sml::Object* object = ar->object();
+    
     Sml::List* list = new Sml::List();
     object->add_attribute_data("items", list);
 
@@ -54,25 +57,23 @@ GroupShape::save(Sml::Object* object) const
         ++iter) {
         Sml::Object* shape_object = new Sml::Object();
         list->add_value(new Sml::Value(shape_object));
-        shape_object->add_attribute_data(":id",   (void*)(*iter));
-        shape_object->add_attribute_data(":type", (*iter)->type()->name());
-        (*iter)->save(shape_object);
+
+        ar->save_shape(shape_object, *iter);
     }
 }
 
 void
-GroupShape::load(Sml::Object* object)
+GroupShape::load(DiagramArchiver* ar)
 {
+    Sml::Object* object = ar->object();
+    
     Sml::List* list;
     object->get_attribute_data("items", list);
     for (Sml::List::ValuesType::const_iterator iter = list->values().begin();
          iter != list->values().end();
          ++iter) {
         Sml::Object* shape_object = (*iter)->get_object();
-        std::string  shape_type   = shape_object->get_attribute_string(":type");
-        Shape* shape  = ShapeFactory::create_shape(shape_type);
-        shape->load(shape_object);
-        m_shapes.push_back(shape);
+        m_shapes.push_back(ar->load_shape(shape_object));
     }
 
     initialize();
