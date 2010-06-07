@@ -21,19 +21,42 @@ ShapeTypeCollection* standard_collection()
     return collection;
 }
 
-ShapeTypeCollection* boxed_collection()
-{
-    ShapeTypeCollection* collection = new ShapeTypeCollection("boxed");
 
-    collection->add(read_shape("/home/yami/project/DBricks/src/shapes/flowchart/predefined_process.shape"));
-    collection->add(read_shape("/home/yami/project/DBricks/src/shapes/flowchart/merge.shape"));
-    return collection;
+static const std::string Slash = "/";
+
+void collection_files_init(const std::string& collection_name, const std::string& dirname)
+{
+    ShapeTypeCollection* collection = new ShapeTypeCollection(collection_name);
+    Glib::Dir dir(dirname);
+    std::string dirent_name;
+
+    while ((dirent_name = dir.read_name()) != "") {
+        std::string dirent_fullname = dirname + Slash + dirent_name;
+        collection->add(read_shape(dirent_fullname));
+    }
+
+    theInventory.add_collection(collection);
+}
+
+void shape_files_init(const std::string& shape_dirname)
+{
+    Glib::Dir   dir(shape_dirname);
+    std::string dirent_name;
+
+    while ((dirent_name = dir.read_name()) != "") {
+        std::string dirent_fullname = shape_dirname + Slash + dirent_name;
+
+        if (Glib::file_test(dirent_fullname, Glib::FILE_TEST_EXISTS | Glib::FILE_TEST_IS_DIR)) {
+            collection_files_init(dirent_name, dirent_fullname);            
+        }
+    }
 }
 
 void inventory_init()
 {
     theInventory.add_collection(standard_collection());
-    theInventory.add_collection(boxed_collection());
+
+    shape_files_init("/home/yami/project/DBricks/src/shapes");
 }
 
 } // namespace DBricks

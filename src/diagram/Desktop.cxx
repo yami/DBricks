@@ -6,7 +6,7 @@
 #include <gtkmm/stock.h>
 
 #include <fstream>
-
+#include <string>
 
 #include "SexpSaver.hxx"
 #include "SexpLoader.hxx"
@@ -118,7 +118,7 @@ Desktop::on_quit_program()
 }
 
 void
-Desktop::on_create_shape(const char* shape_type)
+Desktop::on_create_shape(const std::string& shape_type)
 {
     m_display.set_context(new CreateContext(&m_diagram, &m_display, shape_type));
 }
@@ -185,6 +185,8 @@ Desktop::on_edit_undo()
     m_diagram.notify_observers();
 }
 
+extern ShapeTypeInventory theInventory;
+
 void
 Desktop::initialize_menus()
 {
@@ -205,22 +207,25 @@ Desktop::initialize_menus()
 
     m_action_group->add(
         Gtk::Action::create("CreateMenu", "Create"));
-    m_action_group->add(
-        Gtk::Action::create("CreateRectangle", "Rectangle"),
-        sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/standard/rectangle"));
-    m_action_group->add(
-        Gtk::Action::create("CreateEllipse", "Ellipse"),
-        sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/standard/ellipse"));
-    m_action_group->add(
-        Gtk::Action::create("CreateLine", "Line"),
-        sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/standard/line"));
 
-    m_action_group->add(
-        Gtk::Action::create("CreatePredefinedProcess", "PredefinedProcess"),
-        sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/boxed/predefined_process"));
-    m_action_group->add(
-        Gtk::Action::create("CreateMerge", "Merge"),
-        sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/boxed/merge"));
+    theInventory.action_group_init(m_action_group, sigc::mem_fun(*this, &Desktop::on_create_shape));
+    
+    // m_action_group->add(
+    //     Gtk::Action::create("CreateRectangle", "Rectangle"),
+    //     sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/standard/rectangle"));
+    // m_action_group->add(
+    //     Gtk::Action::create("CreateEllipse", "Ellipse"),
+    //     sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/standard/ellipse"));
+    // m_action_group->add(
+    //     Gtk::Action::create("CreateLine", "Line"),
+    //     sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/standard/line"));
+
+    // m_action_group->add(
+    //     Gtk::Action::create("CreatePredefinedProcess", "PredefinedProcess"),
+    //     sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/boxed/predefined_process"));
+    // m_action_group->add(
+    //     Gtk::Action::create("CreateMerge", "Merge"),
+    //     sigc::bind(sigc::mem_fun(*this, &Desktop::on_create_shape), "/boxed/merge"));
 
     
     m_action_group->add(
@@ -245,31 +250,37 @@ Desktop::initialize_menus()
     
     m_ui_manager->insert_action_group(m_action_group);
     Glib::ustring ui_info =
-        "<ui>"
-        "  <menubar>"
-        "    <menu action='FileMenu'>"
-        "      <menuitem action='FileOpenStandard' />"        
-        "      <menuitem action='FileNewStandard' />"
-        "      <menuitem action='FileSaveStandard' />"
-        "      <menuitem action='FileQuitStandard' />"
-        "    </menu>"
-        "    <menu action='CreateMenu'>"
-        "      <menuitem action='CreateRectangle' />"
+        "<ui>\n"
+        "  <menubar>\n"
+        "    <menu action='FileMenu'>\n"
+        "      <menuitem action='FileOpenStandard' />\n"
+        "      <menuitem action='FileNewStandard' />\n"
+        "      <menuitem action='FileSaveStandard' />\n"
+        "      <menuitem action='FileQuitStandard' />\n"
+        "    </menu>\n"
+
+        "    <menu action='ToolsMenu'>\n"
+        "      <menuitem action='ModifyTool' />\n"
+        "    </menu>\n"
+
+        "    <menu action='EditMenu'>\n"
+        "      <menuitem action='EditCopy' />\n"
+        "      <menuitem action='EditPaste' />\n"
+        "      <menuitem action='EditUndo' />\n"
+        "    </menu>\n"
+        
+        "    <menu action='CreateMenu'>\n"
+        + theInventory.ui_info(2, "  ") +
+        "    </menu>\n"
+        "  </menubar>\n"
+        "</ui>\n";
+/*
+    "      <menuitem action='CreateRectangle' />"
         "      <menuitem action='CreateEllipse' />"
         "      <menuitem action='CreateLine' />"
         "      <menuitem action='CreatePredefinedProcess' />"
         "      <menuitem action='CreateMerge' />"        
-        "    </menu>"
-        "    <menu action='ToolsMenu'>"
-        "      <menuitem action='ModifyTool' />"
-        "    </menu>"
-        "    <menu action='EditMenu'>"
-        "      <menuitem action='EditCopy' />"
-        "      <menuitem action='EditPaste' />"
-        "      <menuitem action='EditUndo' />"
-        "    </menu>"
-        "  </menubar>"
-        "</ui>";
+*/   
     m_ui_manager->add_ui_from_string(ui_info);
 }
 

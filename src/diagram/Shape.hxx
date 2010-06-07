@@ -6,7 +6,10 @@
 #include <cmath>
 #include <geom/Point.hxx>
 #include <geom/Rect.hxx>
+
 #include <cairomm/context.h>
+#include <gtkmm/uimanager.h>
+#include <gtkmm/menu.h>
 
 
 #include <util/bit.hxx>
@@ -22,6 +25,9 @@ namespace Sml {
 class Object;
 }
 
+namespace Gtk {
+class ActionGroup;
+}
 
 namespace DBricks {
 
@@ -173,8 +179,15 @@ class ShapeType {
 public:
     ShapeType(const std::string& name);
 
-    const std::string& name() const;
-    const std::string& short_name() const;
+    const std::string name() const
+    {
+        return m_name;
+    }
+    
+    const std::string short_name() const
+    {
+        return m_short_name;
+    }
     
     void join(ShapeTypeCollection* c);
     
@@ -254,6 +267,11 @@ public:
     {
         return m_shape_types;
     }
+
+    const ShapeTypesType& shape_types() const
+    {
+        return m_shape_types;
+    }
     
 private:
     std::string    m_name;
@@ -268,10 +286,33 @@ public:
     
     void add_collection(ShapeTypeCollection* collection);
     ShapeType* shape_type(const std::string& name) const;
+
+    std::string ui_info(int nindent, const std::string& indent) const;
+
+    template<class FuncT>
+    void        action_group_init(Glib::RefPtr<Gtk::ActionGroup> ag, FuncT func) const;
 private:
     CollectionsType   m_collections;
     ShapeTypeMapType  m_shape_type_map;
 };
+
+
+template<class FuncT>
+void ShapeTypeInventory::action_group_init(Glib::RefPtr<Gtk::ActionGroup> ag, FuncT func) const
+{
+    for (CollectionsType::const_iterator iter = m_collections.begin();
+         iter != m_collections.end();
+         ++iter) {
+        ag->add(Gtk::Action::create("Collection_" + (*iter)->name(), (*iter)->name()));                
+
+        for (ShapeTypeCollection::ShapeTypesType::const_iterator siter = (*iter)->shape_types().begin();
+             siter != (*iter)->shape_types().end();
+             siter++) {
+            ag->add(Gtk::Action::create("Shape_" + (*siter)->short_name(), (*siter)->short_name()),
+                    sigc::bind(func, (*siter)->name()));
+        }
+    }
+}
 
 ShapeType* lookup_shape_type(const std::string& name);
 

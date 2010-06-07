@@ -45,11 +45,6 @@ ShapeType::ShapeType(const std::string& name)
 {
 }
 
-const std::string& ShapeType::name() const
-{
-    ASSERT(m_collection);
-    return m_name;
-}
 
 void ShapeType::join(ShapeTypeCollection* c)
 {
@@ -84,6 +79,30 @@ ShapeType* ShapeTypeInventory::shape_type(const std::string& name) const
 
     return iter != m_shape_type_map.end() ? (*iter).second : 0;
 }
+
+std::string ShapeTypeInventory::ui_info(int nindent, const std::string& indent_string) const
+{
+    std::string indent;
+    std::stringstream os;
+
+    for (int i = 0; i < nindent; i++)
+        indent += indent_string;
+    
+    for (CollectionsType::const_iterator iter = m_collections.begin();
+         iter != m_collections.end();
+         ++iter) {
+        os << indent << "<menu action='Collection_" << (*iter)->name() << "' >\n";
+        for (ShapeTypeCollection::ShapeTypesType::const_iterator siter = (*iter)->shape_types().begin();
+             siter != (*iter)->shape_types().end();
+             siter++) {
+            os << indent << indent_string << "<menuitem action='Shape_" << (*siter)->short_name() << "' />\n";
+        }
+        os << indent << "</menu>\n";
+    }
+
+    return os.str();
+}
+
 
 ShapeType* lookup_shape_type(const std::string& name)
 {
