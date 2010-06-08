@@ -187,7 +187,7 @@ Display::draw_select()
 
             m_renderer->save();
             m_renderer->line_style(LS_Dash);
-            m_renderer->draw_rectangle(Point(rect.x1(), rect.y1()), Point(rect.x2(), rect.y2()));
+            m_renderer->draw_rectangle(Point(rect.x1(), rect.y1()), Point(rect.x2(), rect.y2()), Draw_Stroke);
             m_renderer->restore();
             break;
         }

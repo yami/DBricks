@@ -33,12 +33,13 @@ public:
     virtual double fill_alpha(double alpha);
     virtual Color fill_color(const Color& color);
     
-    virtual void draw_background(const Rect& update);
-        
+    virtual void draw_background(const Rect& update);        
     virtual void draw_line(const Point& from, const Point& to);
-    virtual void draw_rectangle(const Point& top_left, const Point& bottom_right, FillAction fill = Fill_None);
-    virtual void draw_ellipse(const Point& center, double width, double height, FillAction fill = Fill_None);
-    virtual void draw_polygon(const std::vector<Point>& points, FillAction fill = Fill_None);
+    
+    virtual void draw_rectangle(const Point& top_left, const Point& bottom_right, int action);
+    virtual void draw_ellipse(const Point& center, double width, double height, int action);
+    virtual void draw_polygon(const std::vector<Point>& points, int action);
+    virtual void draw_path(const std::vector<PathElement>& elements, int action);
     
 private:
     Color background__(const Color& color);
@@ -51,6 +52,8 @@ private:
     
     void rectangle__(int fill, const Point& top_left, const Point& bottom_right);
     void ellipse__(int fill, const Point& center, double width, double height);
+
+    void do_draw_action(int action);
     
     enum ModificationType {
         MT_LineColor,

@@ -24,7 +24,7 @@ GroupShape::draw_shape(IRenderer* renderer) const
     
     if (m_show_handles) {
         Rect rect = bb();
-        renderer->draw_rectangle(Point(rect.x1(), rect.y1()), Point(rect.x2(), rect.y2()));
+        renderer->draw_rectangle(Point(rect.x1(), rect.y1()), Point(rect.x2(), rect.y2()), Draw_Stroke);
     }
 }
 

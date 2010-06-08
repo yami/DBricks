@@ -1,15 +1,15 @@
 #include <geom/Point.hxx>
 #include <geom/Rect.hxx>
 #include <list>
+
 #include "Shape.hxx"
+#include "IRenderer.hxx"
 
 namespace Sml {
 class Object;
 };
 
 namespace DBricks {
-
-class IRenderer;
 
 class LinearTransform {
 public:
@@ -56,6 +56,7 @@ enum DrawInstOp {
     DIO_Rectangle,
     DIO_Ellipse,
     DIO_Polygon,
+    DIO_Path,
 };
 
 struct DrawInst {
@@ -113,6 +114,17 @@ struct DrawInstPolygon : public DrawInst {
     virtual void draw(IRenderer* renderer, const LinearTransform& trans) const;
 
     std::vector<Point> m_points;
+};
+
+struct DrawInstPath : public DrawInst {
+    DrawInstPath(const std::vector<PathElement>& elements)
+        :DrawInst(DIO_Path), m_elements(elements)
+    {
+    }
+
+    virtual void draw(IRenderer* renderer, const LinearTransform& trans) const;
+    
+    std::vector<PathElement> m_elements;
 };
 
 struct BoxedShapeInfo {

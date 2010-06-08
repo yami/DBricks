@@ -23,6 +23,35 @@ evaluate_point(sexp_t pair)
     return Point(ci_to_double(first(pair)), ci_to_double(second(pair)));
 }
 
+PathElement
+evaluate_path_element(sexp_t element)
+{
+    PathElement e;
+    const char* command = ci_symbol_name(car(element));
+
+    if (string_iequal(command, "move-to")) {
+        e.type = Path_Move_To;
+        e.points[0] = evaluate_point(second(element));
+        return e;
+    }
+
+    if (string_iequal(command, "line-to")) {
+        e.type = Path_Line_To;
+        e.points[0] = evaluate_point(second(element));
+        return e;
+    }
+
+    if (string_iequal(command, "curve-to")) {
+        e.type = Path_Curve_To;
+        e.points[0] = evaluate_point(ci_nth(element, 1));
+        e.points[1] = evaluate_point(ci_nth(element, 2));
+        e.points[2] = evaluate_point(ci_nth(element, 3));
+        return e;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
 DrawInst*
 evaluate_inst(sexp_t inst)
 {
@@ -58,6 +87,15 @@ evaluate_inst(sexp_t inst)
         }
 
         return new DrawInstPolygon(points);
+    }
+
+    if (string_iequal(inst_op, "path")) {
+        std::vector<PathElement> elements;
+        for (sexp_t rest_elements = cdr(inst); rest_elements != Nil; rest_elements = cdr(rest_elements)) {
+            elements.push_back(evaluate_path_element(car(rest_elements)));
+        }
+
+        return new DrawInstPath(elements);
     }
 
     assert(0);
@@ -131,13 +169,14 @@ void
 DrawInstRectangle::draw(IRenderer* renderer, const LinearTransform& trans) const
 {    
     renderer->draw_rectangle(trans(topleft),
-                             trans(Point(topleft.x + width, topleft.y + height)));
+                             trans(Point(topleft.x + width, topleft.y + height)),
+                             Draw_Stroke);
 }
 
 void
 DrawInstEllipse::draw(IRenderer* renderer, const LinearTransform& trans) const
 {
-    renderer->draw_ellipse(trans(center), trans.x(width), trans.y(height));
+    renderer->draw_ellipse(trans(center), trans.x(width), trans.y(height), Draw_Stroke);
 }
 
 void
@@ -149,7 +188,29 @@ DrawInstPolygon::draw(IRenderer* renderer, const LinearTransform& trans) const
         points.push_back(trans(m_points[i]));
     }
 
-    renderer->draw_polygon(points);
+    renderer->draw_polygon(points, Draw_Stroke);
+}
+
+void
+DrawInstPath::draw(IRenderer* renderer, const LinearTransform& trans) const
+{
+    std::vector<PathElement> elements(m_elements);
+
+    for (size_t i=0; i<elements.size(); ++i) {
+        switch (elements[i].type) {
+            case Path_Move_To:
+            case Path_Line_To:
+                elements[i].points[0] = trans(elements[i].points[0]);
+                break;
+            case Path_Curve_To:
+                elements[i].points[0] = trans(elements[i].points[0]);
+                elements[i].points[1] = trans(elements[i].points[1]);
+                elements[i].points[2] = trans(elements[i].points[2]);
+                break;
+        }
+    }
+
+    renderer->draw_path(elements, Draw_Stroke);
 }
 
 BoxedShape::BoxedShape(BoxedShapeInfo* info)

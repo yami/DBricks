@@ -182,6 +182,20 @@ double CairoRenderer::fill_alpha__(double alpha)
     return old_alpha;
 }
 
+void CairoRenderer::do_draw_action(int action)
+{
+    if (action & Draw_Fill) {
+        m_ctx->set_source_rgba(RGB_P(m_fill_spec.color), m_fill_spec.alpha);
+        m_ctx->fill_preserve();
+    }
+    
+    if (action & Draw_Stroke) {
+        m_ctx->set_source_rgba(RGB_P(m_line_spec.color), 1);
+        m_ctx->stroke();
+    }        
+}
+
+
 void CairoRenderer::draw_background(const Rect& update)
 {
     m_ctx->set_source_rgba(RGB_P(m_background), 1);
@@ -191,46 +205,32 @@ void CairoRenderer::draw_background(const Rect& update)
 
 void CairoRenderer::draw_line(const Point& from, const Point& to)
 {
-    m_ctx->set_source_rgba(RGB_P(m_line_spec.color), 1);
-
     m_ctx->move_to(from.x, from.y);
     m_ctx->line_to(to.x, to.y);
-    m_ctx->stroke();
+
+    do_draw_action(Draw_Stroke);
 }
 
-void CairoRenderer::draw_rectangle(const Point& top_left, const Point& bottom_right, FillAction fill)
+void CairoRenderer::draw_rectangle(const Point& top_left, const Point& bottom_right, int action)
 {
-    m_ctx->rectangle(top_left.x, top_left.y, bottom_right.x - top_left.x, bottom_right.y - top_left.y);
-
-    if (fill == Fill_Fill) {
-        m_ctx->set_source_rgba(RGB_P(m_fill_spec.color), m_fill_spec.alpha);
-        m_ctx->fill_preserve();
-    }
-    
-    m_ctx->set_source_rgba(RGB_P(m_line_spec.color), 1);
-    m_ctx->stroke();
+    m_ctx->rectangle(top_left.x, top_left.y, bottom_right.x - top_left.x, bottom_right.y - top_left.y);   
+    do_draw_action(action);
 }
 
-void CairoRenderer::draw_ellipse(const Point& center, double width, double height, FillAction fill)
+void CairoRenderer::draw_ellipse(const Point& center, double width, double height, int action)
 {
     m_ctx->save();
     
     m_ctx->translate(center.x, center.y);
     m_ctx->scale(width/2, height/2);
-    m_ctx->arc(0, 0, 1, 0, 2*M_PI);
-    
-   if (fill == Fill_Fill) {
-       m_ctx->set_source_rgba(RGB_P(m_fill_spec.color), m_fill_spec.alpha);
-       m_ctx->fill_preserve();
-   }
+    m_ctx->arc(0, 0, 1, 0, 2*M_PI);    
     
     m_ctx->restore();
 
-    m_ctx->set_source_rgba(RGB_P(m_line_spec.color), 1);
-    m_ctx->stroke();    
+    do_draw_action(action);
 }
 
-void CairoRenderer::draw_polygon(const std::vector<Point>& points, FillAction fill)
+void CairoRenderer::draw_polygon(const std::vector<Point>& points, int action)
 {
     ASSERT(points.size() > 1);
     
@@ -244,13 +244,31 @@ void CairoRenderer::draw_polygon(const std::vector<Point>& points, FillAction fi
     m_ctx->line_to(points[0].x, points[0].y);
     m_ctx->close_path();
 
-    if (fill == Fill_Fill) {
-        m_ctx->set_source_rgba(RGB_P(m_fill_spec.color), m_fill_spec.alpha);
-        m_ctx->fill_preserve();
+    do_draw_action(action);
+}
+
+void CairoRenderer::draw_path(const std::vector<PathElement>& elements, int action)
+{
+    m_ctx->begin_new_path();
+    
+    for (size_t i = 0; i < elements.size(); ++i) {
+        switch (elements[i].type) {
+            case Path_Move_To:
+                m_ctx->move_to(elements[i].points[0].x, elements[i].points[0].y);
+                break;
+            case Path_Line_To:
+                m_ctx->line_to(elements[i].points[0].x, elements[i].points[0].y);
+                break;
+            case Path_Curve_To:
+                m_ctx->curve_to(elements[i].points[0].x, elements[i].points[0].y,
+                                elements[i].points[1].x, elements[i].points[1].y,
+                                elements[i].points[2].x, elements[i].points[2].y);
+        }
     }
 
-    m_ctx->set_source_rgba(RGB_P(m_line_spec.color), 1);
-    m_ctx->stroke();
+    m_ctx->close_path();
+
+    do_draw_action(action);
 }
 
 } // namespace DBricks
