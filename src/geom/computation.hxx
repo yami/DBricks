@@ -40,6 +40,12 @@ point_origin_distance(const Point& a)
     return sqrt(a.x*a.x + a.y*a.y);
 }
 
+inline int
+round(double d)
+{
+    return (int) floor(d + 0.5);
+}
+
 } // namespace DBricks
 
 

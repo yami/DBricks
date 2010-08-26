@@ -22,11 +22,11 @@
 namespace DBricks {
 
 Desktop::Desktop()
-    :m_display(&m_diagram), m_vbox(), m_table(3,3),
+    :m_display(&m_diagram, this), m_vbox(), m_table(3,3),
      m_action_group(Gtk::ActionGroup::create()), m_ui_manager(Gtk::UIManager::create())
 {
     m_diagram.attach_observer(&m_display);
-
+    
     initialize_menus();
     initialize_layout();
     
@@ -38,12 +38,6 @@ Desktop::Desktop()
 bool
 Desktop::on_event(GdkEvent* event)
 {
-    if (event->type == GDK_MOTION_NOTIFY) {
-        GdkEventMotion* e = reinterpret_cast<GdkEventMotion*>(event);
-        m_hruler.property_position().set_value(e->x);
-        m_vruler.property_position().set_value(e->y);
-    }
-    
     return false;
 }
 
@@ -326,6 +320,23 @@ Desktop::initialize_layout()
     // 2,2
 
     show_all_children();
+}
+
+void
+Desktop::on_display_event(GdkEvent* event)
+{
+    if (event->type == GDK_MOTION_NOTIFY) {
+        // mouse position is changed.
+        GdkEventMotion* e = reinterpret_cast<GdkEventMotion*>(event);
+        m_hruler.property_position().set_value(e->x);
+        m_vruler.property_position().set_value(e->y);
+    } else if (event->type == GDK_CONFIGURE) {
+        // window size or position is changed.
+        GdkEventConfigure* e = reinterpret_cast<GdkEventConfigure*>(event);
+        
+        m_hruler.set_range(0.0, e->width, 0.0, e->width);
+        m_vruler.set_range(0.0, e->height, 0.0, e->height);
+    }    
 }
 
 } // namespace DBricks

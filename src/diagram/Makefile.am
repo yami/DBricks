@@ -23,7 +23,8 @@ dbricks_SOURCES = main.cxx \
 	CairoRenderer.cxx \
 	Color.cxx \
 	inventory.cxx \
-	Shape.cxx
+	Shape.cxx \
+	snap.cxx
 
 dbricks_CPPFLAGS = \
 	$(PANGOMM_CFLAGS) \

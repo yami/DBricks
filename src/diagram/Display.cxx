@@ -17,7 +17,7 @@
 #include "Handle.hxx"
 #include "Diagram.hxx"
 #include "Menu.hxx"
-
+#include "Desktop.hxx"
 
 #include "ModifyContext.hxx"
 #include "CreateContext.hxx"
@@ -25,10 +25,12 @@
 
 #include "CairoRenderer.hxx"
 
+#include "snap.hxx"
+
 namespace DBricks {
 
-Display::Display(Diagram* diagram)
-    :DiagramObserver(diagram), m_context(new ModifyContext(diagram, this)), m_select_state(Select_None),
+Display::Display(Diagram* diagram, Desktop* desktop)
+    :DiagramObserver(diagram), m_desktop(desktop), m_context(new ModifyContext(diagram, this)), m_select_state(Select_None),
      m_renderer(0), m_highlight_closest_connector(false), m_event(NULL)
 {
     add_events(Gdk::EXPOSURE_MASK);
@@ -74,7 +76,7 @@ Display::on_event(GdkEvent* event)
     }
     
     m_context->on_event(shape, event);
-
+    m_desktop->on_display_event(event);
     update();
     return false;
 }
@@ -156,8 +158,11 @@ Display::draw(GdkEventExpose* event)
 void
 Display::draw_grid(int width, int height)
 {
-    const int xstep = 20;
-    const int ystep = 20;
+    const int xstep = 40;
+    const int ystep = 40;
+
+    snap_set_grid(xstep, ystep);
+    
 
     m_renderer->save();
 

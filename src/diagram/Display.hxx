@@ -24,10 +24,11 @@ class Handle;
 class EventContext;
 class Menu;
 class IRenderer;
+class Desktop;
 
 class Display : public Gtk::DrawingArea, public DiagramObserver {
 public:
-    Display(Diagram* diagram);
+    Display(Diagram* diagram, Desktop* desktop);
     ~Display();
 
     // DBricks::DiagramObserver interfaces
@@ -72,7 +73,8 @@ private:
     void draw(GdkEventExpose* event=NULL);
     void draw_select();
     void draw_grid(int width, int height);
-    
+
+    Desktop*      m_desktop;
     EventContext* m_context;
     
     enum SelectState {

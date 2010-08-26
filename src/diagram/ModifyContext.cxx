@@ -11,6 +11,8 @@
 #include "GroupShape.hxx"
 #include "Menu.hxx"
 #include "BuiltinChanges.hxx"
+#include "snap.hxx"
+
 
 #include <util/stl.hxx>
 #include <util/bit.hxx>
@@ -133,6 +135,25 @@ ModifyContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
     return pass_down;
 }
 
+// TODO: move to another file
+template<class ShapeContainerT>
+Rect calc_bounding_box(const ShapeContainerT& shapes)
+{
+    typename ShapeContainerT::const_iterator iter = shapes.begin();
+    Rect rect((*iter)->bb());
+
+    for (++iter; iter != shapes.end(); ++iter) {
+        Rect curr((*iter)->bb());
+
+        rect = Rect(std::min(rect.x1(), curr.x1()),
+                    std::min(rect.y1(), curr.y1()),
+                    std::max(rect.x2(), curr.x2()),
+                    std::max(rect.y2(), curr.y2()));
+    }
+
+    return rect;
+}
+
 bool
 ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
 {
@@ -142,7 +163,12 @@ ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
     History&   history   = m_diagram->history();
     
     if (bit_is_set(m_state, Dragging)) {
-        history.append(new ShapeMoveChange(m_diagram, selection.shapes(), m_opoint, point));
+        Rect  bb = calc_bounding_box(selection.shapes());
+        Point source = Point(bb.x1(), bb.y1());
+        Point target = snap(source);
+        
+        Diagram::move_shapes(selection.shapes(),  target - source + point - m_mpoint);
+        history.append(new ShapeMoveChange(m_diagram, selection.shapes(), m_opoint, point + target - source));
     } else if (bit_is_set(m_state, Selecting)) {
         m_display->selected(m_opoint, point);
 

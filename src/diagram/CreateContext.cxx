@@ -10,6 +10,7 @@
 #include "Shape.hxx"
 #include "BuiltinChanges.hxx"
 
+#include "snap.hxx"
 
 namespace DBricks {
 
@@ -17,8 +18,10 @@ bool
 CreateContext::on_button_press_event(Shape* shape, GdkEventButton* e)
 {
     if (e->button == Left_Button) {
+        Point start = snap(point_of_event(e));
+        
         m_state = CC_Dragging;
-        m_shape = ShapeFactory::create_shape(m_shape_type, point_of_event(e), m_handle);
+        m_shape = ShapeFactory::create_shape(m_shape_type, start, m_handle);
         m_shape->show_handles();
         m_diagram->add_shape(m_shape);
     }
@@ -29,8 +32,8 @@ CreateContext::on_button_press_event(Shape* shape, GdkEventButton* e)
 bool
 CreateContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
 {
-    Point point = point_of_event(e);
     if (m_state == CC_Dragging) {
+        Point point = snap(point_of_event(e));
         Diagram::move_handle(m_shape, m_handle, point - m_handle->point());
     }
 

@@ -21,6 +21,9 @@ public:
     
     // Gtk::Windows interfaces
     virtual bool on_event(GdkEvent* event);
+
+    // called by Display
+    void on_display_event(GdkEvent* event);
 private:
     void on_new_file();
     void on_open_file();
