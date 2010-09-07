@@ -8,6 +8,8 @@
 #include <gtkmm/box.h>
 #include <gtkmm/uimanager.h>
 #include <gtkmm/menu.h>
+#include <gtkmm/toggletoolbutton.h>
+#include <gtkmm/toolpalette.h>
 
 #include "Display.hxx"
 #include "Diagram.hxx"
@@ -34,10 +36,14 @@ private:
     void on_edit_copy();
     void on_edit_paste();
     void on_edit_undo();
+
+    void on_palette_item_toggled(Gtk::ToggleToolButton* button, const std::string& shape_type);
     
     void initialize_menus();
     void initialize_layout();
-    
+
+    void init_palette();
+    void init_drawing_space();
     
     Gtk::Widget* create_menubar();
     
@@ -48,12 +54,14 @@ private:
     Glib::RefPtr<Gtk::ActionGroup> m_action_group;
     Glib::RefPtr<Gtk::UIManager>   m_ui_manager;
     
-    Gtk::VBox  m_vbox;
-    Gtk::Table m_table;
-    Gtk::HRuler m_hruler;
-    Gtk::VRuler m_vruler;
-    Gtk::HScrollbar m_hscrollbar;
-    Gtk::VScrollbar m_vscrollbar;
+    Gtk::VBox        m_vbox;
+    Gtk::HBox        m_hbox;
+    Gtk::ToolPalette m_palette;
+    Gtk::Table       m_table;
+    Gtk::HRuler      m_hruler;
+    Gtk::VRuler      m_vruler;
+    Gtk::HScrollbar  m_hscrollbar;
+    Gtk::VScrollbar  m_vscrollbar;
 };
 
 } // namespace DBricks

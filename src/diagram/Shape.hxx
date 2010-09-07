@@ -291,6 +291,11 @@ public:
 
     template<class FuncT>
     void        action_group_init(Glib::RefPtr<Gtk::ActionGroup> ag, FuncT func) const;
+
+    const CollectionsType& collections() const
+    {
+        return m_collections;
+    }
 private:
     CollectionsType   m_collections;
     ShapeTypeMapType  m_shape_type_map;
@@ -303,7 +308,7 @@ void ShapeTypeInventory::action_group_init(Glib::RefPtr<Gtk::ActionGroup> ag, Fu
     for (CollectionsType::const_iterator iter = m_collections.begin();
          iter != m_collections.end();
          ++iter) {
-        ag->add(Gtk::Action::create("Collection_" + (*iter)->name(), (*iter)->name()));                
+        ag->add(Gtk::Action::create("Collection_" + (*iter)->name(), (*iter)->name()));
 
         for (ShapeTypeCollection::ShapeTypesType::const_iterator siter = (*iter)->shape_types().begin();
              siter != (*iter)->shape_types().end();

@@ -12,6 +12,9 @@
 #include "IntProperties.hxx"
 #include "DiagramArchiver.hxx"
 
+#include <algorithm>
+using std::max;
+
 using namespace ssexp;
 using util::string_iequal;
 
@@ -276,32 +279,46 @@ BoxedShape::draw_shape(IRenderer* renderer) const
 void
 BoxedShape::move_handle(Handle* handle, const Point& delta)
 {
+#define CALC_N do {                                                     \
+        double new_height  = max(Min_Height, m_height - delta.y);       \
+        m_y               -= new_height - m_height;                     \
+        m_height           = new_height;                                \
+    } while (0)
+
+#define CALC_E m_width = max(Min_Width, m_width + delta.x)
+
+#define CALC_S m_height = max(Min_Height, m_height + delta.y)
+    
+#define CALC_W do {                             \
+        double new_width  = max(Min_Width, m_width - delta.x);   \
+        m_x              -= new_width - m_width;                 \
+        m_width           = new_width;                           \
+    } while (0)
+
+
+    const double Min_Width  = 5;
+    const double Min_Height = 5;
+    
     if (handle == m_handles[HDir_N]) {
-        m_y      += delta.y;
-        m_height -= delta.y;
+        CALC_N;
     } else if (handle == m_handles[HDir_NE]) {
-        m_width  += delta.x;
-        m_y      += delta.y;
-        m_height -= delta.y;
+        CALC_E;
+        CALC_N;
     } else if (handle == m_handles[HDir_E]) {
-        m_width += delta.x;
+        CALC_E;
     } else if (handle == m_handles[HDir_SE]) {
-        m_width  += delta.x;
-        m_height += delta.y;        
+        CALC_S;
+        CALC_E;
     } else if (handle == m_handles[HDir_S]) {
-        m_height += delta.y;
+        CALC_S;
     } else if (handle == m_handles[HDir_SW]) {
-        m_x      += delta.x;
-        m_width  -= delta.x;
-        m_height += delta.y;        
+        CALC_W;
+        CALC_S;
     } else if (handle == m_handles[HDir_W]) {
-        m_x     += delta.x;
-        m_width -= delta.x;
+        CALC_W;
     } else if (handle == m_handles[HDir_NW]) {
-        m_x      += delta.x;
-        m_width  -= delta.x;
-        m_y      += delta.y;
-        m_height -= delta.y;
+        CALC_W;
+        CALC_N;
     } else {
         ASSERT_NOT_REACHED();
     }

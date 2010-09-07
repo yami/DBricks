@@ -179,6 +179,16 @@ Desktop::on_edit_undo()
     m_diagram.notify_observers();
 }
 
+void
+Desktop::on_palette_item_toggled(Gtk::ToggleToolButton* button, const std::string& shape_type)
+{
+    if (button->get_active()) {
+        m_display.set_context(new CreateContext(&m_diagram, &m_display, shape_type));
+    } else {
+        m_display.set_context(new ModifyContext(&m_diagram, &m_display));
+    }
+}
+
 extern ShapeTypeInventory theInventory;
 
 void
@@ -288,7 +298,7 @@ void
 Desktop::initialize_layout()
 {
     set_default_size(400, 500);
-
+    
     // add main vbox
     add(m_vbox);
 
@@ -296,9 +306,41 @@ Desktop::initialize_layout()
     Gtk::Widget* menubar = create_menubar();
     m_vbox.pack_start(*menubar, Gtk::PACK_SHRINK);
 
-    // add table to main vbox
-    m_vbox.pack_start(m_table, Gtk::PACK_EXPAND_WIDGET);
+    m_vbox.pack_start(m_hbox, Gtk::PACK_EXPAND_WIDGET);
     
+    // add hbox for containing tool_palette and drawing_space
+    init_drawing_space();
+    init_palette();
+    
+    m_hbox.pack_start(m_palette, Gtk::PACK_SHRINK);
+    m_hbox.pack_start(m_table, Gtk::PACK_EXPAND_WIDGET);
+    
+    show_all_children();
+}
+
+void
+Desktop::init_palette()
+{
+    const ShapeTypeInventory::CollectionsType& collections = theInventory.collections();
+    for (ShapeTypeInventory::CollectionsType::const_iterator citer = collections.begin();
+         citer != collections.end();
+         ++citer) {
+        Gtk::ToolItemGroup* group = Gtk::manage(new Gtk::ToolItemGroup((*citer)->name()));
+        m_palette.add(*group);
+        
+        for (ShapeTypeCollection::ShapeTypesType::const_iterator siter = (*citer)->shape_types().begin();
+             siter != (*citer)->shape_types().end();
+             ++siter) {
+            Gtk::ToggleToolButton* button = Gtk::manage(new Gtk::ToggleToolButton((*siter)->short_name()));
+            button->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &Desktop::on_palette_item_toggled), button, (*siter)->name()));
+            group->insert(*button);
+        }
+    }
+}
+
+void
+Desktop::init_drawing_space()
+{
     m_hruler.set_range(0.0, 400.0, 0.0, 400.0);
     m_vruler.set_range(0.0, 500.0, 0.0, 500.0);
 
@@ -317,9 +359,7 @@ Desktop::initialize_layout()
     // 0,2
     // 1,2
     m_table.attach(m_hscrollbar, 1, 2, 2, 3, Gtk::EXPAND|Gtk::SHRINK|Gtk::FILL, Gtk::FILL);
-    // 2,2
-
-    show_all_children();
+    // 2,2    
 }
 
 void
