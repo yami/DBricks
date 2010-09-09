@@ -20,31 +20,28 @@ Connector::draw(IRenderer* renderer) const
 void
 Connector::draw_connected(IRenderer* renderer) const
 {
-    renderer->save();
+    renderer->line_width(1.0);
     renderer->line_color(Black);
     renderer->fill_color(Black);
     renderer->draw_ellipse(Point(m_point.x, m_point.y), 4, 4, Draw_Fill | Draw_Stroke);
-    renderer->restore();    
 }
 
 void
 Connector::draw_normal(IRenderer* renderer) const
 {
-    renderer->save();
+    renderer->line_width(1.0);
     renderer->line_color(Blue);
     renderer->draw_line(Point(m_point.x-2, m_point.y-2), Point(m_point.x+2, m_point.y+2));
     renderer->draw_line(Point(m_point.x+2, m_point.y-2), Point(m_point.x-2, m_point.y+2));
-    renderer->restore();    
 }
 
 void
 Connector::draw_highlighted(IRenderer* renderer) const
 {
-    renderer->save();
+    renderer->line_width(1.0);
     renderer->line_color(Red);
     renderer->fill_color(Red);
     renderer->draw_ellipse(Point(m_point.x, m_point.y), 8, 8, Draw_Stroke | Draw_Fill);
-    renderer->restore();
 }
 
 double

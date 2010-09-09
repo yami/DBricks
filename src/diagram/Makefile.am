@@ -20,6 +20,7 @@ dbricks_SOURCES = main.cxx \
 	SexpSaver.cxx \
 	SexpLoader.cxx \
 	PropertyDescriptor.cxx \
+	IRenderer.cxx \
 	CairoRenderer.cxx \
 	Color.cxx \
 	inventory.cxx \

@@ -5,8 +5,9 @@
 #include "LineSpec.hxx"
 #include <geom/Point.hxx>
 #include <geom/Rect.hxx>
-#include <vector>
 
+#include <vector>
+#include <stack>
 
 namespace DBricks {
 
@@ -27,20 +28,19 @@ struct PathElement {
 
 class IRenderer {
 public:
-    virtual void save() = 0;
-    virtual void restore() = 0;
+    virtual ~IRenderer() {}
+    
+    void background(const Color& color);
+
+    void line_width(double width);
+    void line_color(const Color& color);
+    void line_style(LineStyle style);
+
+    void fill_alpha(double alpha);
+    void fill_color(const Color& color);
     
     virtual void begin_render(const Rect& update) = 0;
     virtual void end_render() = 0;
-
-    virtual Color background(const Color& color) = 0;
-
-    virtual double line_width(double width) = 0 ;
-    virtual Color line_color(const Color& color) = 0;
-    virtual LineStyle line_style(LineStyle style) = 0;
-
-    virtual double fill_alpha(double alpha) = 0;
-    virtual Color fill_color(const Color& color) = 0;    
 
     virtual void draw_background(const Rect& area) = 0;
     virtual void draw_line(const Point& from, const Point& to) = 0;
@@ -50,6 +50,11 @@ public:
     virtual void draw_ellipse(const Point& center, double width, double height, int action) = 0;
     virtual void draw_polygon(const std::vector<Point>& points, int action) = 0;
     virtual void draw_path(const std::vector<PathElement>& elements, int action) = 0;
+
+protected:
+    LineSpec m_line_spec;
+    FillSpec m_fill_spec;
+    Color    m_background;
 };
 
 } // namespace DBricks

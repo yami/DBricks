@@ -272,6 +272,12 @@ BoxedShape::draw_shape(IRenderer* renderer) const
     for (std::list<DrawInst*>::iterator iter = m_info->inst_list.begin();
          iter != m_info->inst_list.end();
          ++iter) {
+        // TODO: add set line/fill spec instructions.
+        renderer->line_width(1.0);
+        renderer->line_color(Black);
+        renderer->line_style(LS_Solid);
+        renderer->fill_color(White);
+        renderer->fill_alpha(1.0);
         (*iter)->draw(renderer, trans);
     }
 }

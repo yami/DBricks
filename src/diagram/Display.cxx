@@ -161,10 +161,7 @@ Display::draw_grid(int width, int height)
     const int xstep = 40;
     const int ystep = 40;
 
-    snap_set_grid(xstep, ystep);
-    
-
-    m_renderer->save();
+    snap_set_grid(xstep, ystep);    
 
     //m_renderer->line_color(Color(0.337, 0.612, 0.117));
     m_renderer->line_width(0.2);
@@ -176,8 +173,6 @@ Display::draw_grid(int width, int height)
     for (int y=ystep; y < height; y += ystep) {
         m_renderer->draw_line(Point(0, y), Point(width, y));
     }
-
-    m_renderer->restore();
 }
 
 void
@@ -190,10 +185,9 @@ Display::draw_select()
         {
             Rect rect(m_select_origin, m_select_current);
 
-            m_renderer->save();
+            m_renderer->line_width(1.0);
             m_renderer->line_style(LS_Dash);
             m_renderer->draw_rectangle(Point(rect.x1(), rect.y1()), Point(rect.x2(), rect.y2()), Draw_Stroke);
-            m_renderer->restore();
             break;
         }
         case Select_Selected:
