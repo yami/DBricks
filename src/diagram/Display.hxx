@@ -9,6 +9,7 @@
 #include <geom/Point.hxx>
 #include "DiagramObserver.hxx"
 
+
 // Perhaps I should change Display to Canvas or some other name?
 // Its role is:
 //   1. main drawing area
@@ -25,6 +26,7 @@ class EventContext;
 class Menu;
 class IRenderer;
 class Desktop;
+class ZoomWindow;
 
 class Display : public Gtk::DrawingArea, public DiagramObserver {
 public:
@@ -68,7 +70,14 @@ public:
     {
         m_highlight_closest_connector = true;
     }
-    
+
+    const ZoomWindow* zwindow() const
+    {
+        return m_zwindow;
+    }
+
+    void zoom(const Point& origin, double factor);
+
 private:
     void draw(GdkEventExpose* event=NULL);
     void draw_select();
@@ -92,6 +101,8 @@ private:
 
     bool m_highlight_closest_connector;
     GdkEvent*  m_event;
+
+    ZoomWindow* m_zwindow;
 };
 
 } // namespace DBricks

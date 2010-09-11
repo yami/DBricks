@@ -22,22 +22,24 @@ enum PathElementType {
 };
 
 struct PathElement {
+    enum { Max_Points = 3 };
     PathElementType type;
-    Point           points[3];
+    Point           points[Max_Points];
 };
 
 class IRenderer {
 public:
     virtual ~IRenderer() {}
     
-    void background(const Color& color);
+    virtual void background(const Color& color);
 
-    void line_width(double width);
-    void line_color(const Color& color);
-    void line_style(LineStyle style);
+    virtual void line_width(double width);
+    virtual void line_color(const Color& color);
+    virtual void line_style(LineStyle style);
 
-    void fill_alpha(double alpha);
-    void fill_color(const Color& color);
+    virtual void fill_alpha(double alpha);
+    virtual void fill_color(const Color& color);
+
     
     virtual void begin_render(const Rect& update) = 0;
     virtual void end_render() = 0;

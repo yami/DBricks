@@ -12,7 +12,9 @@
 #include "Menu.hxx"
 #include "BuiltinChanges.hxx"
 #include "snap.hxx"
+#include "gtkutil.hxx"
 
+#include "ZoomWindow.hxx"
 
 #include <util/stl.hxx>
 #include <util/bit.hxx>
@@ -67,7 +69,11 @@ bool
 ModifyContext::on_button_press_event(Shape* shape, GdkEventButton* e)
 {
     bool pass_down = false;
-    Point point(e->x, e->y);
+
+    const ZoomWindow* zwindow = m_display->zwindow();
+    
+    Point display_point = point_of_event(e);
+    Point point = zwindow->to_real_coord(display_point);
 
     Selection& selection = m_diagram->selection();
     
@@ -87,8 +93,7 @@ ModifyContext::on_button_press_event(Shape* shape, GdkEventButton* e)
             bit_set(m_state, Selecting);
         }
         
-        m_mpoint.x = e->x;
-        m_mpoint.y = e->y;
+        m_mpoint = point;
         m_opoint   = m_mpoint;
     } else if (e->button == Right_Button) {
         if (!selection.empty()) {
@@ -103,8 +108,12 @@ bool
 ModifyContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
 {
     bool pass_down = false;
-    Point point(e->x, e->y);
 
+    const ZoomWindow* zwindow = m_display->zwindow();
+
+    Point display_point = point_of_event(e);
+    Point point         = zwindow->to_real_coord(display_point);
+        
     Selection& selection = m_diagram->selection();
     
     if (bit_is_set(m_state, Dragging)) {
@@ -130,7 +139,7 @@ ModifyContext::on_motion_notify_event(Shape* shape, GdkEventMotion* e)
         }
     }
 
-    m_mpoint = point;    
+    m_mpoint = point;
 
     return pass_down;
 }
@@ -157,7 +166,10 @@ Rect calc_bounding_box(const ShapeContainerT& shapes)
 bool
 ModifyContext::on_button_release_event(Shape* shape, GdkEventButton* e)
 {
-    Point point(e->x, e->y);
+    const ZoomWindow* zwindow = m_display->zwindow();
+    
+    Point display_point = point_of_event(e);
+    Point point         = zwindow->to_real_coord(display_point);
 
     Selection& selection = m_diagram->selection();
     History&   history   = m_diagram->history();

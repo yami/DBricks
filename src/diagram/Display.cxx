@@ -24,6 +24,8 @@
 
 
 #include "CairoRenderer.hxx"
+#include "ZoomedRendererDecorator.hxx"
+#include "ZoomWindow.hxx"
 
 #include "snap.hxx"
 
@@ -31,8 +33,17 @@ namespace DBricks {
 
 Display::Display(Diagram* diagram, Desktop* desktop)
     :DiagramObserver(diagram), m_desktop(desktop), m_context(new ModifyContext(diagram, this)), m_select_state(Select_None),
-     m_renderer(0), m_highlight_closest_connector(false), m_event(NULL)
+     m_renderer(0), m_highlight_closest_connector(false), m_event(NULL),
+     m_zwindow(0)
 {
+    const Gtk::Allocation& allocation = get_allocation();
+    double x1 = allocation.get_x();
+    double y1 = allocation.get_y();
+    double x2 = x1 + allocation.get_width();
+    double y2 = y1 + allocation.get_height();
+    
+    m_zwindow = new ZoomWindow(Rect(x1, y1, x2, y2), 1.0);
+    
     add_events(Gdk::EXPOSURE_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
     add_events(Gdk::POINTER_MOTION_HINT_MASK);
@@ -97,7 +108,7 @@ Display::draw(GdkEventExpose* event)
     if (window) {
         // better way?
         if (!m_renderer)
-            m_renderer = new CairoRenderer(get_window());
+            m_renderer = new ZoomedRendererDecorator(new CairoRenderer(get_window()), m_zwindow);
             //m_renderer = new CairoRenderer(get_window()->create_cairo_context());
         
         
@@ -210,6 +221,21 @@ void
 Display::set_cursor()
 {
     get_window()->set_cursor();
+}
+
+void
+Display::zoom(const Point& origin, double factor)
+{
+    m_zwindow->factor(factor * m_zwindow->factor());
+
+    double width  = m_zwindow->width()/factor;
+    double height = m_zwindow->height()/factor;
+
+    Rect visible(origin,
+                 m_zwindow->to_real_length(width),
+                 m_zwindow->to_real_length(height));
+
+    m_zwindow->visible(visible);
 }
 
 Glib::ustring

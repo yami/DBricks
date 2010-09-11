@@ -5,6 +5,8 @@ dbricks_SOURCES = main.cxx \
 	ModifyContext.cxx \
 	CreateContext.cxx \
 	DispatchContext.cxx \
+	ZoomContext.cxx \
+	ZoomWindow.cxx \
 	Display.cxx \
 	Desktop.cxx \
 	gtkutil.cxx \
@@ -22,6 +24,7 @@ dbricks_SOURCES = main.cxx \
 	PropertyDescriptor.cxx \
 	IRenderer.cxx \
 	CairoRenderer.cxx \
+	ZoomedRendererDecorator.cxx \
 	Color.cxx \
 	inventory.cxx \
 	Shape.cxx \
