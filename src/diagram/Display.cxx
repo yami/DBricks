@@ -83,7 +83,7 @@ Display::on_event(GdkEvent* event)
     m_event = event;
     
     if (point_of_event(event, &point)) {
-        shape  = m_diagram->find_closest_shape(point);
+        shape  = m_diagram->find_closest_shape(m_zwindow->to_real_coord(point));
     }
     
     m_context->on_event(shape, event);
@@ -109,8 +109,6 @@ Display::draw(GdkEventExpose* event)
         // better way?
         if (!m_renderer)
             m_renderer = new ZoomedRendererDecorator(new CairoRenderer(get_window()), m_zwindow);
-            //m_renderer = new CairoRenderer(get_window()->create_cairo_context());
-        
         
         Gtk::Allocation allocation = get_allocation();
 

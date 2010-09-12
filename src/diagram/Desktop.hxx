@@ -33,6 +33,7 @@ private:
     void on_quit_program();
     void on_create_shape(const std::string& shape_type);
     void on_select_modify();
+    void on_select_zoom();
     void on_edit_copy();
     void on_edit_paste();
     void on_edit_undo();

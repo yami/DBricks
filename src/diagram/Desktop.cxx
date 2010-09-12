@@ -13,6 +13,7 @@
 #include "ShapeFactory.hxx"
 #include "CreateContext.hxx"
 #include "ModifyContext.hxx"
+#include "ZoomContext.hxx"
 #include "Clipboard.hxx"
 #include "Change.hxx"
 #include "DiagramArchiver.hxx"
@@ -121,6 +122,12 @@ void
 Desktop::on_select_modify()
 {
     m_display.set_context(new ModifyContext(&m_diagram, &m_display));
+}
+
+void
+Desktop::on_select_zoom()
+{
+    m_display.set_context(new ZoomContext(&m_diagram, &m_display));
 }
 
 void
@@ -237,6 +244,9 @@ Desktop::initialize_menus()
     m_action_group->add(
         Gtk::Action::create("ModifyTool", "Modify"),
         sigc::mem_fun(*this, &Desktop::on_select_modify));
+    m_action_group->add(
+        Gtk::Action::create("ZoomTool", "Zoom"),
+        sigc::mem_fun(*this, &Desktop::on_select_zoom));
 
 
     m_action_group->add(
@@ -265,6 +275,7 @@ Desktop::initialize_menus()
 
         "    <menu action='ToolsMenu'>\n"
         "      <menuitem action='ModifyTool' />\n"
+        "      <menuitem action='ZoomTool' />\n"
         "    </menu>\n"
 
         "    <menu action='EditMenu'>\n"
