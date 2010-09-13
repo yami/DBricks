@@ -28,7 +28,7 @@ Rect ZoomWindow::to_display_rect(const Rect& rect) const
 
 double ZoomWindow::to_real_length(double length) const
 {
-    return m_factor/length;
+    return length/m_factor;
 }
 
 Point ZoomWindow::to_real_coord(const Point& point) const
@@ -73,7 +73,7 @@ double ZoomWindow::height() const
     return m_visible.height();
 }
 
-void ZoomWindow::visible(Rect& visi)
+void ZoomWindow::visible(const Rect& visi)
 {
     m_visible = visi;
 }

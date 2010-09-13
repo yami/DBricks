@@ -35,14 +35,12 @@ Display::Display(Diagram* diagram, Desktop* desktop)
     :DiagramObserver(diagram), m_desktop(desktop), m_context(new ModifyContext(diagram, this)), m_select_state(Select_None),
      m_renderer(0), m_highlight_closest_connector(false), m_event(NULL),
      m_zwindow(0)
-{
-    const Gtk::Allocation& allocation = get_allocation();
-    double x1 = allocation.get_x();
-    double y1 = allocation.get_y();
-    double x2 = x1 + allocation.get_width();
-    double y2 = y1 + allocation.get_height();
+{    
+    m_zwindow = new ZoomWindow(Rect(0, 0, 400, 500), 1.0);
+
+    DLOG(DIAGRAM, DEBUG, "InitZoom: factor=%g visible={origin(%g, %g), w=%g, h=%g}\n",
+         m_zwindow->factor(), m_zwindow->x1(), m_zwindow->y1(), m_zwindow->width(), m_zwindow->height());
     
-    m_zwindow = new ZoomWindow(Rect(x1, y1, x2, y2), 1.0);
     
     add_events(Gdk::EXPOSURE_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
@@ -224,16 +222,18 @@ Display::set_cursor()
 void
 Display::zoom(const Point& origin, double factor)
 {
+    DLOG(DIAGRAM, DEBUG, "BeforeZoom: factor=%g visible={origin(%g, %g), w=%g, h=%g}\n",
+         m_zwindow->factor(), m_zwindow->x1(), m_zwindow->y1(), m_zwindow->width(), m_zwindow->height());
+    
     m_zwindow->factor(factor * m_zwindow->factor());
 
-    double width  = m_zwindow->width()/factor;
-    double height = m_zwindow->height()/factor;
+    double width  = m_zwindow->to_real_length(m_zwindow->width());
+    double height = m_zwindow->to_real_length(m_zwindow->height());
 
-    Rect visible(origin,
-                 m_zwindow->to_real_length(width),
-                 m_zwindow->to_real_length(height));
+    m_zwindow->visible(Rect(origin, width, height));
 
-    m_zwindow->visible(visible);
+    DLOG(DIAGRAM, DEBUG, "AfterZoom: factor=%g visible={origin(%g, %g), w=%g, h=%g}\n",
+         m_zwindow->factor(), m_zwindow->x1(), m_zwindow->y1(), m_zwindow->width(), m_zwindow->height());
 }
 
 Glib::ustring

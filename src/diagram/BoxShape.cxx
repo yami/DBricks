@@ -153,6 +153,8 @@ BoxShape::move_handle(Handle* handle, const Point& delta)
     
     update_handles();
 
+    DLOG(DIAGRAM, DEBUG, "Rect: x=%g, y=%g, width=%g, height=%g\n", m_x, m_y, m_width, m_height);
+    
     on_data_change();
 }
 

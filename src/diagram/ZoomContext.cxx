@@ -73,9 +73,6 @@ ZoomContext::on_button_release_event(Shape* shape, GdkEventButton* e)
             double vfactor = zwindow->height()/vdiff;
 
             factor = min(hfactor, vfactor);
-
-            origin.x += zwindow->width()/(2.0 * factor);
-            origin.y += zwindow->height()/(2.0 * factor);
         } else {
             double hfactor = hdiff / zwindow->width();
             double vfactor = vdiff / zwindow->height();

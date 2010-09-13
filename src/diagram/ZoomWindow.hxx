@@ -26,7 +26,7 @@ public:
     double width() const;
     double height() const;
 
-    void visible(Rect& rect);
+    void visible(const Rect& rect);
     void factor(double fact);
 
     Rect   visible() const;
