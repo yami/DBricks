@@ -387,7 +387,7 @@ Desktop::on_display_event(GdkEvent* event)
         
         m_hruler.set_range(0.0, e->width, 0.0, e->width);
         m_vruler.set_range(0.0, e->height, 0.0, e->height);
-    }    
+    }
 }
 
 } // namespace DBricks

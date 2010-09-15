@@ -83,9 +83,15 @@ Display::on_event(GdkEvent* event)
     if (point_of_event(event, &point)) {
         shape  = m_diagram->find_closest_shape(m_zwindow->to_real_coord(point));
     }
+
+    if (event->type == GDK_CONFIGURE) {
+        GdkEventConfigure* e = reinterpret_cast<GdkEventConfigure*>(event);
+        set_visible(Point(m_zwindow->x1(), m_zwindow->y1()), e->width, e->height);
+    }
     
     m_context->on_event(shape, event);
     m_desktop->on_display_event(event);
+    
     update();
     return false;
 }
@@ -163,22 +169,28 @@ Display::draw(GdkEventExpose* event)
 }
 
 void
-Display::draw_grid(int width, int height)
+Display::draw_grid(int dwidth, int dheight)
 {
     const int xstep = 40;
-    const int ystep = 40;
+    const int ystep = 40;   
 
-    snap_set_grid(xstep, ystep);    
+    int width  = round(m_zwindow->to_real_length(dwidth));
+    int height = round(m_zwindow->to_real_length(dheight));
+
+    double ox = m_zwindow->x1();
+    double oy = m_zwindow->y1();
+    
+    snap_set_grid(xstep, ystep);
 
     //m_renderer->line_color(Color(0.337, 0.612, 0.117));
     m_renderer->line_width(0.2);
     
     for (int x=xstep; x < width; x += xstep) {
-        m_renderer->draw_line(Point(x, 0), Point(x, height));
+        m_renderer->draw_line(Point(ox+x, oy), Point(ox+x, oy+height));
     }
 
     for (int y=ystep; y < height; y += ystep) {
-        m_renderer->draw_line(Point(0, y), Point(width, y));
+        m_renderer->draw_line(Point(ox, oy+y), Point(ox+width, oy+y));
     }
 }
 
@@ -220,20 +232,36 @@ Display::set_cursor()
 }
 
 void
-Display::zoom(const Point& origin, double factor)
+Display::zoom(const Point& point, double factor, Display::ZoomPoint zp)
 {
     DLOG(DIAGRAM, DEBUG, "BeforeZoom: factor=%g visible={origin(%g, %g), w=%g, h=%g}\n",
          m_zwindow->factor(), m_zwindow->x1(), m_zwindow->y1(), m_zwindow->width(), m_zwindow->height());
+
+    double width  = m_zwindow->width() / factor;
+    double height = m_zwindow->height() / factor;
     
     m_zwindow->factor(factor * m_zwindow->factor());
 
-    double width  = m_zwindow->to_real_length(m_zwindow->width());
-    double height = m_zwindow->to_real_length(m_zwindow->height());
-
-    m_zwindow->visible(Rect(origin, width, height));
+    switch (zp) {
+        case ZoomPoint_Center:
+            m_zwindow->visible(Rect(Point(point.x-width/2, point.y-height/2), width, height));
+            break;
+        case ZoomPoint_Origin:
+            m_zwindow->visible(Rect(point, width, height));
+            break;
+    }
 
     DLOG(DIAGRAM, DEBUG, "AfterZoom: factor=%g visible={origin(%g, %g), w=%g, h=%g}\n",
          m_zwindow->factor(), m_zwindow->x1(), m_zwindow->y1(), m_zwindow->width(), m_zwindow->height());
+}
+
+void
+Display::set_visible(const Point& origin, double dwidth, double dheight)
+{
+    double width  = m_zwindow->to_real_length(dwidth);
+    double height = m_zwindow->to_real_length(dheight);
+
+    m_zwindow->visible(Rect(origin, width, height));
 }
 
 Glib::ustring
