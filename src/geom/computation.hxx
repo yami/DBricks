@@ -46,6 +46,12 @@ round(double d)
     return (int) floor(d + 0.5);
 }
 
+inline bool
+double_equal(double a, double b)
+{
+    return fabs(a - b) <= 1.0e-6;
+}
+
 } // namespace DBricks
 
 

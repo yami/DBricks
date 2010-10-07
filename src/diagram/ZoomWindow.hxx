@@ -4,6 +4,8 @@
 #include <geom/Point.hxx>
 #include <geom/Rect.hxx>
 
+#include <sigc++/sigc++.h>
+
 namespace DBricks {
 
 class ZoomWindow {
@@ -25,15 +27,18 @@ public:
 
     double width() const;
     double height() const;
-
-    void visible(const Rect& rect);
-    void factor(double fact);
-
+    
     Rect   visible() const;
     double factor() const;
+
+    void set(double factor, const Rect& visible);
+
+    sigc::signal<void, const ZoomWindow&>& signal_changed();
 private:
     Rect   m_visible;           // visible area: rectangle in real
     double m_factor;            // zoom factor = visible/real
+
+    sigc::signal<void, const ZoomWindow&> m_signal_changed;
 };
 
 

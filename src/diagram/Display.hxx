@@ -71,7 +71,7 @@ public:
         m_highlight_closest_connector = true;
     }
 
-    const ZoomWindow* zwindow() const
+    ZoomWindow* zwindow() const
     {
         return m_zwindow;
     }
@@ -87,9 +87,7 @@ private:
     void draw(GdkEventExpose* event=NULL);
     void draw_select();
     void draw_grid(int width, int height);
-
-    void set_visible(const Point& origin, double dwidth, double dheight);
-    
+        
     Desktop*      m_desktop;
     EventContext* m_context;
     

@@ -2,6 +2,7 @@
 #define RECT_HXX
 
 #include <algorithm>
+#include "computation.hxx"
 
 namespace DBricks {
 
@@ -63,6 +64,21 @@ public:
     {
         return m_height;
     }
+
+    bool operator == (const Rect& other) const
+    {
+        return
+            double_equal(m_x, other.m_x) &&
+            double_equal(m_y, other.m_y) &&
+            double_equal(m_width, other.m_width) &&
+            double_equal(m_height, other.m_height);
+    }
+
+    bool operator != (const Rect& other) const
+    {
+        return !(*this == other);
+    }
+    
 private:
     double m_x;
     double m_y;

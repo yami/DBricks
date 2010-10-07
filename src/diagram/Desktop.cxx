@@ -17,6 +17,7 @@
 #include "Clipboard.hxx"
 #include "Change.hxx"
 #include "DiagramArchiver.hxx"
+#include "ZoomWindow.hxx"
 
 #include "gtkmm/filechooserdialog.h"
 
@@ -24,7 +25,11 @@ namespace DBricks {
 
 Desktop::Desktop()
     :m_display(&m_diagram, this), m_vbox(), m_table(3,3),
-     m_action_group(Gtk::ActionGroup::create()), m_ui_manager(Gtk::UIManager::create())
+     m_action_group(Gtk::ActionGroup::create()), m_ui_manager(Gtk::UIManager::create()),
+     m_hscroll_adjustment(0, 0, 400, 1, 100, 400),
+     m_vscroll_adjustment(0, 0, 400, 1, 100, 400),
+     m_hscrollbar(m_hscroll_adjustment),
+     m_vscrollbar(m_vscroll_adjustment)
 {
     m_diagram.attach_observer(&m_display);
     
@@ -34,6 +39,8 @@ Desktop::Desktop()
     add_events(Gdk::BUTTON_PRESS_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
     add_events(Gdk::EXPOSURE_MASK);
+
+    m_display.zwindow()->signal_changed().connect(sigc::mem_fun(this, &Desktop::on_zwindow));
 }
 
 bool
@@ -196,6 +203,27 @@ Desktop::on_palette_item_toggled(Gtk::ToggleToolButton* button, const std::strin
     }
 }
 
+void
+Desktop::on_zwindow(const ZoomWindow& zwindow)
+{
+    m_hruler.set_range(zwindow.x1(), zwindow.width(), zwindow.x1(), zwindow.width());
+    m_vruler.set_range(zwindow.y1(), zwindow.height(), zwindow.y1(), zwindow.height());
+}
+
+void
+Desktop::on_hscroll_changed()
+{
+    m_display.zoom(Point(m_hscroll_adjustment.get_value(), m_display.zwindow()->y1()),
+                   1, Display::ZoomPoint_Origin);
+}
+
+void
+Desktop::on_vscroll_changed()
+{
+    m_display.zoom(Point(m_display.zwindow()->x1(), m_vscroll_adjustment.get_value()),
+                   1, Display::ZoomPoint_Origin);
+}
+
 extern ShapeTypeInventory theInventory;
 
 void
@@ -351,10 +379,7 @@ Desktop::init_palette()
 
 void
 Desktop::init_drawing_space()
-{
-    m_hruler.set_range(0.0, 400.0, 0.0, 400.0);
-    m_vruler.set_range(0.0, 500.0, 0.0, 500.0);
-
+{    
     // 0,0
     // 1,0    
     m_table.attach(m_hruler, 1, 2, 0, 1, Gtk::EXPAND|Gtk::SHRINK|Gtk::FILL, Gtk::FILL);
@@ -370,7 +395,10 @@ Desktop::init_drawing_space()
     // 0,2
     // 1,2
     m_table.attach(m_hscrollbar, 1, 2, 2, 3, Gtk::EXPAND|Gtk::SHRINK|Gtk::FILL, Gtk::FILL);
-    // 2,2    
+    // 2,2
+
+    m_hscroll_adjustment.signal_changed().connect(sigc::mem_fun(this, &Desktop::on_hscroll_changed));
+    m_vscroll_adjustment.signal_changed().connect(sigc::mem_fun(this, &Desktop::on_vscroll_changed));
 }
 
 void
@@ -381,12 +409,6 @@ Desktop::on_display_event(GdkEvent* event)
         GdkEventMotion* e = reinterpret_cast<GdkEventMotion*>(event);
         m_hruler.property_position().set_value(e->x);
         m_vruler.property_position().set_value(e->y);
-    } else if (event->type == GDK_CONFIGURE) {
-        // window size or position is changed.
-        GdkEventConfigure* e = reinterpret_cast<GdkEventConfigure*>(event);
-        
-        m_hruler.set_range(0.0, e->width, 0.0, e->width);
-        m_vruler.set_range(0.0, e->height, 0.0, e->height);
     }
 }
 

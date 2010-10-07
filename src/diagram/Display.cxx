@@ -86,7 +86,12 @@ Display::on_event(GdkEvent* event)
 
     if (event->type == GDK_CONFIGURE) {
         GdkEventConfigure* e = reinterpret_cast<GdkEventConfigure*>(event);
-        set_visible(Point(m_zwindow->x1(), m_zwindow->y1()), e->width, e->height);
+        double factor  = m_zwindow->factor();
+        Rect   visible(m_zwindow->x1(), m_zwindow->y1(),
+                       m_zwindow->to_real_length(e->width),
+                       m_zwindow->to_real_length(e->height));
+
+        m_zwindow->set(factor, visible);
     }
     
     m_context->on_event(shape, event);
@@ -240,14 +245,14 @@ Display::zoom(const Point& point, double factor, Display::ZoomPoint zp)
     double width  = m_zwindow->width() / factor;
     double height = m_zwindow->height() / factor;
     
-    m_zwindow->factor(factor * m_zwindow->factor());
+    double new_factor = factor * m_zwindow->factor();
 
     switch (zp) {
         case ZoomPoint_Center:
-            m_zwindow->visible(Rect(Point(point.x-width/2, point.y-height/2), width, height));
+            m_zwindow->set(new_factor, Rect(Point(point.x-width/2, point.y-height/2), width, height));
             break;
         case ZoomPoint_Origin:
-            m_zwindow->visible(Rect(point, width, height));
+            m_zwindow->set(new_factor, Rect(point, width, height));
             break;
     }
 
@@ -255,14 +260,6 @@ Display::zoom(const Point& point, double factor, Display::ZoomPoint zp)
          m_zwindow->factor(), m_zwindow->x1(), m_zwindow->y1(), m_zwindow->width(), m_zwindow->height());
 }
 
-void
-Display::set_visible(const Point& origin, double dwidth, double dheight)
-{
-    double width  = m_zwindow->to_real_length(dwidth);
-    double height = m_zwindow->to_real_length(dheight);
-
-    m_zwindow->visible(Rect(origin, width, height));
-}
 
 Glib::ustring
 menu_to_uiinfo(const Menu* pcontext_menu, const Menu* pshape_menu)

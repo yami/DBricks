@@ -26,6 +26,8 @@ public:
 
     // called by Display
     void on_display_event(GdkEvent* event);
+
+
 private:
     void on_new_file();
     void on_open_file();
@@ -39,6 +41,12 @@ private:
     void on_edit_undo();
 
     void on_palette_item_toggled(Gtk::ToggleToolButton* button, const std::string& shape_type);
+
+    // called when ZoomWindow signal_changed is emitted
+    void on_zwindow(const ZoomWindow& zwindow);
+
+    void on_vscroll_changed();
+    void on_hscroll_changed();
     
     void initialize_menus();
     void initialize_layout();
@@ -61,6 +69,9 @@ private:
     Gtk::Table       m_table;
     Gtk::HRuler      m_hruler;
     Gtk::VRuler      m_vruler;
+
+    Gtk::Adjustment  m_hscroll_adjustment;
+    Gtk::Adjustment  m_vscroll_adjustment;
     Gtk::HScrollbar  m_hscrollbar;
     Gtk::VScrollbar  m_vscrollbar;
 };

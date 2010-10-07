@@ -73,23 +73,25 @@ double ZoomWindow::height() const
     return m_visible.height();
 }
 
-void ZoomWindow::visible(const Rect& visi)
+void ZoomWindow::set(double factor, const Rect& visible)
 {
-    m_visible = visi;
-}
-void ZoomWindow::factor(double fact)
-{
-    m_factor = fact;
-}
+    if (double_equal(m_factor, factor) && m_visible == visible)
+        return;
+    
+    m_factor  = factor;
+    m_visible = visible;
 
-Rect ZoomWindow::visible() const
-{
-    return m_visible;
+    m_signal_changed.emit(*this);
 }
 
 double ZoomWindow::factor() const
 {
     return m_factor;
+}
+
+sigc::signal<void, const ZoomWindow&>& ZoomWindow::signal_changed()
+{
+    return m_signal_changed;
 }
 
 } // namespace DBricks
