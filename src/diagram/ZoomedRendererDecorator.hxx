@@ -27,6 +27,7 @@ public:
     virtual void draw_polygon(const std::vector<Point>& points, int action);
     virtual void draw_path(const std::vector<PathElement>& elements, int action);
 
+    virtual void draw_text(const TextString& text, int action);
 private:
     IRenderer*  m_backedRenderer;
     ZoomWindow* m_zwindow;

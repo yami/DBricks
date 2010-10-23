@@ -1,6 +1,8 @@
 #include "ZoomedRendererDecorator.hxx"
 #include "ZoomWindow.hxx"
 
+#include <logging/logging.hxx>
+
 namespace DBricks {
 
 void ZoomedRendererDecorator::begin_render(const Rect& update)
@@ -68,6 +70,12 @@ void ZoomedRendererDecorator::draw_path(const std::vector<PathElement>& elements
     }
 
     m_backedRenderer->draw_path(display_elements, action);
+}
+
+void ZoomedRendererDecorator::draw_text(const TextString& text, int action)
+{
+    DLOG(DIAGRAM, DEBUG, "ZoomedRendererDecorator::draw_text is not implemented correctly yet!\n");
+    m_backedRenderer->draw_text(text, action);
 }
 
 } // namespace DBricks

@@ -3,6 +3,7 @@
 
 #include "Color.hxx"
 #include "LineSpec.hxx"
+#include "TextString.hxx"
 #include <geom/Point.hxx>
 #include <geom/Rect.hxx>
 
@@ -53,6 +54,7 @@ public:
     virtual void draw_polygon(const std::vector<Point>& points, int action) = 0;
     virtual void draw_path(const std::vector<PathElement>& elements, int action) = 0;
 
+    virtual void draw_text(const TextString& text, int action) = 0;
 protected:
     LineSpec m_line_spec;
     FillSpec m_fill_spec;

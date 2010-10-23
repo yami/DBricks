@@ -135,6 +135,26 @@ Display::draw(GdkEventExpose* event)
 
         m_renderer->begin_render(Rect(0, 0, width, height));
         m_renderer->draw_background(Rect(0, 0, width, height));
+
+        TextString text;
+        TextAttributes attr;
+        
+        text.text = "Hello World!";
+        attr.start = 0;
+        attr.end   = 12;
+
+        attr.font.family = "monospace";
+        attr.font.style = FontStyle_Italic;
+        attr.font.variant = FontVariant_Normal;
+        attr.font.weight = FontWeight_Bold;
+        attr.font.stretch = FontStretch_Normal;
+        attr.font.size = 16 * PANGO_SCALE;
+        attr.font.mask = FontMask_Family | FontMask_Style | FontMask_Weight | FontMask_Stretch | FontMask_Size;
+        
+        attr.outline_color = Black;
+        attr.fill_color = Red;
+        
+        text.attrs.push_back(attr);
         
         draw_grid(width, height);
 
@@ -166,7 +186,7 @@ Display::draw(GdkEventExpose* event)
         
         draw_select();
         
-        
+        m_renderer->draw_text(text, Draw_Fill | Draw_Stroke);
         m_renderer->end_render();
         
         window->end_paint();
